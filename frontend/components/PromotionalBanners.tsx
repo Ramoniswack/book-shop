@@ -4,71 +4,77 @@ import Link from 'next/link'
 import { Tag, Percent, BookOpen, Recycle, Sparkles, TrendingUp, Gift, Leaf, Search, Clock } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
-// 1. The Reader's Rewards - Minimalist Split Banner
+// 1. The Reader's Rewards - Refined 3D Break-out
 export const SpecialOffersBanner = () => (
-  <section className="py-20 bg-stone-50 dark:bg-gray-900 relative overflow-hidden dark-transition">
+  <section className="relative overflow-visible py-12 md:py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
     <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center max-w-7xl mx-auto">
         {/* Left: 60% Text Content */}
-        <div className="lg:col-span-3 space-y-8">
+        <div className="lg:col-span-3 space-y-6 z-20">
           <div>
-            <h2 className="font-serif text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
-              The Reader's Rewards
+            <p className="text-xs uppercase tracking-[0.2em] text-booksmandala-blue dark:text-blue-400 font-bold mb-3">
+              Limited Offer
+            </p>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight leading-[1.1]">
+              Buy 2, Get 1 on<br />Modern Classics
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-xl">
-              Exclusive benefits designed for book lovers who can't get enough
+            <p className="text-gray-600 dark:text-gray-400 text-base max-w-xl leading-relaxed">
+              Discover timeless stories and build your collection with our exclusive offer on carefully curated classics.
             </p>
           </div>
 
-          {/* Elegant Icons */}
-          <div className="flex flex-col sm:flex-row gap-8">
-            <div className="flex items-start space-x-3">
-              <div className="w-12 h-12 rounded-full bg-sage-100 dark:bg-sage-900/20 flex items-center justify-center flex-shrink-0">
-                <Gift className="text-sage-600 dark:text-sage-400" size={20} strokeWidth={1.5} />
-              </div>
+          {/* Elegant Icon Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+              <Gift className="text-booksmandala-blue dark:text-blue-400" size={20} strokeWidth={1.5} />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">Buy 2 Get 1 Free</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">On selected titles</p>
+                <p className="font-semibold text-gray-900 dark:text-white text-sm">Buy 2 Get 1</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Selected Titles</p>
               </div>
             </div>
             
-            <div className="flex items-start space-x-3">
-              <div className="w-12 h-12 rounded-full bg-sage-100 dark:bg-sage-900/20 flex items-center justify-center flex-shrink-0">
-                <Percent className="text-sage-600 dark:text-sage-400" size={20} strokeWidth={1.5} />
-              </div>
+            <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+              <Percent className="text-booksmandala-blue dark:text-blue-400" size={20} strokeWidth={1.5} />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">Free Shipping</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Orders over Rs. 2000</p>
+                <p className="font-semibold text-gray-900 dark:text-white text-sm">Free Shipping</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Over Rs. 2000</p>
               </div>
             </div>
           </div>
 
-          {/* Ghost Button */}
-          <div>
+          <div className="pt-4">
             <Link 
               href="/deals#bogo-deals" 
-              className="inline-flex items-center px-8 py-3 border-2 border-booksmandala-blue dark:border-blue-400 text-booksmandala-blue dark:text-blue-400 font-medium rounded-lg hover:bg-booksmandala-blue hover:text-white dark:hover:bg-blue-400 dark:hover:text-white transition-all duration-300 group"
+              className="inline-flex items-center px-8 py-3 bg-booksmandala-blue hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 group"
             >
               Shop BOGO Deals
-              <Gift className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+              <Sparkles className="ml-2 group-hover:rotate-12 transition-transform" size={18} />
             </Link>
           </div>
         </div>
 
-        {/* Right: 40% Visual */}
-        <div className="lg:col-span-2 relative">
-          <div className="relative w-full h-80 flex items-center justify-center">
-            {/* Aesthetic Book Stack Illustration */}
-            <div className="absolute inset-0 bg-gradient-to-br from-sage-100 to-sand-100 dark:from-sage-900/20 dark:to-sand-900/20 rounded-2xl transform rotate-3"></div>
-            <div className="relative z-10 text-center">
-              <div className="w-48 h-48 mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex items-center justify-center transform -rotate-6 hover:rotate-0 transition-transform duration-500">
-                <BookOpen className="text-sage-600 dark:text-sage-400" size={80} strokeWidth={1} />
-              </div>
+        {/* Right: 40% Visual Column with "Extra" 3D Logic */}
+        <div className="lg:col-span-2 relative flex justify-center items-center h-[350px] md:h-[400px]">
+          {/* Layer 1: The Decorative Circle (Behind) */}
+          <div className="absolute w-[250px] h-[250px] md:w-[320px] md:h-[320px] rounded-full bg-gradient-to-tr from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 z-0 shadow-inner" />
+          
+          {/* Layer 2: The Floating Image (Breaking out) */}
+          <div className="relative z-10 animate-float">
+            <img
+              src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&h=700&fit=crop&q=80"
+              alt="Book stack"
+              className="w-[280px] md:w-[350px] max-w-none drop-shadow-[0_25px_40px_rgba(0,0,0,0.25)] transform -rotate-3 hover:rotate-0 transition-all duration-700 ease-out"
+            />
+            
+            {/* Layer 3: Accent Element - Positioned relative to image */}
+            <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 w-14 h-14 md:w-16 md:h-16 bg-booksmandala-blue dark:bg-blue-600 rounded-full flex items-center justify-center shadow-xl z-20 animate-bounce-slow">
+              <span className="font-serif italic font-bold text-white text-sm md:text-base">Free</span>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   </section>
 )
 

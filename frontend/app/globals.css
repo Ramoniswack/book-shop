@@ -187,3 +187,24 @@ a {
     scroll-behavior: smooth;
   }
 }
+
+/* Premium Animations for BOGO Section */
+@keyframes float {
+  0% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-20px); 
+  }
+  100% { 
+    transform: translateY(0px); 
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce 4s infinite;
+}
