@@ -28,13 +28,29 @@ module.exports = {
           400: '#9ca3af',
           500: '#6b7280',
           600: '#4b5563',
-          700: '#1a1a1a', // Darker for dark mode
-          800: '#121212', // Darker for dark mode
-          900: '#0a0a0a', // Almost black for dark mode
-        }
+          700: '#1a1a1a',
+          800: '#121212',
+          900: '#0a0a0a',
+        },
+        sage: {
+          50: '#f6f7f6',
+          100: '#e3e8e3',
+          600: '#6b8e6b',
+          700: '#4a6b4a',
+          900: '#2d4a2d',
+        },
+        sand: {
+          50: '#faf9f7',
+          100: '#f5f1eb',
+        },
+        coral: {
+          500: '#ff6b6b',
+          600: '#ee5a52',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
       },
     },
   },
