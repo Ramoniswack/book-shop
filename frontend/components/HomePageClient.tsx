@@ -63,7 +63,7 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         books={newArrivals}
         title="New Arrivals"
         showViewAll={false}
-        className="bg-gray-50 dark:bg-gray-800"
+        className="bg-gray-50 dark:bg-gray-900"
       />
 
       {/* Special Offers Banner */}

@@ -78,7 +78,7 @@ const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps
   const displayAuthors = authors || defaultAuthors
 
   return (
-    <section className={`py-8 bg-gray-50 dark:bg-gray-800 dark-transition ${className}`}>
+    <section className={`py-8 bg-gray-50 dark:bg-gray-900 dark-transition ${className}`}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 dark-transition">

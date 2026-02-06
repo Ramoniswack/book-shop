@@ -12,8 +12,8 @@
 
 .dark {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 17, 24, 39;
-  --background-end-rgb: 17, 24, 39;
+  --background-start-rgb: 10, 10, 10;
+  --background-end-rgb: 10, 10, 10;
 }
 
 * {
@@ -41,7 +41,7 @@ body {
 }
 
 .dark body {
-  background: rgb(17, 24, 39);
+  background: rgb(10, 10, 10);
   color: rgb(243, 244, 246);
 }
 

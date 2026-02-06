@@ -2,9 +2,10 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Star, Heart, ShoppingCart } from 'lucide-react'
+import { Star, Heart, ShoppingCart, Plus, Minus } from 'lucide-react'
 import { Book } from '@/types/book'
 import { useCurrency } from '@/contexts/CurrencyContext'
+import { useState } from 'react'
 
 interface BookCardProps {
   book: Book
@@ -13,63 +14,75 @@ interface BookCardProps {
 
 const BookCard = ({ book, className = '' }: BookCardProps) => {
   const { formatPrice } = useCurrency()
+  const [quantity, setQuantity] = useState(1)
   
   const discountPercentage = book.originalPrice 
     ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
     : 0
 
   return (
-    <div className={`card hover:shadow-lg transition-shadow duration-300 group dark-transition ${className}`}>
-      <div className="relative">
+    <div className={`bg-white dark:bg-gray-800 shadow-md rounded-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden dark-transition ${className}`}>
+      {/* Image Section */}
+      <div className="relative h-48 w-full bg-gray-200 dark:bg-gray-900">
         <Link href={`/book/${book.id}`}>
-          <div className="aspect-[2/3] relative overflow-hidden">
-            <Image
-              src={book.image}
-              alt={book.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-            />
-          </div>
+          <Image
+            src={book.image}
+            alt={book.title}
+            fill
+            className="object-cover hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
         </Link>
         
-        {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col space-y-1">
-          {book.isNew && (
-            <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">New</span>
-          )}
-          {book.isBestseller && (
-            <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded">Bestseller</span>
-          )}
-          {discountPercentage > 0 && (
-            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
-              -{discountPercentage}%
-            </span>
-          )}
+        {/* Top Controls */}
+        <div className="absolute top-2 left-2 right-2 flex justify-between items-start">
+          {/* Badges */}
+          <div className="flex flex-col space-y-1">
+            {book.isNew && (
+              <span className="uppercase text-xs bg-green-50 dark:bg-green-900 px-1.5 py-0.5 border border-green-500 rounded text-green-700 dark:text-green-300 font-medium select-none">
+                New
+              </span>
+            )}
+            {book.isBestseller && (
+              <span className="uppercase text-xs bg-yellow-50 dark:bg-yellow-900 px-1.5 py-0.5 border border-yellow-500 rounded text-yellow-700 dark:text-yellow-300 font-medium select-none">
+                Bestseller
+              </span>
+            )}
+            {discountPercentage > 0 && (
+              <span className="uppercase text-xs bg-red-50 dark:bg-red-900 px-1.5 py-0.5 border border-red-500 rounded text-red-700 dark:text-red-300 font-medium select-none">
+                -{discountPercentage}%
+              </span>
+            )}
+          </div>
+          
+          {/* Wishlist Button */}
+          <button className="text-white hover:text-red-500 bg-black/20 hover:bg-white/90 p-1.5 rounded-full transition-all">
+            <Heart size={18} />
+          </button>
         </div>
-
-        {/* Wishlist Button */}
-        <button className="absolute top-2 right-2 p-2 bg-white dark:bg-gray-700 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-50 dark:hover:bg-red-900">
-          <Heart size={16} className="text-gray-600 dark:text-gray-300 hover:text-red-500" />
-        </button>
       </div>
 
-      <div className="p-3">
+      {/* Content Section */}
+      <div className="p-4 flex flex-col items-center">
+        {/* Author */}
+        <p className="text-gray-400 dark:text-gray-500 font-light text-xs text-center truncate w-full">
+          {book.author}
+        </p>
+        
+        {/* Title */}
         <Link href={`/book/${book.id}`}>
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 transition-colors line-clamp-1 dark-transition">
+          <h3 className="text-gray-800 dark:text-gray-100 text-center mt-1 font-medium hover:text-booksmandala-blue dark:hover:text-blue-400 transition-colors truncate w-full text-sm">
             {book.title}
           </h3>
         </Link>
         
-        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 dark-transition">{book.author}</p>
-        
         {/* Rating */}
-        <div className="flex items-center mt-2 space-x-1">
+        <div className="flex items-center mt-1.5 space-x-1">
           <div className="flex">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                size={14}
+                size={12}
                 className={`${
                   i < Math.floor(book.rating)
                     ? 'text-yellow-400 fill-current'
@@ -78,27 +91,44 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
               />
             ))}
           </div>
-          <span className="text-xs text-gray-500 dark:text-gray-400">({book.reviewCount})</span>
+          <span className="text-[10px] text-gray-500 dark:text-gray-400">({book.reviewCount})</span>
         </div>
-
-        {/* Price */}
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center space-x-2">
-            <span className="text-base font-semibold text-gray-900 dark:text-gray-100 dark-transition">
-              {formatPrice(book.price)}
-            </span>
-            {book.originalPrice && book.originalPrice > book.price && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 line-through">
-                {formatPrice(book.originalPrice)}
-              </span>
-            )}
+        
+        {/* Price - Side by Side */}
+        <div className="flex items-center justify-center gap-2 mt-2">
+          <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
+            {formatPrice(book.price)}
+          </p>
+          {book.originalPrice && book.originalPrice > book.price && (
+            <p className="text-gray-500 dark:text-gray-400 text-xs line-through">
+              {formatPrice(book.originalPrice)}
+            </p>
+          )}
+        </div>
+        
+        {/* Quantity Controls */}
+        <div className="inline-flex items-center mt-3 border border-gray-200 dark:border-gray-600 rounded-md overflow-hidden">
+          <button
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
+          >
+            <Minus size={16} />
+          </button>
+          <div className="bg-white dark:bg-gray-800 border-l border-r border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 inline-flex items-center px-4 py-1 select-none min-w-[40px] justify-center font-medium">
+            {quantity}
           </div>
+          <button
+            onClick={() => setQuantity(quantity + 1)}
+            className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
+          >
+            <Plus size={16} />
+          </button>
         </div>
-
-        {/* Add to Cart Button - Always Visible */}
-        <button className="w-full mt-2 bg-booksmandala-blue hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 text-sm">
-          <ShoppingCart size={14} />
-          <span>Add to Cart</span>
+        
+        {/* Add to Cart Button */}
+        <button className="py-2 px-4 bg-booksmandala-blue text-white rounded-md hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 mt-3 w-full flex items-center justify-center transition-colors text-sm font-medium">
+          Add to Cart
+          <ShoppingCart size={16} className="ml-2" />
         </button>
       </div>
     </div>

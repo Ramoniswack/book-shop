@@ -31,7 +31,7 @@ export default async function DealsPage() {
   return (
     <MainLayout>
       {/* Deals Header */}
-      <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white py-12">
+      <div className="bg-gradient-to-r from-red-500 to-orange-500 dark:from-gray-900 dark:to-black text-white py-12 dark-transition">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Special Deals & Offers
@@ -57,7 +57,7 @@ export default async function DealsPage() {
       </div>
 
       {/* Deal Categories Menu */}
-      <section className="py-8 bg-gray-50 dark:bg-gray-800 dark-transition">
+      <section className="py-8 bg-gray-50 dark:bg-gray-900 dark-transition">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8 dark-transition">Choose Your Deal Type</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -136,7 +136,7 @@ export default async function DealsPage() {
           <ProductGrid
             books={buyOneGetOneBooks}
             title="Buy One Get One Free"
-            className="py-8 bg-gray-50 dark:bg-gray-800 dark-transition"
+            className="py-8 bg-gray-50 dark:bg-gray-900 dark-transition"
           />
         </Suspense>
       </div>
@@ -161,7 +161,7 @@ export default async function DealsPage() {
       </div>
 
       {/* Newsletter Signup for Deals */}
-      <section className="py-12 bg-booksmandala-blue">
+      <section className="py-12 bg-booksmandala-blue dark:bg-gray-900 dark-transition">
         <div className="container mx-auto px-4 text-center text-white">
           <ShoppingBag size={48} className="mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-4">
@@ -174,9 +174,9 @@ export default async function DealsPage() {
             <input
               type="email"
               placeholder="Enter your email for deals"
-              className="flex-1 px-4 py-3 rounded-l-lg text-gray-900 focus:outline-none"
+              className="flex-1 px-4 py-3 rounded-l-lg text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 focus:outline-none dark-transition"
             />
-            <button className="px-6 py-3 bg-white text-booksmandala-blue font-semibold rounded-r-lg hover:bg-gray-100 transition-colors">
+            <button className="px-6 py-3 bg-white dark:bg-blue-600 text-booksmandala-blue dark:text-white font-semibold rounded-r-lg hover:bg-gray-100 dark:hover:bg-blue-700 transition-colors">
               Subscribe
             </button>
           </div>
