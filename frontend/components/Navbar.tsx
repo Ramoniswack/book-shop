@@ -42,29 +42,66 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const genres = [
-    'Arts and Photography',
-    'Boxed Sets', 
-    'Business and Investing',
-    'Fiction and Literature',
-    'Foreign Languages',
-    'History, Biography, and Social Science'
+  const [expandedGenre, setExpandedGenre] = useState<string | null>(null)
+
+  const genresWithSubGenres = [
+    {
+      name: 'Arts and Photography',
+      subGenres: ['All', 'Architecture', 'Design & Decorative Arts', 'Drawing', 'Fashion', 'Graphic Design', 'History & Criticism', 'Music', 'Painting', 'Photography & Video']
+    },
+    {
+      name: 'Boxed Sets',
+      subGenres: ['All', 'Fiction Box Sets', 'Non-Fiction Box Sets', 'Children\'s Box Sets', 'Young Adult Box Sets', 'Classic Literature Sets']
+    },
+    {
+      name: 'Business and Investing',
+      subGenres: ['All', 'Accounting', 'Economics', 'Entrepreneurship', 'Finance', 'Management', 'Marketing & Sales', 'Personal Finance', 'Real Estate']
+    },
+    {
+      name: 'Fiction and Literature',
+      subGenres: ['All', 'Action & Adventure', 'Classics', 'Contemporary Fiction', 'Fantasy', 'Historical Fiction', 'Horror', 'Literary Fiction', 'Mystery & Thriller', 'Romance', 'Science Fiction']
+    },
+    {
+      name: 'Foreign Languages',
+      subGenres: ['All', 'Chinese', 'French', 'German', 'Hindi', 'Italian', 'Japanese', 'Korean', 'Nepali', 'Spanish', 'Urdu']
+    },
+    {
+      name: 'History, Biography, and Social Science',
+      subGenres: ['All', 'Ancient History', 'Anthropology', 'Archaeology', 'Biography & Memoir', 'Military History', 'Philosophy', 'Political Science', 'Psychology', 'Sociology', 'World History']
+    },
+    {
+      name: 'Children and Young Adult',
+      subGenres: ['All', 'Action & Adventure', 'Animals', 'Comics & Graphic Novels', 'Early Learning', 'Fantasy & Magic', 'Growing Up', 'Mysteries', 'Science Fiction']
+    },
+    {
+      name: 'Science and Technology',
+      subGenres: ['All', 'Astronomy', 'Biology', 'Chemistry', 'Computer Science', 'Engineering', 'Mathematics', 'Physics', 'Programming', 'Technology']
+    },
+    {
+      name: 'Self-Help and Personal Development',
+      subGenres: ['All', 'Creativity', 'Happiness', 'Memory Improvement', 'Motivational', 'Personal Transformation', 'Relationships', 'Self-Esteem', 'Stress Management', 'Success', 'Time Management']
+    },
+    {
+      name: 'Health and Wellness',
+      subGenres: ['All', 'Alternative Medicine', 'Diet & Nutrition', 'Exercise & Fitness', 'Mental Health', 'Mindfulness', 'Yoga', 'Weight Loss']
+    }
   ]
 
   const megaMenuSections = {
     'Best Sellers': [
       { id: '2', title: 'Atomic Habits', author: 'James Clear', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop&q=80' },
       { id: '7', title: 'The Alchemist', author: 'Paulo Coelho', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=300&fit=crop&q=80' },
-      { id: '4', title: 'Psychology of Money', author: 'Morgan Housel', image: 'https://images.unsplash.com/photo-1589998059171-988d887df646?w=200&h=300&fit=crop&q=80' },
-      { id: '18', title: 'Think and Grow Rich', author: 'Napoleon Hill', image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&h=300&fit=crop&q=80' }
+      { id: '4', title: 'Psychology of Money', author: 'Morgan Housel', image: 'https://images.unsplash.com/photo-1589998059171-988d887df646?w=200&h=300&fit=crop&q=80' }
     ],
     'New Arrivals': [
       { id: '10', title: 'Fourth Wing', author: 'Rebecca Ross', image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&h=300&fit=crop&q=80' },
-      { id: '11', title: 'Tomorrow, and Tomorrow, and Tomorrow', author: 'Gabrielle Zevin', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop&q=80' }
+      { id: '11', title: 'Tomorrow, and Tomorrow', author: 'Gabrielle Zevin', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop&q=80' },
+      { id: '12', title: 'The Midnight Library', author: 'Matt Haig', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=300&fit=crop&q=80' }
     ],
     'Nepali Books': [
       { id: '3', title: 'Palpasa Cafe', author: 'Narayan Wagle', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=300&fit=crop&q=80' },
-      { id: '5', title: 'Shirish Ko Phool', author: 'Parijat', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&h=300&fit=crop&q=80' }
+      { id: '5', title: 'Shirish Ko Phool', author: 'Parijat', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&h=300&fit=crop&q=80' },
+      { id: '15', title: 'Seto Dharti', author: 'Amar Neupane', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop&q=80' }
     ],
     'Others': [
       'Bundle Deals',
@@ -100,7 +137,7 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {/* Books Menu */}
-            <div className="relative group">
+            <div className="relative">
               <button 
                 className="flex items-center space-x-1 text-booksmandala-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium dark-transition"
                 onMouseEnter={() => setIsBooksMenuOpen(true)}
@@ -112,54 +149,96 @@ const Navbar = () => {
               {/* Mega Menu */}
               {isBooksMenuOpen && (
                 <div 
-                  className="absolute top-full left-0 mt-1 w-screen max-w-4xl bg-white dark:bg-gray-800 shadow-xl rounded-lg border dark:border-gray-700 z-50 dark-transition"
-                  onMouseLeave={() => setIsBooksMenuOpen(false)}
-                  style={{ left: '-200px' }}
+                  className="fixed left-0 right-0 bg-white dark:bg-gray-800 shadow-2xl border-t dark:border-gray-700 z-40 dark-transition"
+                  onMouseLeave={() => {
+                    setIsBooksMenuOpen(false)
+                    setExpandedGenre(null)
+                  }}
+                  style={{ top: '64px' }}
                 >
-                  <div className="p-6">
+                  <div className="container mx-auto px-4 py-6">
                     <div className="grid grid-cols-12 gap-6">
-                      {/* Left Sidebar - Genres */}
-                      <div className="col-span-3">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Genres</h3>
-                        <ul className="space-y-2">
-                          {genres.map((genre) => (
-                            <li key={genre}>
-                              <Link
-                                href={`/genre/${genre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-                                className="text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm block py-1 dark-transition"
-                              >
-                                {genre}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                      {/* Left Sidebar - Genres with Scrollbar */}
+                      <div className="col-span-3 border-r dark:border-gray-700 pr-6">
+                        <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-4 text-base">Browse by Genre</h3>
+                        <div className="genre-scroll pr-2" style={{ maxHeight: '360px' }}>
+                          <ul className="space-y-1">
+                            {genresWithSubGenres.map((genre) => (
+                              <li key={genre.name}>
+                                <div className="flex items-stretch gap-1">
+                                  <Link
+                                    href={`/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                                    className={`flex-1 flex items-center text-left text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 py-2.5 px-3 rounded-md transition-all dark-transition font-semibold text-[15px] ${
+                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-booksmandala-blue dark:text-blue-400' : ''
+                                    }`}
+                                  >
+                                    <span>{genre.name}</span>
+                                  </Link>
+                                  <button
+                                    onClick={() => setExpandedGenre(expandedGenre === genre.name ? null : genre.name)}
+                                    className={`flex items-center justify-center px-2 text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-all dark-transition ${
+                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-booksmandala-blue dark:text-blue-400' : ''
+                                    }`}
+                                  >
+                                    <ChevronDown 
+                                      size={16} 
+                                      className={`flex-shrink-0 transition-transform duration-200 ${
+                                        expandedGenre === genre.name ? 'rotate-180' : ''
+                                      }`}
+                                    />
+                                  </button>
+                                </div>
+                                
+                                {/* Sub-genres - Expand Below */}
+                                {expandedGenre === genre.name && (
+                                  <ul className="mt-1 mb-2 ml-3 space-y-1 border-l-2 border-gray-200 dark:border-gray-600 pl-3">
+                                    {genre.subGenres.map((subGenre) => (
+                                      <li key={subGenre}>
+                                        <Link
+                                          href={
+                                            subGenre === 'All' 
+                                              ? `/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+                                              : `/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${subGenre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+                                          }
+                                          className="text-gray-600 dark:text-gray-400 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm block py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                        >
+                                          {subGenre}
+                                        </Link>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
 
-                      {/* Main Content */}
+                      {/* Main Content - Fixed Height */}
                       <div className="col-span-9">
                         <div className="grid grid-cols-4 gap-6">
                           {/* Best Sellers */}
                           <div>
                             <Link href="/bestsellers">
-                              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition">Best Sellers</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Best Sellers</h4>
                             </Link>
                             <div className="space-y-3">
                               {megaMenuSections['Best Sellers'].map((book, index) => (
                                 <Link
                                   key={index}
                                   href={`/book/${book.id}`}
-                                  className="flex items-center space-x-2 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded transition-colors"
+                                  className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
                                 >
                                   <Image
                                     src={book.image}
                                     alt={book.title}
-                                    width={30}
-                                    height={40}
-                                    className="rounded"
+                                    width={50}
+                                    height={70}
+                                    className="rounded shadow-sm flex-shrink-0"
                                   />
-                                  <div>
-                                    <p className="text-xs font-medium text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 dark-transition">{book.title}</p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400">{book.author}</p>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
                                   </div>
                                 </Link>
                               ))}
@@ -169,25 +248,25 @@ const Navbar = () => {
                           {/* New Arrivals */}
                           <div>
                             <Link href="/new-arrivals">
-                              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition">New Arrivals</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">New Arrivals</h4>
                             </Link>
                             <div className="space-y-3">
                               {megaMenuSections['New Arrivals'].map((book, index) => (
                                 <Link
                                   key={index}
                                   href={`/book/${book.id}`}
-                                  className="flex items-center space-x-2 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded transition-colors"
+                                  className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
                                 >
                                   <Image
                                     src={book.image}
                                     alt={book.title}
-                                    width={30}
-                                    height={40}
-                                    className="rounded"
+                                    width={50}
+                                    height={70}
+                                    className="rounded shadow-sm flex-shrink-0"
                                   />
-                                  <div>
-                                    <p className="text-xs font-medium text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 dark-transition">{book.title}</p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400">{book.author}</p>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
                                   </div>
                                 </Link>
                               ))}
@@ -197,39 +276,39 @@ const Navbar = () => {
                           {/* Nepali Books */}
                           <div>
                             <Link href="/nepali-books">
-                              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition">Nepali Books</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Nepali Books</h4>
                             </Link>
                             <div className="space-y-3">
                               {megaMenuSections['Nepali Books'].map((book, index) => (
                                 <Link
                                   key={index}
                                   href={`/book/${book.id}`}
-                                  className="flex items-center space-x-2 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded transition-colors"
+                                  className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
                                 >
                                   <Image
                                     src={book.image}
                                     alt={book.title}
-                                    width={30}
-                                    height={40}
-                                    className="rounded"
+                                    width={50}
+                                    height={70}
+                                    className="rounded shadow-sm flex-shrink-0"
                                   />
-                                  <div>
-                                    <p className="text-xs font-medium text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 dark-transition">{book.title}</p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400">{book.author}</p>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
                                   </div>
                                 </Link>
                               ))}
                             </div>
                           </div>
 
-                          {/* Others */}
+                          {/* Quick Links */}
                           <div>
-                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Others</h4>
-                            <ul className="space-y-2">
+                            <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 text-base">Quick Links</h4>
+                            <ul className="space-y-2.5">
                               <li>
                                 <Link
                                   href="/bundle-deals"
-                                  className="text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Bundle Deals
                                 </Link>
@@ -237,7 +316,7 @@ const Navbar = () => {
                               <li>
                                 <Link
                                   href="/used-books"
-                                  className="text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Used Books
                                 </Link>
@@ -245,7 +324,7 @@ const Navbar = () => {
                               <li>
                                 <Link
                                   href="/preorders"
-                                  className="text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Preorders
                                 </Link>
@@ -253,7 +332,7 @@ const Navbar = () => {
                               <li>
                                 <Link
                                   href="/book-request"
-                                  className="text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Book Request
                                 </Link>
