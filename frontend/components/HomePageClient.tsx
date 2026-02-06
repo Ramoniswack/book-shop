@@ -28,7 +28,7 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 dark-transition">Browse Genres</h2>
-            <Link href="/genres" className="text-booksmandala-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center dark-transition">
+            <Link href="/genres" className="text-bookStore-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center dark-transition">
               View All <ArrowRight size={16} className="ml-1" />
             </Link>
           </div>

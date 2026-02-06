@@ -161,7 +161,7 @@ export default async function DealsPage() {
       </div>
 
       {/* Newsletter Signup for Deals */}
-      <section className="py-12 bg-booksmandala-blue dark:bg-gray-900 dark-transition">
+      <section className="py-12 bg-bookStore-blue dark:bg-gray-900 dark-transition">
         <div className="container mx-auto px-4 text-center text-white">
           <ShoppingBag size={48} className="mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-4">
@@ -176,7 +176,7 @@ export default async function DealsPage() {
               placeholder="Enter your email for deals"
               className="flex-1 px-4 py-3 rounded-l-lg text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 focus:outline-none dark-transition"
             />
-            <button className="px-6 py-3 bg-white dark:bg-blue-600 text-booksmandala-blue dark:text-white font-semibold rounded-r-lg hover:bg-gray-100 dark:hover:bg-blue-700 transition-colors">
+            <button className="px-6 py-3 bg-white dark:bg-blue-600 text-bookStore-blue dark:text-white font-semibold rounded-r-lg hover:bg-gray-100 dark:hover:bg-blue-700 transition-colors">
               Subscribe
             </button>
           </div>

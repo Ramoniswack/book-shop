@@ -83,7 +83,7 @@ const SearchComponent = ({
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length > 2 && setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue text-sm"
+          className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue text-sm"
         />
         
         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
@@ -95,7 +95,7 @@ const SearchComponent = ({
               <X size={16} />
             </button>
           )}
-          <button className="p-1 text-gray-400 hover:text-booksmandala-blue transition-colors">
+          <button className="p-1 text-gray-400 hover:text-bookStore-blue transition-colors">
             <Search size={18} />
           </button>
         </div>
@@ -106,7 +106,7 @@ const SearchComponent = ({
         <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 text-center text-gray-500">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-booksmandala-blue mx-auto"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bookStore-blue mx-auto"></div>
               <p className="mt-2 text-sm">Searching...</p>
             </div>
           ) : results.length > 0 ? (
@@ -136,7 +136,7 @@ const SearchComponent = ({
                         {book.title}
                       </h4>
                       <p className="text-xs text-gray-600 mt-1">by {book.author}</p>
-                      <p className="text-sm font-semibold text-booksmandala-blue mt-1">
+                      <p className="text-sm font-semibold text-bookStore-blue mt-1">
                         {formatPrice(book.price)}
                       </p>
                     </div>
@@ -147,7 +147,7 @@ const SearchComponent = ({
                 <Link
                   href={`/search?q=${encodeURIComponent(query)}`}
                   onClick={handleResultClick}
-                  className="text-sm text-booksmandala-blue hover:text-blue-700 font-medium"
+                  className="text-sm text-bookStore-blue hover:text-blue-700 font-medium"
                 >
                   View all results for "{query}" →
                 </Link>

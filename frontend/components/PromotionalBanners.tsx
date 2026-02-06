@@ -12,7 +12,7 @@ export const SpecialOffersBanner = () => (
         {/* Left: 60% Text Content */}
         <div className="lg:col-span-3 space-y-6 z-20">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-booksmandala-blue dark:text-blue-400 font-bold mb-3">
+            <p className="text-xs uppercase tracking-[0.2em] text-bookStore-blue dark:text-blue-400 font-bold mb-3">
               Limited Offer
             </p>
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight leading-[1.1]">
@@ -26,7 +26,7 @@ export const SpecialOffersBanner = () => (
           {/* Elegant Icon Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-              <Gift className="text-booksmandala-blue dark:text-blue-400" size={20} strokeWidth={1.5} />
+              <Gift className="text-bookStore-blue dark:text-blue-400" size={20} strokeWidth={1.5} />
               <div>
                 <p className="font-semibold text-gray-900 dark:text-white text-sm">Buy 2 Get 1</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Selected Titles</p>
@@ -34,7 +34,7 @@ export const SpecialOffersBanner = () => (
             </div>
             
             <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-              <Percent className="text-booksmandala-blue dark:text-blue-400" size={20} strokeWidth={1.5} />
+              <Percent className="text-bookStore-blue dark:text-blue-400" size={20} strokeWidth={1.5} />
               <div>
                 <p className="font-semibold text-gray-900 dark:text-white text-sm">Free Shipping</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Over Rs. 2000</p>
@@ -45,7 +45,7 @@ export const SpecialOffersBanner = () => (
           <div className="pt-4">
             <Link 
               href="/deals#bogo-deals" 
-              className="inline-flex items-center px-8 py-3 bg-booksmandala-blue hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 group"
+              className="inline-flex items-center px-8 py-3 bg-bookStore-blue hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 group"
             >
               Shop BOGO Deals
               <Sparkles className="ml-2 group-hover:rotate-12 transition-transform" size={18} />
@@ -67,7 +67,7 @@ export const SpecialOffersBanner = () => (
             />
             
             {/* Layer 3: Accent Element - Positioned relative to image */}
-            <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 w-14 h-14 md:w-16 md:h-16 bg-booksmandala-blue dark:bg-blue-600 rounded-full flex items-center justify-center shadow-xl z-20 animate-bounce-slow">
+            <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 w-14 h-14 md:w-16 md:h-16 bg-bookStore-blue dark:bg-blue-600 rounded-full flex items-center justify-center shadow-xl z-20 animate-bounce-slow">
               <span className="font-serif italic font-bold text-white text-sm md:text-base">Free</span>
             </div>
           </div>
@@ -111,7 +111,7 @@ export const UsedBooksPromoBanner = () => (
         <div className="pt-4">
           <Link 
             href="/used-books" 
-            className="inline-flex items-center px-10 py-4 bg-booksmandala-blue dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 dark:hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="inline-flex items-center px-10 py-4 bg-bookStore-blue dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 dark:hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             Browse Used Books
             <Recycle className="ml-2" size={20} />
@@ -201,7 +201,7 @@ export const DealsPromoBanner = () => {
               <div>
                 <Link 
                   href="/deals" 
-                  className="inline-flex items-center px-10 py-4 bg-booksmandala-blue dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 dark:hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="inline-flex items-center px-10 py-4 bg-bookStore-blue dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 dark:hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Shop Deals Now
                   <Tag className="ml-2" size={20} />
@@ -246,7 +246,7 @@ export const RecommendationBanner = () => (
               {/* Start Quiz Button */}
               <Link 
                 href="/recommendations" 
-                className="inline-flex items-center px-8 py-3 bg-booksmandala-blue dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 dark:hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="inline-flex items-center px-8 py-3 bg-bookStore-blue dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 dark:hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 Start the Quiz
                 <TrendingUp className="ml-2" size={18} />

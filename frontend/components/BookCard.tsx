@@ -71,7 +71,7 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
         
         {/* Title */}
         <Link href={`/book/${book.id}`}>
-          <h3 className="text-gray-800 dark:text-gray-100 text-center mt-1 font-medium hover:text-booksmandala-blue dark:hover:text-blue-400 transition-colors truncate w-full text-sm">
+          <h3 className="text-gray-800 dark:text-gray-100 text-center mt-1 font-medium hover:text-bookStore-blue dark:hover:text-blue-400 transition-colors truncate w-full text-sm">
             {book.title}
           </h3>
         </Link>
@@ -126,7 +126,7 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
         </div>
         
         {/* Add to Cart Button */}
-        <button className="py-2 px-4 bg-booksmandala-blue text-white rounded-md hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 mt-3 w-full flex items-center justify-center transition-colors text-sm font-medium">
+        <button className="py-2 px-4 bg-bookStore-blue text-white rounded-md hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 mt-3 w-full flex items-center justify-center transition-colors text-sm font-medium">
           Add to Cart
           <ShoppingCart size={16} className="ml-2" />
         </button>

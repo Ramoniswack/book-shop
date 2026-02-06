@@ -105,7 +105,7 @@ const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps
                   className="rounded-full mx-auto object-cover group-hover:scale-105 transition-transform duration-200"
                 />
               </div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 transition-colors line-clamp-1 dark-transition">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm group-hover:text-bookStore-blue dark:group-hover:text-blue-400 transition-colors line-clamp-1 dark-transition">
                 {author.name}
               </h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 dark-transition">

@@ -66,7 +66,7 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
                     onClick={() => setSelectedImageIndex(index)}
                     className={`w-20 h-24 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedImageIndex === index 
-                        ? 'border-booksmandala-blue shadow-md' 
+                        ? 'border-bookStore-blue shadow-md' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -147,12 +147,12 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
               <div className="h-14 flex w-full justify-between items-center mt-6">
                 <div className="justify-start items-center gap-2 flex">
                   <span className="text-gray-800 dark:text-gray-200 text-sm font-normal leading-5">Author:</span>
-                  <div className="text-booksmandala-blue dark:text-blue-400 font-medium">{book.author}</div>
+                  <div className="text-bookStore-blue dark:text-blue-400 font-medium">{book.author}</div>
                 </div>
                 <div className="justify-start items-center gap-2.5 flex">
                   <h2 className="text-gray-800 dark:text-gray-200 text-sm font-normal leading-5">Share item:</h2>
                   <div className="justify-start items-start gap-1 flex">
-                    <button className="w-10 h-10 relative rounded-full bg-booksmandala-blue hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    <button className="w-10 h-10 relative rounded-full bg-bookStore-blue hover:bg-blue-700 transition-colors flex items-center justify-center">
                       <Facebook className="w-4 h-4 text-white" />
                     </button>
                     <button className="w-10 h-10 relative rounded-full bg-gray-600 hover:bg-gray-700 transition-colors flex items-center justify-center">
@@ -197,7 +197,7 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
 
                 <button
                   onClick={handleAddToCart}
-                  className="h-12 px-20 py-4 bg-booksmandala-blue hover:bg-blue-700 rounded-full justify-center items-center gap-4 flex transition-colors"
+                  className="h-12 px-20 py-4 bg-bookStore-blue hover:bg-blue-700 rounded-full justify-center items-center gap-4 flex transition-colors"
                 >
                   <span className="text-white text-base font-semibold leading-tight">Add to Cart</span>
                   <ShoppingCart className="w-4 h-4 text-white" strokeWidth={1.3} />

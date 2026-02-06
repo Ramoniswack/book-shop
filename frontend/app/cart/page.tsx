@@ -41,7 +41,7 @@ export default function CartPage() {
             <ShoppingCart size={64} className="text-gray-300 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-600 mb-2">Your cart is empty</h2>
             <p className="text-gray-500 mb-6">Add some books to get started</p>
-            <a href="/" className="bg-booksmandala-blue hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
+            <a href="/" className="bg-bookStore-blue hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
               Continue Shopping
             </a>
           </div>
@@ -100,7 +100,7 @@ export default function CartPage() {
                   </div>
                 </div>
               </div>
-              <button className="w-full bg-booksmandala-blue hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 mt-6">
+              <button className="w-full bg-bookStore-blue hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 mt-6">
                 Proceed to Checkout
               </button>
             </div>

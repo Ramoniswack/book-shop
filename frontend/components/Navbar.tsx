@@ -139,7 +139,7 @@ const Navbar = () => {
             {/* Books Menu */}
             <div className="relative">
               <button 
-                className="flex items-center space-x-1 text-booksmandala-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium dark-transition"
+                className="flex items-center space-x-1 text-bookStore-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium dark-transition"
                 onMouseEnter={() => setIsBooksMenuOpen(true)}
               >
                 <span>Books</span>
@@ -168,16 +168,16 @@ const Navbar = () => {
                                 <div className="flex items-stretch gap-1">
                                   <Link
                                     href={`/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-                                    className={`flex-1 flex items-center text-left text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 py-2.5 px-3 rounded-md transition-all dark-transition font-semibold text-[15px] ${
-                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-booksmandala-blue dark:text-blue-400' : ''
+                                    className={`flex-1 flex items-center text-left text-gray-900 dark:text-gray-100 hover:text-bookStore-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 py-2.5 px-3 rounded-md transition-all dark-transition font-semibold text-[15px] ${
+                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-bookStore-blue dark:text-blue-400' : ''
                                     }`}
                                   >
                                     <span>{genre.name}</span>
                                   </Link>
                                   <button
                                     onClick={() => setExpandedGenre(expandedGenre === genre.name ? null : genre.name)}
-                                    className={`flex items-center justify-center px-2 text-gray-900 dark:text-gray-100 hover:text-booksmandala-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-all dark-transition ${
-                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-booksmandala-blue dark:text-blue-400' : ''
+                                    className={`flex items-center justify-center px-2 text-gray-900 dark:text-gray-100 hover:text-bookStore-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-all dark-transition ${
+                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-bookStore-blue dark:text-blue-400' : ''
                                     }`}
                                   >
                                     <ChevronDown 
@@ -200,7 +200,7 @@ const Navbar = () => {
                                               ? `/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
                                               : `/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${subGenre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
                                           }
-                                          className="text-gray-600 dark:text-gray-400 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm block py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                          className="text-gray-600 dark:text-gray-400 hover:text-bookStore-blue dark:hover:text-blue-400 text-sm block py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                         >
                                           {subGenre}
                                         </Link>
@@ -220,7 +220,7 @@ const Navbar = () => {
                           {/* Best Sellers */}
                           <div>
                             <Link href="/bestsellers">
-                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Best Sellers</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-bookStore-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Best Sellers</h4>
                             </Link>
                             <div className="space-y-3">
                               {megaMenuSections['Best Sellers'].map((book, index) => (
@@ -237,7 +237,7 @@ const Navbar = () => {
                                     className="rounded shadow-sm flex-shrink-0"
                                   />
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
                                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
                                   </div>
                                 </Link>
@@ -248,7 +248,7 @@ const Navbar = () => {
                           {/* New Arrivals */}
                           <div>
                             <Link href="/new-arrivals">
-                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">New Arrivals</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-bookStore-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">New Arrivals</h4>
                             </Link>
                             <div className="space-y-3">
                               {megaMenuSections['New Arrivals'].map((book, index) => (
@@ -265,7 +265,7 @@ const Navbar = () => {
                                     className="rounded shadow-sm flex-shrink-0"
                                   />
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
                                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
                                   </div>
                                 </Link>
@@ -276,7 +276,7 @@ const Navbar = () => {
                           {/* Nepali Books */}
                           <div>
                             <Link href="/nepali-books">
-                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-booksmandala-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Nepali Books</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-bookStore-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Nepali Books</h4>
                             </Link>
                             <div className="space-y-3">
                               {megaMenuSections['Nepali Books'].map((book, index) => (
@@ -293,7 +293,7 @@ const Navbar = () => {
                                     className="rounded shadow-sm flex-shrink-0"
                                   />
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
                                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
                                   </div>
                                 </Link>
@@ -308,7 +308,7 @@ const Navbar = () => {
                               <li>
                                 <Link
                                   href="/bundle-deals"
-                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Bundle Deals
                                 </Link>
@@ -316,7 +316,7 @@ const Navbar = () => {
                               <li>
                                 <Link
                                   href="/used-books"
-                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Used Books
                                 </Link>
@@ -324,7 +324,7 @@ const Navbar = () => {
                               <li>
                                 <Link
                                   href="/preorders"
-                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Preorders
                                 </Link>
@@ -332,7 +332,7 @@ const Navbar = () => {
                               <li>
                                 <Link
                                   href="/book-request"
-                                  className="block text-gray-700 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
+                                  className="block text-gray-700 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-3 rounded-md transition-all dark-transition"
                                 >
                                   Book Request
                                 </Link>
@@ -347,7 +347,7 @@ const Navbar = () => {
               )}
             </div>
 
-            <Link href="/deals" className="text-booksmandala-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium dark-transition">
+            <Link href="/deals" className="text-bookStore-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium dark-transition">
               Deals
             </Link>
           </div>
@@ -356,7 +356,7 @@ const Navbar = () => {
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="w-full flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-booksmandala-blue dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800 dark-transition"
+              className="w-full flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-bookStore-blue dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800 dark-transition"
             >
               <Search size={18} className="mr-3" />
               <span className="text-sm">What do you want to read ?</span>
@@ -369,13 +369,13 @@ const Navbar = () => {
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 dark-transition"
+              className="p-2 text-gray-600 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 dark-transition"
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
             {/* Cart */}
-            <Link href="/cart" className="p-2 text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 relative dark-transition">
+            <Link href="/cart" className="p-2 text-gray-600 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 relative dark-transition">
               <ShoppingCart size={20} />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 0
@@ -383,7 +383,7 @@ const Navbar = () => {
             </Link>
 
             {/* Login */}
-            <Link href="/login" className="text-gray-600 dark:text-gray-300 hover:text-booksmandala-blue dark:hover:text-blue-400 font-medium dark-transition">
+            <Link href="/login" className="text-gray-600 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 font-medium dark-transition">
               Login
             </Link>
 
@@ -391,13 +391,13 @@ const Navbar = () => {
             <div className="relative" ref={currencyRef}>
               <button
                 onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
-                className="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-booksmandala-blue dark:hover:border-blue-400 rounded-lg px-3 py-2 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer group dark-transition"
+                className="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-bookStore-blue dark:hover:border-blue-400 rounded-lg px-3 py-2 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer group dark-transition"
               >
                 <span className="text-lg mr-2">{selectedCurrency?.flag}</span>
-                <span className="text-gray-700 dark:text-gray-200 font-medium text-sm group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 transition-colors">
+                <span className="text-gray-700 dark:text-gray-200 font-medium text-sm group-hover:text-bookStore-blue dark:group-hover:text-blue-400 transition-colors">
                   {selectedCurrency?.label}
                 </span>
-                <ChevronDown className={`w-4 h-4 text-gray-400 dark:text-gray-500 ml-2 transition-all duration-200 group-hover:text-booksmandala-blue dark:group-hover:text-blue-400 ${isCurrencyOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-gray-400 dark:text-gray-500 ml-2 transition-all duration-200 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 ${isCurrencyOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Custom Dropdown */}
@@ -411,7 +411,7 @@ const Navbar = () => {
                         setIsCurrencyOpen(false)
                       }}
                       className={`w-full flex items-center px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                        currency === option.value ? 'bg-blue-50 dark:bg-blue-900/20 text-booksmandala-blue dark:text-blue-400' : 'text-gray-700 dark:text-gray-200'
+                        currency === option.value ? 'bg-blue-50 dark:bg-blue-900/20 text-bookStore-blue dark:text-blue-400' : 'text-gray-700 dark:text-gray-200'
                       }`}
                     >
                       <span className="text-lg mr-3">{option.flag}</span>
@@ -420,7 +420,7 @@ const Navbar = () => {
                         <div className="text-xs text-gray-500 dark:text-gray-400">{option.country}</div>
                       </div>
                       {currency === option.value && (
-                        <div className="w-2 h-2 bg-booksmandala-blue dark:bg-blue-400 rounded-full"></div>
+                        <div className="w-2 h-2 bg-bookStore-blue dark:bg-blue-400 rounded-full"></div>
                       )}
                     </button>
                   ))}

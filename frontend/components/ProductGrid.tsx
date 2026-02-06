@@ -27,7 +27,7 @@ const ProductGrid = ({
             {showViewAll && (
               <a 
                 href={viewAllLink}
-                className="text-booksmandala-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm md:text-base dark-transition"
+                className="text-bookStore-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm md:text-base dark-transition"
               >
                 View All →
               </a>

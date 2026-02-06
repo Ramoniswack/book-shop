@@ -7,7 +7,7 @@ export default function BookRequestPage() {
       <div className="bg-gray-50 dark:bg-gray-800 py-8 dark-transition">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <div className="w-16 h-16 bg-booksmandala-blue rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-bookStore-blue rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="text-white" size={32} />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 dark-transition">
@@ -76,7 +76,7 @@ export default function BookRequestPage() {
                     <input
                       type="text"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
                       placeholder="Enter book title"
                     />
                   </div>
@@ -87,7 +87,7 @@ export default function BookRequestPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
                       placeholder="Enter author name"
                     />
                   </div>
@@ -100,7 +100,7 @@ export default function BookRequestPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
                       placeholder="Enter ISBN"
                     />
                   </div>
@@ -111,7 +111,7 @@ export default function BookRequestPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
                       placeholder="Enter publisher"
                     />
                   </div>
@@ -124,7 +124,7 @@ export default function BookRequestPage() {
                   <input
                     type="text"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
                     placeholder="Enter your name"
                   />
                 </div>
@@ -136,7 +136,7 @@ export default function BookRequestPage() {
                   <input
                     type="email"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -147,14 +147,14 @@ export default function BookRequestPage() {
                   </label>
                   <textarea
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
                     placeholder="Any additional information about the book..."
                   ></textarea>
                 </div>
                 
                 <button
                   type="submit"
-                  className="w-full bg-booksmandala-blue hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+                  className="w-full bg-bookStore-blue hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
                 >
                   Submit Book Request
                 </button>

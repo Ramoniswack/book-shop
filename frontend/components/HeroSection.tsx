@@ -88,7 +88,7 @@ const HeroSection = ({ featuredBooks }: HeroSectionProps) => {
             <div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 dark:text-white dark-transition">
                 Discover your next
-                <span className="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-booksmandala-blue to-blue-600 dark:from-blue-400 dark:to-blue-500">
+                <span className="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-bookStore-blue to-blue-600 dark:from-blue-400 dark:to-blue-500">
                   great read
                 </span>
               </h1>
@@ -103,7 +103,7 @@ const HeroSection = ({ featuredBooks }: HeroSectionProps) => {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link 
                 href="/books" 
-                className="group inline-flex items-center justify-center bg-booksmandala-blue hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="group inline-flex items-center justify-center bg-bookStore-blue hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <span>Browse Books</span>
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -111,7 +111,7 @@ const HeroSection = ({ featuredBooks }: HeroSectionProps) => {
               
               <Link 
                 href="/deals" 
-                className="inline-flex items-center justify-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 border-2 border-gray-300 dark:border-gray-600 hover:border-booksmandala-blue dark:hover:border-blue-400 dark-transition"
+                className="inline-flex items-center justify-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 border-2 border-gray-300 dark:border-gray-600 hover:border-bookStore-blue dark:hover:border-blue-400 dark-transition"
               >
                 View Deals
               </Link>
@@ -152,7 +152,7 @@ const HeroSection = ({ featuredBooks }: HeroSectionProps) => {
             onClick={() => setCurrentImageIndex(index)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               index === currentImageIndex 
-                ? 'bg-booksmandala-blue dark:bg-blue-400 w-8' 
+                ? 'bg-bookStore-blue dark:bg-blue-400 w-8' 
                 : 'bg-white/60 dark:bg-gray-600/60 w-1.5 hover:bg-white/80 dark:hover:bg-gray-500/80'
             }`}
             aria-label={`Go to slide ${index + 1}`}

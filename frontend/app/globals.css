@@ -52,7 +52,7 @@ a {
 
 @layer components {
   .btn-primary {
-    @apply bg-booksmandala-blue hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-bookStore-blue hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
   
   .btn-secondary {
@@ -72,7 +72,7 @@ a {
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue focus:border-transparent;
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue focus:border-transparent;
   }
   
   .dark .input-field {

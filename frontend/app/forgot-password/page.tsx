@@ -64,7 +64,7 @@ export default function ForgotPasswordPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-booksmandala-blue focus:border-booksmandala-blue focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-bookStore-blue focus:border-bookStore-blue focus:z-10 sm:text-sm"
                 placeholder="Enter your email address"
               />
             </div>
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-booksmandala-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-booksmandala-blue transition-colors"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-bookStore-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bookStore-blue transition-colors"
               >
                 Send Reset Link
               </button>
@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
               </p>
               <button
                 onClick={() => setIsSubmitted(false)}
-                className="text-booksmandala-blue hover:text-blue-700 font-medium"
+                className="text-bookStore-blue hover:text-blue-700 font-medium"
               >
                 Try again
               </button>
@@ -97,7 +97,7 @@ export default function ForgotPasswordPage() {
         <div className="text-center">
           <Link
             href="/login"
-            className="inline-flex items-center text-sm text-booksmandala-blue hover:text-blue-700 font-medium"
+            className="inline-flex items-center text-sm text-bookStore-blue hover:text-blue-700 font-medium"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Sign In

@@ -13,7 +13,7 @@ export default async function BestsellersPage() {
       <div className="bg-gray-50 dark:bg-gray-800 py-8 dark-transition">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <div className="w-16 h-16 bg-booksmandala-blue rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-bookStore-blue rounded-full flex items-center justify-center mx-auto mb-4">
               <TrendingUp className="text-white" size={32} />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 dark-transition">

@@ -99,7 +99,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search By Title, Author, Keyword or ISBN"
-              className="w-full pl-10 pr-16 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-booksmandala-blue dark:focus:ring-blue-400 focus:border-transparent text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
+              className="w-full pl-10 pr-16 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-bookStore-blue dark:focus:ring-blue-400 focus:border-transparent text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark-transition"
             />
             <button
               onClick={onClose}
@@ -115,10 +115,10 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
           {!query ? (
             <div className="text-center py-12">
               <div className="mb-6">
-                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-booksmandala-blue to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-full flex items-center justify-center">
+                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-bookStore-blue to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-full flex items-center justify-center">
                   <Search className="text-white" size={32} />
                 </div>
-                <h3 className="text-lg font-semibold text-booksmandala-blue dark:text-blue-300 mb-2 dark-transition">
+                <h3 className="text-lg font-semibold text-bookStore-blue dark:text-blue-300 mb-2 dark-transition">
                   Discover Your Next Great Read
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm dark-transition">
@@ -128,7 +128,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
             </div>
           ) : isLoading ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-booksmandala-blue dark:border-blue-300 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bookStore-blue dark:border-blue-300 mx-auto mb-4"></div>
               <p className="text-gray-600 dark:text-gray-400 dark-transition">Searching for "{query}"...</p>
             </div>
           ) : results.length > 0 ? (
@@ -156,7 +156,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                         {book.title}
                       </h4>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 dark-transition">by {book.author}</p>
-                      <p className="text-sm font-semibold text-booksmandala-blue dark:text-blue-300 dark-transition">
+                      <p className="text-sm font-semibold text-bookStore-blue dark:text-blue-300 dark-transition">
                         {formatPrice(book.price)}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 dark-transition">{book.genre}</p>
@@ -170,7 +170,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                   <Link
                     href={`/search?q=${encodeURIComponent(query)}`}
                     onClick={onClose}
-                    className="text-booksmandala-blue dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-200 font-medium text-sm dark-transition"
+                    className="text-bookStore-blue dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-200 font-medium text-sm dark-transition"
                   >
                     View all {results.length} results →
                   </Link>

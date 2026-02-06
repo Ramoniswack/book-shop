@@ -16,7 +16,7 @@ module.exports = {
           600: '#0284c7',
           700: '#0369a1',
         },
-        booksmandala: {
+        bookStore: {
           blue: '#1a6489',
           'blue-rgb': 'rgba(26, 100, 137, 1)',
         },
