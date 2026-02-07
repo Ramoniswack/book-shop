@@ -156,6 +156,8 @@ export default async function DealsPage() {
             books={usedBooks}
             title="Quality Used Books"
             className="py-8 bg-white dark:bg-gray-900 dark-transition"
+            showViewAll={true}
+            viewAllLink="/used-books"
           />
         </Suspense>
       </div>

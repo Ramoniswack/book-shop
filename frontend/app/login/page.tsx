@@ -1,24 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, Lock } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { login, isAuthenticated } from '@/utils/auth'
+import toast from 'react-hot-toast'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.push('/')
+    }
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError('')
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Login attempt:', { email, password })
+    try {
+      const response = await login({ email, password })
+      
+      if (response.success) {
+        toast.success('Login successful!')
+        // Redirect to home page
+        setTimeout(() => {
+          router.push('/')
+        }, 500)
+      }
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please try again.')
+      toast.error(err.message || 'Login failed')
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -40,6 +64,13 @@ export default function LoginPage() {
             <p className="text-gray-600 dark:text-gray-400 text-sm text-center">Sign in to your account</p>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-3">
             {/* Email Field */}
@@ -55,6 +86,7 @@ export default function LoginPage() {
                 className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-bookStore-blue focus:border-bookStore-blue transition-all duration-200 bg-white dark:bg-gray-700 text-sm dark-transition"
                 placeholder="Email address"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -72,6 +104,7 @@ export default function LoginPage() {
                   className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-bookStore-blue focus:border-bookStore-blue transition-all duration-200 bg-white dark:bg-gray-700 text-sm dark-transition"
                   placeholder="Password"
                   required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -84,6 +117,7 @@ export default function LoginPage() {
                   name="remember-me"
                   type="checkbox"
                   className="h-3.5 w-3.5 text-bookStore-blue focus:ring-bookStore-blue border-gray-300 dark:border-gray-600 rounded"
+                  disabled={isLoading}
                 />
                 <label htmlFor="remember-me" className="ml-1.5 block text-gray-700 dark:text-gray-300">
                   Remember me
@@ -130,7 +164,10 @@ export default function LoginPage() {
           </div>
 
           {/* Google Sign In */}
-          <button className="w-full flex items-center justify-center py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bookStore-blue transition-all duration-200 dark-transition">
+          <button 
+            className="w-full flex items-center justify-center py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bookStore-blue transition-all duration-200 dark-transition"
+            disabled={isLoading}
+          >
             <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>

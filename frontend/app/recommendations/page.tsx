@@ -115,20 +115,6 @@ export default async function RecommendationsPage() {
         />
       </Suspense>
 
-      {/* Get More Recommendations */}
-      <section className="py-12 bg-purple-600">
-        <div className="container mx-auto px-4 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">
-            Want More Personalized Recommendations?
-          </h2>
-          <p className="text-xl mb-6 opacity-90">
-            Create an account to get recommendations based on your reading history and preferences.
-          </p>
-          <button className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-            Create Account
-          </button>
-        </div>
-      </section>
     </MainLayout>
   )
 }

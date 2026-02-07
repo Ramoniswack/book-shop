@@ -3,19 +3,32 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, ShoppingCart, User, Menu, X, ChevronDown, Sun, Moon, BookOpen } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu, X, ChevronDown, Sun, Moon, BookOpen, LogOut } from 'lucide-react'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useCart } from '@/contexts/CartContext'
 import SearchModal from './SearchModal'
+import { isAuthenticated, getUser, logout } from '@/utils/auth'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isBooksMenuOpen, setIsBooksMenuOpen] = useState(false)
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState<any>(null)
   const { currency, setCurrency } = useCurrency()
   const { isDarkMode, toggleTheme } = useTheme()
+  const { cartCount } = useCart()
   const currencyRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
+  // Check authentication status
+  useEffect(() => {
+    setIsLoggedIn(isAuthenticated())
+    setUser(getUser())
+  }, [])
 
   // Handle Ctrl+K shortcut
   useEffect(() => {
@@ -35,6 +48,9 @@ const Navbar = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (currencyRef.current && !currencyRef.current.contains(event.target as Node)) {
         setIsCurrencyOpen(false)
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false)
       }
     }
 
@@ -377,15 +393,65 @@ const Navbar = () => {
             {/* Cart */}
             <Link href="/cart" className="p-2 text-gray-600 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 relative dark-transition">
               <ShoppingCart size={20} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
-            {/* Login */}
-            <Link href="/login" className="text-gray-600 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 font-medium dark-transition">
-              Login
-            </Link>
+            {/* User Menu / Login */}
+            {isLoggedIn && user ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 font-medium dark-transition"
+                >
+                  <User size={20} />
+                  <span className="hidden md:inline">{user.firstName}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* User Dropdown */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 dark-transition">
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                    <Link
+                      href="/orders"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      My Orders
+                    </Link>
+                    <Link
+                      href="/wishlist"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Wishlist
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 rounded-b-lg"
+                    >
+                      <LogOut size={16} />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/login" className="text-gray-600 dark:text-gray-300 hover:text-bookStore-blue dark:hover:text-blue-400 font-medium dark-transition">
+                Login
+              </Link>
+            )}
 
             {/* Currency Selector - Custom Dropdown */}
             <div className="relative" ref={currencyRef}>

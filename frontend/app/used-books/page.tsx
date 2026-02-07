@@ -86,20 +86,6 @@ export default async function UsedBooksPage() {
         />
       </Suspense>
 
-      {/* Call to Action */}
-      <section className="py-12 bg-green-600">
-        <div className="container mx-auto px-4 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">
-            Have Books to Sell?
-          </h2>
-          <p className="text-xl mb-6 opacity-90">
-            Turn your old books into cash. We buy quality used books at fair prices.
-          </p>
-          <button className="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-            Sell Your Books
-          </button>
-        </div>
-      </section>
     </MainLayout>
   )
 }

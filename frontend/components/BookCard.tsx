@@ -5,7 +5,12 @@ import Link from 'next/link'
 import { Star, Heart, ShoppingCart, Plus, Minus } from 'lucide-react'
 import { Book } from '@/types/book'
 import { useCurrency } from '@/contexts/CurrencyContext'
+import { useCart } from '@/contexts/CartContext'
+import { addToWishlist, removeFromWishlist } from '@/utils/wishlist'
+import { isAuthenticated } from '@/utils/auth'
+import { ensureBookExists } from '@/utils/bookMapper'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 interface BookCardProps {
   book: Book
@@ -14,11 +19,98 @@ interface BookCardProps {
 
 const BookCard = ({ book, className = '' }: BookCardProps) => {
   const { formatPrice } = useCurrency()
+  const { addToCart, isLoading } = useCart()
   const [quantity, setQuantity] = useState(1)
+  const [isAdding, setIsAdding] = useState(false)
+  const [isInWishlist, setIsInWishlist] = useState(false)
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false)
   
   const discountPercentage = book.originalPrice 
     ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
     : 0
+
+  const handleAddToCart = async () => {
+    if (!isAuthenticated()) {
+      toast.error('Please login to add items to cart')
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1000)
+      return
+    }
+
+    try {
+      setIsAdding(true)
+      
+      // Ensure book exists in backend and get MongoDB ID
+      const mongoBookId = await ensureBookExists({
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        price: book.price,
+        image: book.image
+      })
+      
+      // Add to cart with MongoDB ID
+      await addToCart({
+        bookId: mongoBookId,
+        title: book.title,
+        author: book.author,
+        price: book.price,
+        image: book.image
+      }, quantity)
+      
+      setQuantity(1) // Reset quantity after adding
+    } catch (error: any) {
+      console.error('Failed to add to cart:', error)
+      toast.error(error.message || 'Failed to add to cart')
+    } finally {
+      setIsAdding(false)
+    }
+  }
+
+  const handleWishlistToggle = async () => {
+    if (!isAuthenticated()) {
+      toast.error('Please login to add to wishlist')
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1000)
+      return
+    }
+
+    try {
+      setIsWishlistLoading(true)
+      
+      // Ensure book exists in backend and get MongoDB ID
+      const mongoBookId = await ensureBookExists({
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        price: book.price,
+        image: book.image
+      })
+      
+      if (isInWishlist) {
+        await removeFromWishlist(mongoBookId)
+        setIsInWishlist(false)
+        toast.success('Removed from wishlist')
+      } else {
+        await addToWishlist({
+          bookId: mongoBookId,
+          title: book.title,
+          author: book.author,
+          price: book.price,
+          image: book.image
+        })
+        setIsInWishlist(true)
+        toast.success('Added to wishlist!')
+      }
+    } catch (error: any) {
+      console.error('Failed to update wishlist:', error)
+      toast.error(error.message || 'Failed to update wishlist')
+    } finally {
+      setIsWishlistLoading(false)
+    }
+  }
 
   return (
     <div className={`bg-white dark:bg-gray-800 shadow-md rounded-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden dark-transition ${className}`}>
@@ -56,8 +148,14 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
           </div>
           
           {/* Wishlist Button */}
-          <button className="text-white hover:text-red-500 bg-black/20 hover:bg-white/90 p-1.5 rounded-full transition-all">
-            <Heart size={18} />
+          <button 
+            onClick={handleWishlistToggle}
+            disabled={isWishlistLoading}
+            className={`${
+              isInWishlist ? 'text-red-500 bg-white/90' : 'text-white bg-black/20'
+            } hover:text-red-500 hover:bg-white/90 p-1.5 rounded-full transition-all disabled:opacity-50`}
+          >
+            <Heart size={18} className={isInWishlist ? 'fill-current' : ''} />
           </button>
         </div>
       </div>
@@ -126,8 +224,12 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
         </div>
         
         {/* Add to Cart Button */}
-        <button className="py-2 px-4 bg-bookStore-blue text-white rounded-md hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 mt-3 w-full flex items-center justify-center transition-colors text-sm font-medium">
-          Add to Cart
+        <button 
+          onClick={handleAddToCart}
+          disabled={isAdding || isLoading}
+          className="py-2 px-4 bg-bookStore-blue text-white rounded-md hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed mt-3 w-full flex items-center justify-center transition-colors text-sm font-medium"
+        >
+          {isAdding ? 'Adding...' : 'Add to Cart'}
           <ShoppingCart size={16} className="ml-2" />
         </button>
       </div>

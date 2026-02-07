@@ -1,46 +1,60 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import MainLayout from '@/layouts/MainLayout'
 import { ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react'
 import { useCurrency } from '@/contexts/CurrencyContext'
+import { useCart } from '@/contexts/CartContext'
+import { isAuthenticated } from '@/utils/auth'
+import { useEffect } from 'react'
+import Image from 'next/image'
 
 export default function CartPage() {
+  const router = useRouter()
   const { formatPrice } = useCurrency()
-  
-  // Mock cart data - in real app, this would come from state management
-  const cartItems = [
-    {
-      id: '1',
-      title: 'The Seven Husbands of Evelyn Hugo',
-      author: 'Taylor Jenkins Reid',
-      price: 1250,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=80&h=100&fit=crop'
-    },
-    {
-      id: '2',
-      title: 'Atomic Habits',
-      author: 'James Clear',
-      price: 1800,
-      quantity: 2,
-      image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=80&h=100&fit=crop'
-    }
-  ]
+  const { cart, updateQuantity, removeItem, isLoading } = useCart()
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  const shipping = 150
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/login')
+    }
+  }, [router])
+
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const shipping = subtotal > 0 ? 150 : 0
   const total = subtotal + shipping
+
+  const handleUpdateQuantity = async (bookId: string, newQuantity: number) => {
+    if (newQuantity < 1) return
+    try {
+      await updateQuantity(bookId, newQuantity)
+    } catch (error) {
+      console.error('Failed to update quantity:', error)
+    }
+  }
+
+  const handleRemoveItem = async (bookId: string) => {
+    try {
+      await removeItem(bookId)
+    } catch (error) {
+      console.error('Failed to remove item:', error)
+    }
+  }
+
+  const handleCheckout = () => {
+    router.push('/checkout')
+  }
 
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Shopping Cart</h1>
 
-        {cartItems.length === 0 ? (
+        {cart.length === 0 ? (
           <div className="text-center py-12">
-            <ShoppingCart size={64} className="text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-600 mb-2">Your cart is empty</h2>
-            <p className="text-gray-500 mb-6">Add some books to get started</p>
+            <ShoppingCart size={64} className="text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">Your cart is empty</h2>
+            <p className="text-gray-500 dark:text-gray-500 mb-6">Add some books to get started</p>
             <a href="/" className="bg-bookStore-blue hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
               Continue Shopping
             </a>
@@ -49,31 +63,45 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item) => (
-                <div key={item.id} className="card p-4">
+              {cart.map((item) => (
+                <div key={item.bookId} className="card p-4 dark:bg-gray-800">
                   <div className="flex items-center space-x-4">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      className="w-16 h-20 object-cover rounded"
+                      width={64}
+                      height={80}
+                      className="object-cover rounded"
                     />
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{item.title}</h3>
-                      <p className="text-sm text-gray-600">{item.author}</p>
-                      <p className="text-lg font-semibold text-gray-900 mt-1">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{item.title}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{item.author}</p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-1">
                         {formatPrice(item.price)}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <button className="p-1 hover:bg-gray-100 rounded">
+                      <button 
+                        onClick={() => handleUpdateQuantity(item.bookId, item.quantity - 1)}
+                        disabled={isLoading || item.quantity <= 1}
+                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-50"
+                      >
                         <Minus size={16} />
                       </button>
-                      <span className="w-8 text-center">{item.quantity}</span>
-                      <button className="p-1 hover:bg-gray-100 rounded">
+                      <span className="w-8 text-center dark:text-gray-100">{item.quantity}</span>
+                      <button 
+                        onClick={() => handleUpdateQuantity(item.bookId, item.quantity + 1)}
+                        disabled={isLoading}
+                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-50"
+                      >
                         <Plus size={16} />
                       </button>
                     </div>
-                    <button className="p-2 text-red-500 hover:bg-red-50 rounded">
+                    <button 
+                      onClick={() => handleRemoveItem(item.bookId)}
+                      disabled={isLoading}
+                      className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded disabled:opacity-50"
+                    >
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -82,25 +110,29 @@ export default function CartPage() {
             </div>
 
             {/* Order Summary */}
-            <div className="card p-6 h-fit">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
+            <div className="card p-6 h-fit dark:bg-gray-800">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Order Summary</h2>
               <div className="space-y-3">
-                <div className="flex justify-between">
+                <div className="flex justify-between dark:text-gray-300">
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between dark:text-gray-300">
                   <span>Shipping</span>
                   <span>{formatPrice(shipping)}</span>
                 </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between font-semibold text-lg">
+                <div className="border-t dark:border-gray-700 pt-3">
+                  <div className="flex justify-between font-semibold text-lg dark:text-gray-100">
                     <span>Total</span>
                     <span>{formatPrice(total)}</span>
                   </div>
                 </div>
               </div>
-              <button className="w-full bg-bookStore-blue hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 mt-6">
+              <button 
+                onClick={handleCheckout}
+                disabled={isLoading}
+                className="w-full bg-bookStore-blue hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 mt-6 disabled:opacity-50"
+              >
                 Proceed to Checkout
               </button>
             </div>
