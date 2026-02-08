@@ -152,6 +152,10 @@ export default function CheckoutPage() {
       const shippingAddress = deliveryMethod === 'delivery' && selectedAddress
         ? `${selectedAddress.fullName}, ${selectedAddress.addressLine1}${selectedAddress.addressLine2 ? ', ' + selectedAddress.addressLine2 : ''}, ${selectedAddress.city}, ${selectedAddress.postalCode}, ${selectedAddress.country}`
         : 'Store Pickup'
+      
+      const phone = deliveryMethod === 'delivery' && selectedAddress
+        ? selectedAddress.phone
+        : undefined
 
       const orderData = {
         items: cart.map(item => ({
@@ -164,6 +168,7 @@ export default function CheckoutPage() {
         })),
         totalAmount: total,
         shippingAddress,
+        phone,
         deliveryMethod,
         orderNote,
         paymentStatus: 'pending'

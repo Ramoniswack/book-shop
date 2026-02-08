@@ -70,3 +70,24 @@ export const isAuthenticated = (): boolean => {
   }
   return false;
 };
+
+export const updateProfile = async (profileData: { firstName: string; lastName: string; email: string }) => {
+  const data = await apiRequest('/auth/profile', {
+    method: 'PUT',
+    body: JSON.stringify(profileData),
+  });
+
+  // Update user data in localStorage
+  if (data.success && data.data.user) {
+    localStorage.setItem('user', JSON.stringify(data.data.user));
+  }
+
+  return data;
+};
+
+export const updatePassword = async (passwordData: { currentPassword: string; newPassword: string }) => {
+  return await apiRequest('/auth/password', {
+    method: 'PUT',
+    body: JSON.stringify(passwordData),
+  });
+};

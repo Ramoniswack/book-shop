@@ -59,3 +59,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Documentation (except README)
+*.md
+!README.md

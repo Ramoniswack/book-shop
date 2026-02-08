@@ -30,6 +30,7 @@ interface Order {
   orderStatus: 'pending' | 'accepted' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   deliveryMethod: string;
   shippingAddress: string;
+  phone?: string;
   orderNote?: string;
   createdAt: string;
 }
@@ -269,6 +270,11 @@ export default function SellerOrders() {
                         <p className="text-gray-700">
                           <span className="font-medium">Email:</span> {order.userId.email}
                         </p>
+                        {order.phone && (
+                          <p className="text-gray-700">
+                            <span className="font-medium">Phone:</span> {order.phone}
+                          </p>
+                        )}
                         <p className="text-gray-700">
                           <span className="font-medium">Address:</span> {order.shippingAddress}
                         </p>

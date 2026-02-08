@@ -11,6 +11,7 @@ interface OrderData {
   }>
   totalAmount: number
   shippingAddress: string
+  phone?: string
   deliveryMethod: string
   orderNote?: string
   paymentStatus: string
@@ -21,6 +22,7 @@ export const createOrder = async (orderData: OrderData) => {
     method: 'POST',
     body: JSON.stringify({
       shippingAddress: orderData.shippingAddress,
+      phone: orderData.phone,
       deliveryMethod: orderData.deliveryMethod,
       orderNote: orderData.orderNote
     }),

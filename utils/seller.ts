@@ -26,6 +26,12 @@ export const getLowStockAlerts = async (threshold: number = 10) => {
   });
 };
 
+export const getRevenueTimeline = async (period: 'day' | 'week' | 'month' | 'year' = 'month') => {
+  return await apiRequest(`/seller/analytics/revenue-timeline?period=${period}`, {
+    method: 'GET',
+  });
+};
+
 // Orders
 export const getSellerOrders = async (params?: {
   page?: number;
@@ -168,5 +174,46 @@ export const createGenre = async (genreData: { name: string; subGenres?: string[
   return await apiRequest('/seller/genres', {
     method: 'POST',
     body: JSON.stringify(genreData),
+  });
+};
+
+// Deals
+export const getSellerDeals = async (params?: {
+  page?: number;
+  limit?: number;
+  isActive?: boolean;
+  dealType?: string;
+}) => {
+  const queryParams = new URLSearchParams();
+  if (params?.page) queryParams.append('page', params.page.toString());
+  if (params?.limit) queryParams.append('limit', params.limit.toString());
+  if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+  if (params?.dealType) queryParams.append('dealType', params.dealType);
+
+  const queryString = queryParams.toString();
+  const url = `/seller/deals${queryString ? `?${queryString}` : ''}`;
+
+  return await apiRequest(url, {
+    method: 'GET',
+  });
+};
+
+export const createDeal = async (dealData: any) => {
+  return await apiRequest('/seller/deals', {
+    method: 'POST',
+    body: JSON.stringify(dealData),
+  });
+};
+
+export const updateDeal = async (dealId: string, dealData: any) => {
+  return await apiRequest(`/seller/deals/${dealId}`, {
+    method: 'PUT',
+    body: JSON.stringify(dealData),
+  });
+};
+
+export const deleteDeal = async (dealId: string) => {
+  return await apiRequest(`/seller/deals/${dealId}`, {
+    method: 'DELETE',
   });
 };

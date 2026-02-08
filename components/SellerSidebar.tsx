@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   Tag,
   BarChart3,
+  TrendingUp,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -19,6 +20,7 @@ const navigation = [
   { name: 'Orders', href: '/seller/orders', icon: ShoppingCart },
   { name: 'Deals', href: '/seller/deals', icon: Tag },
   { name: 'Analytics', href: '/seller/analytics', icon: BarChart3 },
+  { name: 'Insights', href: '/seller/insights', icon: TrendingUp },
   { name: 'Settings', href: '/seller/settings', icon: Settings },
 ];
 
