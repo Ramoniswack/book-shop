@@ -70,25 +70,15 @@ const HeroSection = ({ featuredBooks }: HeroSectionProps) => {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 h-full flex items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 h-full flex items-center pt-12">
         <div className="grid md:grid-cols-2 gap-8 items-center w-full">
           {/* Left Content - Overlapping the blurred image */}
-          <div className="space-y-5 md:space-y-6">
-            {/* Stats Badge */}
-            <div className="inline-flex items-center space-x-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-gray-200/50 dark:border-gray-700/50 dark-transition">
-              <div className="flex -space-x-2">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white dark:border-gray-800"></div>
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white dark:border-gray-800"></div>
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 border-2 border-white dark:border-gray-800"></div>
-              </div>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">35,000+ Happy Readers</span>
-            </div>
-
+          <div className="space-y-5 md:space-y-6 mt-8">
             {/* Main Heading */}
             <div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 dark:text-white dark-transition">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 dark:text-white dark-transition pb-2">
                 Discover your next
-                <span className="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-bookStore-blue to-blue-600 dark:from-blue-400 dark:to-blue-500">
+                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-bookStore-blue to-blue-600 dark:from-blue-400 dark:to-blue-500">
                   great read
                 </span>
               </h1>
@@ -111,23 +101,15 @@ const HeroSection = ({ featuredBooks }: HeroSectionProps) => {
               
               <Link 
                 href="/deals" 
-                className="inline-flex items-center justify-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 border-2 border-gray-300 dark:border-gray-600 hover:border-bookStore-blue dark:hover:border-blue-400 dark-transition"
+                className="group inline-flex items-center justify-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 border-2 border-gray-300 dark:border-gray-600 hover:border-bookStore-blue dark:hover:border-blue-400 dark-transition"
               >
-                View Deals
+                <span>View Deals</span>
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
             {/* Features */}
             <div className="flex flex-wrap gap-4 pt-1">
-              <div className="flex items-center space-x-2">
-                <div className="w-9 h-9 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center dark-transition">
-                  <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Free Shipping</span>
-              </div>
-              
               <div className="flex items-center space-x-2">
                 <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center dark-transition">
                   <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
