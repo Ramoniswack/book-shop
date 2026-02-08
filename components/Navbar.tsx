@@ -470,10 +470,10 @@ const Navbar = () => {
             <div className="relative" ref={currencyRef}>
               <button
                 onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
-                className="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-bookStore-blue dark:hover:border-blue-400 rounded-lg px-3 py-2 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer group dark-transition"
+                className="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-bookStore-blue dark:hover:border-blue-400 rounded-lg px-3 py-2.5 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer group dark-transition"
               >
                 <span className="text-lg mr-2">{selectedCurrency?.flag}</span>
-                <span className="text-gray-700 dark:text-gray-200 font-medium text-sm group-hover:text-bookStore-blue dark:group-hover:text-blue-400 transition-colors">
+                <span className="text-gray-700 dark:text-gray-200 font-medium text-base group-hover:text-bookStore-blue dark:group-hover:text-blue-400 transition-colors">
                   {selectedCurrency?.label}
                 </span>
                 <ChevronDown className={`w-4 h-4 text-gray-400 dark:text-gray-500 ml-2 transition-all duration-200 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 ${isCurrencyOpen ? 'rotate-180' : ''}`} />
@@ -481,7 +481,7 @@ const Navbar = () => {
 
               {/* Custom Dropdown */}
               {isCurrencyOpen && (
-                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 dark-transition">
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 dark-transition">
                   {currencyOptions.map((option) => (
                     <button
                       key={option.value}
