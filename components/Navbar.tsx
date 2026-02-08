@@ -138,7 +138,7 @@ const Navbar = () => {
     <nav className="bg-white dark:bg-gray-900 shadow-sm border-b dark:border-gray-700 sticky top-0 z-50 dark-transition">
       {/* Main Navigation */}
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
@@ -154,13 +154,26 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {/* Books Menu */}
             <div className="relative">
-              <button 
-                className="flex items-center space-x-1 text-bookStore-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium dark-transition"
+              <Link
+                href="/books"
+                className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-bookStore-blue dark:hover:text-blue-400 font-medium dark-transition text-base"
                 onMouseEnter={() => setIsBooksMenuOpen(true)}
+                onClick={(e) => {
+                  // Allow navigation to /books
+                  setIsBooksMenuOpen(false)
+                }}
               >
                 <span>Books</span>
-                <ChevronDown size={16} />
-              </button>
+                <ChevronDown 
+                  size={16} 
+                  className={`transition-transform duration-200 ${isBooksMenuOpen ? 'rotate-180' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setIsBooksMenuOpen(!isBooksMenuOpen)
+                  }}
+                />
+              </Link>
               
               {/* Mega Menu */}
               {isBooksMenuOpen && (
@@ -170,7 +183,7 @@ const Navbar = () => {
                     setIsBooksMenuOpen(false)
                     setExpandedGenre(null)
                   }}
-                  style={{ top: '64px' }}
+                  style={{ top: '80px' }}
                 >
                   <div className="container mx-auto px-4 py-6">
                     <div className="grid grid-cols-12 gap-6">
@@ -363,7 +376,7 @@ const Navbar = () => {
               )}
             </div>
 
-            <Link href="/deals" className="text-bookStore-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium dark-transition">
+            <Link href="/deals" className="text-gray-700 dark:text-gray-200 hover:text-bookStore-blue dark:hover:text-blue-400 font-medium dark-transition text-base">
               Deals
             </Link>
           </div>
@@ -372,11 +385,11 @@ const Navbar = () => {
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="w-full flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-bookStore-blue dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800 dark-transition"
+              className="w-full flex items-center px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-bookStore-blue dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800 dark-transition"
             >
-              <Search size={18} className="mr-3" />
-              <span className="text-sm">What do you want to read ?</span>
-              <span className="ml-auto text-xs text-gray-400">Ctrl + K</span>
+              <Search size={19} className="mr-3" />
+              <span className="text-base">What do you want to read ?</span>
+              <span className="ml-auto text-sm text-gray-400">Ctrl + K</span>
             </button>
           </div>
 
