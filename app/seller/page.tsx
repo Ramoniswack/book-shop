@@ -5,6 +5,7 @@ import { BookOpen, ShoppingCart, DollarSign, AlertTriangle, Package } from 'luci
 import StatCard from '@/components/StatCard';
 import StatCardSkeleton from '@/components/StatCardSkeleton';
 import { getAnalyticsOverview, getSellerOrders, getLowStockAlerts } from '@/utils/seller';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface AnalyticsData {
   revenue: {
@@ -47,6 +48,7 @@ interface LowStockBook {
 }
 
 export default function SellerDashboard() {
+  const { formatPrice } = useCurrency();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [lowStockBooks, setLowStockBooks] = useState<LowStockBook[]>([]);
@@ -124,7 +126,7 @@ export default function SellerDashboard() {
           <>
             <StatCard
               title="Total Revenue"
-              value={`$${analytics.revenue.total.toFixed(2)}`}
+              value={formatPrice(analytics.revenue.total)}
               icon={DollarSign}
               iconColor="text-green-600"
               iconBgColor="bg-green-100"
@@ -184,7 +186,7 @@ export default function SellerDashboard() {
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-gray-900">
-                        ${order.totalAmount.toFixed(2)}
+                        {formatPrice(order.totalAmount)}
                       </p>
                       <span
                         className={`text-xs px-2 py-1 rounded-full ${
@@ -238,7 +240,7 @@ export default function SellerDashboard() {
                         {book.stock} left
                       </p>
                       <p className="text-sm text-gray-500">
-                        ${book.price.toFixed(2)}
+                        {formatPrice(book.price)}
                       </p>
                     </div>
                   </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Package, AlertTriangle, CheckCircle, XCircle, Truck, Clock } from 'lucide-react';
 import { getSellerOrders, updateOrderStatus } from '@/utils/seller';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface OrderItem {
   bookId: {
@@ -43,6 +44,7 @@ interface Pagination {
 }
 
 export default function SellerOrders() {
+  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -314,16 +316,16 @@ export default function SellerOrders() {
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
                               <p className="text-xs text-gray-500">{item.bookId?.author}</p>
-                              <p className="text-xs text-gray-600">Qty: {item.quantity} × ${item.price.toFixed(2)}</p>
+                              <p className="text-xs text-gray-600">Qty: {item.quantity} × {formatPrice(item.price)}</p>
                             </div>
                             <div className="text-sm font-semibold text-gray-900">
-                              ${(item.quantity * item.price).toFixed(2)}
+                              {formatPrice(item.quantity * item.price)}
                             </div>
                           </div>
                         ))}
                         <div className="flex items-center justify-between pt-3 border-t-2 border-gray-200">
                           <span className="text-base font-semibold text-gray-900">Total</span>
-                          <span className="text-lg font-bold text-gray-900">${order.totalAmount.toFixed(2)}</span>
+                          <span className="text-lg font-bold text-gray-900">{formatPrice(order.totalAmount)}</span>
                         </div>
                       </div>
                     </div>

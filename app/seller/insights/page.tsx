@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ShoppingCart, Heart, TrendingUp, Users, Package, AlertTriangle } from 'lucide-react';
 import apiRequest from '@/utils/api';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface CartItem {
   book: {
@@ -64,6 +65,7 @@ interface MostWishlisted {
 }
 
 export default function SellerInsights() {
+  const { formatPrice } = useCurrency();
   const [activeTab, setActiveTab] = useState<'cart' | 'wishlist'>('cart');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -228,7 +230,7 @@ export default function SellerInsights() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Potential Revenue</p>
-                  <p className="text-3xl font-bold text-green-600">${cartSummary.potentialRevenue.toFixed(2)}</p>
+                  <p className="text-3xl font-bold text-green-600">{formatPrice(cartSummary.potentialRevenue)}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-green-600" />
@@ -261,7 +263,7 @@ export default function SellerInsights() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-gray-600">{cart.itemCount} items</p>
-                        <p className="text-lg font-bold text-gray-900">${cart.totalAmount.toFixed(2)}</p>
+                        <p className="text-lg font-bold text-gray-900">{formatPrice(cart.totalAmount)}</p>
                       </div>
                     </div>
                   </div>
@@ -287,11 +289,11 @@ export default function SellerInsights() {
                             <p className="font-medium text-gray-900">{item.book.title}</p>
                             <p className="text-sm text-gray-600">{item.book.author}</p>
                             <p className="text-sm text-gray-700">
-                              Qty: {item.quantity} × ${item.price.toFixed(2)}
+                              Qty: {item.quantity} × {formatPrice(item.price)}
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-gray-900">${item.subtotal.toFixed(2)}</p>
+                            <p className="font-semibold text-gray-900">{formatPrice(item.subtotal)}</p>
                           </div>
                         </div>
                       ))}
@@ -430,7 +432,7 @@ export default function SellerInsights() {
                               <p className="font-medium text-gray-900 text-sm truncate">{book.title}</p>
                               <p className="text-xs text-gray-600">{book.author}</p>
                               <p className="text-sm font-semibold text-gray-900 mt-1">
-                                ${book.discountPrice || book.price}
+                                {formatPrice(book.discountPrice || book.price)}
                               </p>
                               <p className="text-xs text-gray-500">Stock: {book.stock}</p>
                             </div>

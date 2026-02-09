@@ -5,6 +5,7 @@ import { TrendingUp, DollarSign, Package, AlertTriangle, BookOpen, ShoppingCart 
 import { getAnalyticsOverview, getBestSellingBooks, getLowStockAlerts, getRevenueTimeline } from '@/utils/seller';
 import StatCard from '@/components/StatCard';
 import StatCardSkeleton from '@/components/StatCardSkeleton';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface AnalyticsData {
   revenue: {
@@ -59,6 +60,7 @@ interface TimelineData {
 }
 
 export default function SellerAnalytics() {
+  const { formatPrice } = useCurrency();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [bestSelling, setBestSelling] = useState<BestSellingBook[]>([]);
   const [lowStock, setLowStock] = useState<LowStockBook[]>([]);
@@ -162,14 +164,14 @@ export default function SellerAnalytics() {
           <>
             <StatCard
               title="Total Revenue"
-              value={`$${analytics.revenue.total.toFixed(2)}`}
+              value={formatPrice(analytics.revenue.total)}
               icon={DollarSign}
               iconColor="text-green-600"
               iconBgColor="bg-green-100"
             />
             <StatCard
               title="Pending Revenue"
-              value={`$${analytics.revenue.pending.toFixed(2)}`}
+              value={formatPrice(analytics.revenue.pending)}
               icon={TrendingUp}
               iconColor="text-blue-600"
               iconBgColor="bg-blue-100"
@@ -224,7 +226,7 @@ export default function SellerAnalytics() {
                       style={{ height: `${(item.revenue / maxRevenue) * 100}%` }}
                     >
                       <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                        ${item.revenue.toFixed(2)}
+                        {formatPrice(item.revenue)}
                       </div>
                     </div>
                   </div>
@@ -243,7 +245,7 @@ export default function SellerAnalytics() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold">Total:</span>
-                <span>${timeline.reduce((sum, t) => sum + t.revenue, 0).toFixed(2)}</span>
+                <span>{formatPrice(timeline.reduce((sum, t) => sum + t.revenue, 0))}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold">Orders:</span>
@@ -304,7 +306,7 @@ export default function SellerAnalytics() {
                       <div className="flex items-center gap-3 mt-1 text-xs text-gray-600">
                         <span>{book.totalQuantitySold} sold</span>
                         <span>•</span>
-                        <span className="font-semibold text-green-600">${book.totalRevenue.toFixed(2)}</span>
+                        <span className="font-semibold text-green-600">{formatPrice(book.totalRevenue)}</span>
                       </div>
                     </div>
                   </div>
@@ -363,7 +365,7 @@ export default function SellerAnalytics() {
                         }`}>
                           Only {book.stock} left
                         </span>
-                        <span className="text-xs text-gray-500">• ${book.price.toFixed(2)}</span>
+                        <span className="text-xs text-gray-500">• {formatPrice(book.price)}</span>
                       </div>
                     </div>
                     <AlertTriangle className={`w-5 h-5 flex-shrink-0 ${

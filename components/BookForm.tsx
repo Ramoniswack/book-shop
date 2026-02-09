@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle, Plus } from 'lucide-react';
 import { getAuthors, getGenres, createAuthor, createGenre } from '@/utils/seller';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface BookFormData {
   title: string;
@@ -39,6 +40,7 @@ interface Genre {
 }
 
 export default function BookForm({ initialData, onSubmit, submitLabel, isLoading }: BookFormProps) {
+  const { currency } = useCurrency();
   const [formData, setFormData] = useState<BookFormData>({
     title: initialData?.title || '',
     description: initialData?.description || '',
@@ -329,7 +331,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Price <span className="text-red-500">*</span>
+            Price ({currency === 'NPR' ? 'Rs.' : '$'}) <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
@@ -346,7 +348,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Discount Price (Optional)
+            Discount Price ({currency === 'NPR' ? 'Rs.' : '$'}) (Optional)
           </label>
           <input
             type="number"
