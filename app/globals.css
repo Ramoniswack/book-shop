@@ -208,3 +208,105 @@ a {
 .animate-bounce-slow {
   animation: bounce 4s infinite;
 }
+
+/* Genre Slider - Swiper Cursor Behavior */
+.genre-slider-container {
+  cursor: grab;
+  user-select: none;
+}
+
+.genre-slider-container:active {
+  cursor: grabbing;
+}
+
+.genre-swiper {
+  overflow: visible;
+  padding: 4px 0;
+}
+
+.genre-swiper .swiper-slide {
+  height: auto;
+}
+
+/* Ensure grab cursor on swiper wrapper */
+.genre-swiper .swiper-wrapper {
+  cursor: grab;
+}
+
+.genre-swiper.swiper-grab {
+  cursor: grab;
+}
+
+.genre-swiper.swiper-grabbing {
+  cursor: grabbing;
+}
+
+.genre-swiper.swiper-grabbing .swiper-wrapper {
+  cursor: grabbing;
+}
+
+/* Refined Genre Slider - Premium Version */
+.genre-slider-wrapper {
+  position: relative;
+  user-select: none;
+}
+
+.genre-swiper-refined {
+  overflow: visible;
+  padding: 8px 0;
+}
+
+.genre-swiper-refined .swiper-slide {
+  height: auto;
+  width: auto !important;
+}
+
+/* Grab cursor on the entire swiper */
+.genre-swiper-refined .swiper-wrapper {
+  cursor: grab;
+}
+
+.genre-swiper-refined.swiper-grab {
+  cursor: grab;
+}
+
+.genre-swiper-refined.swiper-grabbing {
+  cursor: grabbing;
+}
+
+.genre-swiper-refined.swiper-grabbing .swiper-wrapper {
+  cursor: grabbing;
+}
+
+/* Genre card link - maintain grab cursor on image, pointer on text */
+.genre-card-link {
+  display: block;
+  text-decoration: none;
+}
+
+/* Ensure grabbing cursor appears immediately on mousedown */
+.genre-card-link:active .genre-card-link > div {
+  cursor: grabbing !important;
+}
+
+/* Prevent text selection during drag */
+.genre-swiper-refined * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Smooth transitions for hover effects */
+.genre-slider-wrapper button {
+  transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* Ensure arrows don't interfere with drag */
+.genre-slider-wrapper button {
+  pointer-events: auto;
+}
+
+.genre-slider-wrapper.group:not(:hover) button {
+  pointer-events: none;
+}

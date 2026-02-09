@@ -17,7 +17,8 @@
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
-    "react-hot-toast": "^2.6.0"
+    "react-hot-toast": "^2.6.0",
+    "swiper": "^12.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",

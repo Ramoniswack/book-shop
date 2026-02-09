@@ -2,7 +2,7 @@
 
 import HeroSection from '@/components/HeroSection'
 import ProductGrid from '@/components/ProductGrid'
-import GenreCard from '@/components/GenreCard'
+import GenreSlider from '@/components/GenreSlider'
 import BestsellingAuthors from '@/components/BestsellingAuthors'
 import { DealsPromoBanner, UsedBooksPromoBanner, RecommendationBanner, SpecialOffersBanner } from '@/components/PromotionalBanners'
 import { Book, Genre, Author } from '@/types/book'
@@ -32,11 +32,7 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
               View All <ArrowRight size={16} className="ml-1" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-            {genres.slice(0, 10).map((genre) => (
-              <GenreCard key={genre.id} genre={genre} />
-            ))}
-          </div>
+          <GenreSlider genres={genres} />
         </div>
       </section>
 
