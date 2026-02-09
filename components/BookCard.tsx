@@ -161,15 +161,15 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-4 flex flex-col items-center">
+      <div className="p-4 flex flex-col">
         {/* Author */}
-        <p className="text-gray-400 dark:text-gray-500 font-light text-xs text-center truncate w-full">
+        <p className="text-gray-400 dark:text-gray-500 font-light text-xs truncate w-full">
           {book.author}
         </p>
         
         {/* Title */}
         <Link href={`/book/${book.id}`}>
-          <h3 className="text-gray-800 dark:text-gray-100 text-center mt-1 font-medium hover:text-bookStore-blue dark:hover:text-blue-400 transition-colors truncate w-full text-sm">
+          <h3 className="text-gray-800 dark:text-gray-100 mt-1 font-medium hover:text-bookStore-blue dark:hover:text-blue-400 transition-colors truncate w-full text-sm">
             {book.title}
           </h3>
         </Link>
@@ -193,7 +193,7 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
         </div>
         
         {/* Price - Side by Side */}
-        <div className="flex items-center justify-center gap-2 mt-2">
+        <div className="flex items-center gap-2 mt-2">
           <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
             {formatPrice(book.price)}
           </p>
@@ -205,22 +205,24 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
         </div>
         
         {/* Quantity Controls */}
-        <div className="inline-flex items-center mt-3 border border-gray-200 dark:border-gray-600 rounded-md overflow-hidden">
-          <button
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
-          >
-            <Minus size={16} />
-          </button>
-          <div className="bg-white dark:bg-gray-800 border-l border-r border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 inline-flex items-center px-4 py-1 select-none min-w-[40px] justify-center font-medium">
-            {quantity}
+        <div className="flex justify-center mt-3">
+          <div className="inline-flex items-center border border-gray-200 dark:border-gray-600 rounded-md overflow-hidden">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
+            >
+              <Minus size={16} />
+            </button>
+            <div className="bg-white dark:bg-gray-800 border-l border-r border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 inline-flex items-center px-4 py-1 select-none min-w-[40px] justify-center font-medium">
+              {quantity}
+            </div>
+            <button
+              onClick={() => setQuantity(quantity + 1)}
+              className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
+            >
+              <Plus size={16} />
+            </button>
           </div>
-          <button
-            onClick={() => setQuantity(quantity + 1)}
-            className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
-          >
-            <Plus size={16} />
-          </button>
         </div>
         
         {/* Add to Cart Button */}
