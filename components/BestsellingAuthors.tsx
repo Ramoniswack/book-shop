@@ -1,6 +1,18 @@
+'use client'
+
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { FreeMode, Navigation } from 'swiper/modules'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Author } from '@/types/book'
+import type { Swiper as SwiperType } from 'swiper'
+
+// Import Swiper styles
+import 'swiper/css'
+import 'swiper/css/free-mode'
+import 'swiper/css/navigation'
 
 interface BestsellingAuthorsProps {
   authors?: Author[]
@@ -8,6 +20,13 @@ interface BestsellingAuthorsProps {
 }
 
 const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps) => {
+  const swiperRef = useRef<SwiperType | null>(null)
+  const [isBeginning, setIsBeginning] = useState(true)
+  const [isEnd, setIsEnd] = useState(false)
+  const dragStartPosRef = useRef({ x: 0, y: 0 })
+  const isDraggingRef = useRef(false)
+  const dragThreshold = 5 // pixels
+
   // Default authors data with real images
   const defaultAuthors: Author[] = [
     {
@@ -77,6 +96,32 @@ const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps
 
   const displayAuthors = authors || defaultAuthors
 
+  const handleSlideChange = (swiper: SwiperType) => {
+    setIsBeginning(swiper.isBeginning)
+    setIsEnd(swiper.isEnd)
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    dragStartPosRef.current = { x: e.clientX, y: e.clientY }
+    isDraggingRef.current = false
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const deltaX = Math.abs(e.clientX - dragStartPosRef.current.x)
+    const deltaY = Math.abs(e.clientY - dragStartPosRef.current.y)
+    
+    if (deltaX > dragThreshold || deltaY > dragThreshold) {
+      isDraggingRef.current = true
+    }
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isDraggingRef.current) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+  }
+
   return (
     <section className={`py-8 bg-gray-50 dark:bg-gray-900 dark-transition ${className}`}>
       <div className="container mx-auto px-4">
@@ -89,30 +134,92 @@ const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps
           </p>
         </div>
         
-        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-4 md:gap-6">
-          {displayAuthors.map((author) => (
-            <Link 
-              key={author.id} 
-              href={`/author/${author.id}`}
-              className="text-center group"
+        <div className="author-slider-wrapper relative group">
+          {/* Left Arrow */}
+          {!isBeginning && (
+            <button
+              onClick={() => swiperRef.current?.slidePrev()}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110 -ml-5"
+              aria-label="Previous authors"
             >
-              <div className="relative mb-3">
-                <Image
-                  src={author.image}
-                  alt={author.name}
-                  width={80}
-                  height={80}
-                  className="rounded-full mx-auto object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm group-hover:text-bookStore-blue dark:group-hover:text-blue-400 transition-colors line-clamp-1 dark-transition">
-                {author.name}
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 dark-transition">
-                {author.bookCount} books
-              </p>
-            </Link>
-          ))}
+              <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+            </button>
+          )}
+
+          {/* Right Arrow */}
+          {!isEnd && (
+            <button
+              onClick={() => swiperRef.current?.slideNext()}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110 -mr-5"
+              aria-label="Next authors"
+            >
+              <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+            </button>
+          )}
+
+          <Swiper
+            modules={[FreeMode, Navigation]}
+            spaceBetween={20}
+            slidesPerView={7}
+            freeMode={true}
+            grabCursor={true}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper
+              setIsBeginning(swiper.isBeginning)
+              setIsEnd(swiper.isEnd)
+            }}
+            onSlideChange={handleSlideChange}
+            className="author-swiper"
+            breakpoints={{
+              320: {
+                slidesPerView: 3,
+                spaceBetween: 12,
+              },
+              640: {
+                slidesPerView: 4,
+                spaceBetween: 16,
+              },
+              768: {
+                slidesPerView: 5,
+                spaceBetween: 18,
+              },
+              1024: {
+                slidesPerView: 7,
+                spaceBetween: 20,
+              },
+            }}
+          >
+            {displayAuthors.map((author) => (
+              <SwiperSlide key={author.id}>
+                <div
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  className="text-center group/author cursor-grab active:cursor-grabbing"
+                >
+                  <div className="relative mb-3">
+                    <Image
+                      src={author.image}
+                      alt={author.name}
+                      width={120}
+                      height={120}
+                      className="rounded-full mx-auto object-cover group-hover/author:scale-105 transition-transform duration-200 shadow-md"
+                    />
+                  </div>
+                  <Link 
+                    href={`/author/${author.id}`}
+                    onClick={handleClick}
+                  >
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm md:text-base group-hover/author:text-bookStore-blue dark:group-hover/author:text-blue-400 transition-colors line-clamp-1 dark-transition cursor-pointer">
+                      {author.name}
+                    </h3>
+                  </Link>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1 dark-transition">
+                    {author.bookCount} books
+                  </p>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </div>
     </section>

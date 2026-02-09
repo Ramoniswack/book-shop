@@ -310,3 +310,57 @@ a {
 .genre-slider-wrapper.group:not(:hover) button {
   pointer-events: none;
 }
+
+/* Author Slider - Similar to Genre Slider */
+.author-slider-wrapper {
+  position: relative;
+  user-select: none;
+}
+
+.author-swiper {
+  overflow: visible;
+  padding: 8px 0;
+}
+
+.author-swiper .swiper-slide {
+  height: auto;
+}
+
+/* Grab cursor on the entire swiper */
+.author-swiper .swiper-wrapper {
+  cursor: grab;
+}
+
+.author-swiper.swiper-grab {
+  cursor: grab;
+}
+
+.author-swiper.swiper-grabbing {
+  cursor: grabbing;
+}
+
+.author-swiper.swiper-grabbing .swiper-wrapper {
+  cursor: grabbing;
+}
+
+/* Prevent text selection during drag */
+.author-swiper * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Smooth transitions for hover effects */
+.author-slider-wrapper button {
+  transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* Ensure arrows don't interfere with drag */
+.author-slider-wrapper button {
+  pointer-events: auto;
+}
+
+.author-slider-wrapper.group:not(:hover) button {
+  pointer-events: none;
+}
