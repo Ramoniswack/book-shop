@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Bell, User, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 import { getUser } from '@/utils/auth';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
@@ -96,14 +97,16 @@ export default function SellerHeader() {
 
         {/* User Info */}
         <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+          <Link href="/seller/settings" className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors cursor-pointer">
             <User className="w-5 h-5 text-white" />
-          </div>
+          </Link>
           <div className="text-sm">
             <p className="font-medium text-gray-900">
               {user ? `${user.firstName} ${user.lastName}` : 'Loading...'}
             </p>
-            <p className="text-gray-500 text-xs">{user?.email}</p>
+            <Link href="/seller/settings" className="text-gray-500 text-xs hover:text-blue-600 transition-colors">
+              {user?.email}
+            </Link>
           </div>
         </div>
       </div>

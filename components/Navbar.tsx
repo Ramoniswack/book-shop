@@ -8,6 +8,7 @@ import { useCurrency } from '@/contexts/CurrencyContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useCart } from '@/contexts/CartContext'
 import SearchModal from './SearchModal'
+import ProfileModal from './ProfileModal'
 import { isAuthenticated, getUser, logout } from '@/utils/auth'
 
 const Navbar = () => {
@@ -15,6 +16,7 @@ const Navbar = () => {
   const [isBooksMenuOpen, setIsBooksMenuOpen] = useState(false)
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState<any>(null)
@@ -437,6 +439,17 @@ const Navbar = () => {
                       </p>
                     </div>
                     <Link
+                      href="/profile"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsProfileOpen(true);
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                    >
+                      Profile Settings
+                    </Link>
+                    <Link
                       href="/orders"
                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => setIsUserMenuOpen(false)}
@@ -545,6 +558,9 @@ const Navbar = () => {
       
       {/* Search Modal */}
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      
+      {/* Profile Modal */}
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </nav>
   )
 }
