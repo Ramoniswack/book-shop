@@ -76,9 +76,9 @@ const HeroSection = ({ featuredBooks }: HeroSectionProps) => {
           <div className="space-y-5 md:space-y-6 mt-8">
             {/* Main Heading */}
             <div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 dark:text-white dark-transition pb-2">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 dark:text-white dark-transition pb-3">
                 Discover your next
-                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-bookStore-blue to-blue-600 dark:from-blue-400 dark:to-blue-500">
+                <span className="block mt-2 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-bookStore-blue to-blue-600 dark:from-blue-400 dark:to-blue-500">
                   great read
                 </span>
               </h1>
