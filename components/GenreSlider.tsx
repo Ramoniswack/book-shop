@@ -30,8 +30,8 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
   const swiperRef = useRef<SwiperType | null>(null)
   const [isBeginning, setIsBeginning] = useState(true)
   const [isEnd, setIsEnd] = useState(false)
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 })
+  const dragStartPosRef = useRef({ x: 0, y: 0 })
+  const isDraggingRef = useRef(false)
   const dragThreshold = 5 // pixels
 
   const handleSlideChange = (swiper: SwiperType) => {
@@ -40,21 +40,21 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    setDragStartPos({ x: e.clientX, y: e.clientY })
-    setIsDragging(false)
+    dragStartPosRef.current = { x: e.clientX, y: e.clientY }
+    isDraggingRef.current = false
   }
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    const deltaX = Math.abs(e.clientX - dragStartPos.x)
-    const deltaY = Math.abs(e.clientY - dragStartPos.y)
+    const deltaX = Math.abs(e.clientX - dragStartPosRef.current.x)
+    const deltaY = Math.abs(e.clientY - dragStartPosRef.current.y)
     
     if (deltaX > dragThreshold || deltaY > dragThreshold) {
-      setIsDragging(true)
+      isDraggingRef.current = true
     }
   }
 
-  const handleClick = (e: React.MouseEvent, slug: string) => {
-    if (isDragging) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (isDraggingRef.current) {
       e.preventDefault()
       e.stopPropagation()
     }
@@ -111,9 +111,7 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
       >
         {genres.map((genre) => (
           <SwiperSlide key={genre.id} className="!w-auto">
-            <Link
-              href={`/genre/${genre.slug}`}
-              onClick={(e) => handleClick(e, genre.slug)}
+            <div
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               className="block genre-card-link"
@@ -135,11 +133,13 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                {/* Genre Name Overlay */}
+                {/* Genre Name Overlay - Clickable */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-                  <h3 className="text-white font-bold text-lg md:text-xl mb-1 drop-shadow-lg cursor-pointer hover:text-blue-200 transition-colors">
-                    {genre.name}
-                  </h3>
+                  <Link href={`/genre/${genre.slug}`}>
+                    <h3 className="text-white font-bold text-lg md:text-xl mb-1 drop-shadow-lg cursor-pointer hover:text-blue-200 transition-colors">
+                      {genre.name}
+                    </h3>
+                  </Link>
                   {genre.bookCount !== undefined && (
                     <p className="text-white/90 text-sm drop-shadow-md">
                       {genre.bookCount.toLocaleString()} books
@@ -150,7 +150,7 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
                 {/* Hover Effect Border */}
                 <div className="absolute inset-0 border-2 border-transparent group-hover/card:border-blue-400 dark:group-hover/card:border-blue-500 transition-colors duration-300 pointer-events-none" />
               </div>
-            </Link>
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
