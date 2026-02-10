@@ -132,8 +132,8 @@ export default function SellerDashboard() {
               iconBgColor="bg-green-100"
             />
             <StatCard
-              title="Total Orders"
-              value={analytics.orders.total}
+              title="Completed Orders"
+              value={analytics.orders.completed}
               icon={ShoppingCart}
               iconColor="text-blue-600"
               iconBgColor="bg-blue-100"

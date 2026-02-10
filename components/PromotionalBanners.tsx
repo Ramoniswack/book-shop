@@ -54,21 +54,21 @@ export const SpecialOffersBanner = () => (
         </div>
 
         {/* Right: 40% Visual Column with "Extra" 3D Logic */}
-        <div className="lg:col-span-2 relative flex justify-center items-center h-[350px] md:h-[400px]">
+        <div className="lg:col-span-2 relative flex justify-center items-center h-[280px] md:h-[320px]">
           {/* Layer 1: The Decorative Circle (Behind) */}
-          <div className="absolute w-[250px] h-[250px] md:w-[320px] md:h-[320px] rounded-full bg-gradient-to-tr from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 z-0 shadow-inner" />
+          <div className="absolute w-[200px] h-[200px] md:w-[240px] md:h-[240px] rounded-full bg-gradient-to-tr from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 z-0 shadow-inner" />
           
           {/* Layer 2: The Floating Image (Breaking out) */}
           <div className="relative z-10 animate-float">
             <img
-              src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&h=700&fit=crop&q=80"
+              src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=500&fit=crop&q=90"
               alt="Book stack"
-              className="w-[280px] md:w-[350px] max-w-none drop-shadow-[0_25px_40px_rgba(0,0,0,0.25)] transform -rotate-3 hover:rotate-0 transition-all duration-700 ease-out"
+              className="w-[200px] md:w-[240px] max-w-none drop-shadow-[0_25px_40px_rgba(0,0,0,0.25)] transform -rotate-3 hover:rotate-0 transition-all duration-700 ease-out"
             />
             
             {/* Layer 3: Accent Element - Positioned relative to image */}
-            <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 w-14 h-14 md:w-16 md:h-16 bg-bookStore-blue dark:bg-blue-600 rounded-full flex items-center justify-center shadow-xl z-20 animate-bounce-slow">
-              <span className="font-serif italic font-bold text-white text-sm md:text-base">Free</span>
+            <div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 w-12 h-12 md:w-14 md:h-14 bg-bookStore-blue dark:bg-blue-600 rounded-full flex items-center justify-center shadow-xl z-20 animate-bounce-slow">
+              <span className="font-serif italic font-bold text-white text-xs md:text-sm">Free</span>
             </div>
           </div>
         </div>

@@ -23,6 +23,7 @@ interface Book {
   condition: 'new' | 'like-new' | 'used';
   isFeatured: boolean;
   isNewArrival: boolean;
+  isNepaliBook: boolean;
 }
 
 export default function EditBook() {
@@ -205,6 +206,7 @@ export default function EditBook() {
             condition: book.condition,
             isFeatured: book.isFeatured,
             isNewArrival: book.isNewArrival,
+            isNepaliBook: book.isNepaliBook,
           }}
           onSubmit={handleSubmit}
           submitLabel="Update Book"

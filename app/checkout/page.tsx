@@ -150,7 +150,7 @@ export default function CheckoutPage() {
       
       const selectedAddress = addresses.find(addr => addr._id === selectedAddressId)
       const shippingAddress = deliveryMethod === 'delivery' && selectedAddress
-        ? `${selectedAddress.fullName}, ${selectedAddress.addressLine1}${selectedAddress.addressLine2 ? ', ' + selectedAddress.addressLine2 : ''}, ${selectedAddress.city}, ${selectedAddress.postalCode}, ${selectedAddress.country}`
+        ? `${selectedAddress.addressLine1}${selectedAddress.addressLine2 ? ', ' + selectedAddress.addressLine2 : ''}, ${selectedAddress.city}, ${selectedAddress.postalCode}, ${selectedAddress.country}`
         : 'Store Pickup'
       
       const phone = deliveryMethod === 'delivery' && selectedAddress

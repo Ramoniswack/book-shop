@@ -177,6 +177,13 @@ export const createGenre = async (genreData: { name: string; subGenres?: string[
   });
 };
 
+export const addSubGenresToGenre = async (genreId: string, subGenres: string[]) => {
+  return await apiRequest(`/seller/genres/${genreId}/subgenres`, {
+    method: 'PUT',
+    body: JSON.stringify({ subGenres }),
+  });
+};
+
 // Deals
 export const getSellerDeals = async (params?: {
   page?: number;
