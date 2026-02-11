@@ -27,6 +27,7 @@ interface BookFormProps {
   onSubmit: (data: BookFormData) => Promise<void>;
   submitLabel: string;
   isLoading: boolean;
+  hideSubmitButton?: boolean;
 }
 
 interface Author {
@@ -40,7 +41,7 @@ interface Genre {
   subGenres: string[];
 }
 
-export default function BookForm({ initialData, onSubmit, submitLabel, isLoading }: BookFormProps) {
+export default function BookForm({ initialData, onSubmit, submitLabel, isLoading, hideSubmitButton = false }: BookFormProps) {
   const { currency } = useCurrency();
   const [formData, setFormData] = useState<BookFormData>({
     title: initialData?.title || '',
@@ -663,15 +664,17 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
       </div>
 
       {/* Submit Button */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Saving...' : submitLabel}
-        </button>
-      </div>
+      {!hideSubmitButton && (
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Saving...' : submitLabel}
+          </button>
+        </div>
+      )}
 
       {/* New Author Modal */}
       {showNewAuthor && (

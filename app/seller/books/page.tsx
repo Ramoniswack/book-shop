@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Search, Eye, EyeOff, Trash2, AlertTriangle, BookOpen, Star, Plus, Edit } from 'lucide-react';
 import Link from 'next/link';
 import { getSellerBooks, toggleBookVisibility, deleteBook } from '@/utils/seller';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface Book {
   _id: string;
@@ -29,6 +30,7 @@ interface Pagination {
 }
 
 export default function SellerBooks() {
+  const { formatPrice } = useCurrency();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -272,11 +274,11 @@ export default function SellerBooks() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          ${book.price.toFixed(2)}
+                          {formatPrice(book.price)}
                         </div>
                         {book.discountPrice && (
                           <div className="text-xs text-gray-500 line-through">
-                            ${book.discountPrice.toFixed(2)}
+                            {formatPrice(book.discountPrice)}
                           </div>
                         )}
                       </td>

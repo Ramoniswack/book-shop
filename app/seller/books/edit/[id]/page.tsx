@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import BookForm from '@/components/BookForm';
 import { updateBook } from '@/utils/seller';
 import apiRequest from '@/utils/api';
@@ -34,8 +35,6 @@ export default function EditBook() {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -53,7 +52,8 @@ export default function EditBook() {
       });
 
       if (response.success) {
-        setBook(response.data);
+        // Response structure is { success: true, data: { book: {...} } }
+        setBook(response.data.book || response.data);
       } else {
         setFetchError(response.message || 'Failed to fetch book');
       }
@@ -65,9 +65,10 @@ export default function EditBook() {
   };
 
   const handleSubmit = async (formData: any) => {
+    const toastId = toast.loading('Updating book...');
+    
     try {
       setIsSubmitting(true);
-      setError(null);
 
       // Convert string values to appropriate types
       const bookData = {
@@ -80,15 +81,15 @@ export default function EditBook() {
       const response = await updateBook(bookId, bookData);
 
       if (response.success) {
-        setSuccess(true);
+        toast.success('Book updated successfully!', { id: toastId });
         setTimeout(() => {
           router.push('/seller/books');
-        }, 2000);
+        }, 1500);
       } else {
-        setError(response.message || 'Failed to update book');
+        toast.error(response.message || 'Failed to update book', { id: toastId });
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to update book');
+      toast.error(err.message || 'Failed to update book', { id: toastId });
     } finally {
       setIsSubmitting(false);
     }
@@ -124,10 +125,7 @@ export default function EditBook() {
           <h1 className="text-2xl font-bold text-gray-900">Edit Book</h1>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <div className="flex items-center">
-            <AlertTriangle className="w-5 h-5 text-red-600 mr-2" />
-            <p className="text-red-800 font-medium">Error loading book</p>
-          </div>
+          <p className="text-red-800 font-medium">Error loading book</p>
           <p className="text-red-600 mt-2">{fetchError}</p>
           <button
             onClick={fetchBook}
@@ -157,8 +155,9 @@ export default function EditBook() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="-m-6 pb-20">
+      {/* Header */}
+      <div className="bg-white px-6 py-4 border-b border-gray-200">
         <div className="flex items-center gap-4">
           <Link href="/seller/books" className="text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-6 h-6" />
@@ -167,51 +166,58 @@ export default function EditBook() {
         </div>
       </div>
 
-      {/* Success Message */}
-      {success && (
-        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
-            <p className="text-green-800 font-medium">Book updated successfully!</p>
-          </div>
-          <p className="text-green-600 text-sm mt-1">Redirecting to books list...</p>
-        </div>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <AlertTriangle className="w-5 h-5 text-red-600 mr-2" />
-            <p className="text-red-800 font-medium">Error updating book</p>
-          </div>
-          <p className="text-red-600 text-sm mt-1">{error}</p>
-        </div>
-      )}
-
       {/* Form */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <BookForm
-          initialData={{
-            title: book.title,
-            description: book.description,
-            author: book.author,
-            genres: book.genres,
-            subGenres: book.subGenres,
-            price: book.price?.toString() || '',
-            discountPrice: book.discountPrice?.toString() || '',
-            stock: book.stock?.toString() || '',
-            images: book.images,
-            isUsedBook: book.isUsedBook,
-            condition: book.condition,
-            isFeatured: book.isFeatured,
-            isNewArrival: book.isNewArrival,
-            isNepaliBook: book.isNepaliBook,
-          }}
-          onSubmit={handleSubmit}
-          submitLabel="Update Book"
-          isLoading={isSubmitting}
-        />
+      <div className="p-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <BookForm
+            initialData={{
+              title: book.title,
+              description: book.description,
+              author: book.author,
+              genres: book.genres,
+              subGenres: book.subGenres,
+              price: book.price?.toString() || '',
+              discountPrice: book.discountPrice?.toString() || '',
+              stock: book.stock?.toString() || '',
+              images: book.images,
+              isUsedBook: book.isUsedBook,
+              condition: book.condition,
+              isFeatured: book.isFeatured,
+              isNewArrival: book.isNewArrival,
+              isNepaliBook: book.isNepaliBook,
+            }}
+            onSubmit={handleSubmit}
+            submitLabel="Update Book"
+            isLoading={isSubmitting}
+            hideSubmitButton={true}
+          />
+        </div>
+      </div>
+
+      {/* Fixed Bottom Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/seller/books"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Cancel
+            </Link>
+            <button
+              onClick={() => {
+                const form = document.querySelector('form');
+                if (form) {
+                  form.requestSubmit();
+                }
+              }}
+              disabled={isSubmitting}
+              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-md"
+            >
+              {isSubmitting ? 'Updating...' : 'Update Book'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
