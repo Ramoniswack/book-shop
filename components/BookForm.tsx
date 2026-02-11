@@ -20,6 +20,7 @@ interface BookFormData {
   isFeatured: boolean;
   isNewArrival: boolean;
   isNepaliBook: boolean;
+  isBestseller: boolean;
 }
 
 interface BookFormProps {
@@ -58,6 +59,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
     isFeatured: initialData?.isFeatured || false,
     isNewArrival: initialData?.isNewArrival || false,
     isNepaliBook: initialData?.isNepaliBook || false,
+    isBestseller: initialData?.isBestseller || false,
   });
 
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -630,7 +632,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
         </div>
       )}
 
-      {/* Featured, New Arrival, and Nepali Book Toggles */}
+      {/* Featured, New Arrival, Nepali Book, and Bestseller Toggles */}
       <div className="space-y-2">
         <label className="flex items-center">
           <input
@@ -660,6 +662,16 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
           <span className="ml-2 text-sm font-medium text-gray-700">Nepali Book</span>
+        </label>
+
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={formData.isBestseller}
+            onChange={(e) => setFormData({ ...formData, isBestseller: e.target.checked })}
+            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <span className="ml-2 text-sm font-medium text-gray-700">Bestseller</span>
         </label>
       </div>
 

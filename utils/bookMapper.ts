@@ -1,65 +1,51 @@
-// Helper to ensure book exists in backend before adding to cart/wishlist
-// This creates a temporary book if it doesn't exist
+import { Book } from '@/types/book';
 
-interface BookData {
-  id: string
-  title: string
-  author: string
-  price: number
-  image: string
+/**
+ * Normalize book data from backend to match frontend expectations
+ * Adds backward compatibility fields
+ */
+export function normalizeBook(book: any): Book {
+  return {
+    ...book,
+    id: book._id || book.id,
+    image: book.images?.[0] || book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop',
+    genre: book.genres?.[0] || book.genre || 'General',
+    originalPrice: book.discountPrice ? book.price : undefined,
+    inStock: book.stock > 0,
+    isNew: book.isNewArrival,
+    reviewCount: book.reviews || book.reviewCount || 0,
+    rating: book.rating || 0,
+    language: book.language || 'English',
+  };
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+/**
+ * Normalize array of books
+ */
+export function normalizeBooks(books: any[]): Book[] {
+  return books.map(normalizeBook);
+}
 
-// Cache to store dummy ID to MongoDB ID mappings
-const bookIdCache = new Map<string, string>();
+/**
+ * Check if book is in stock
+ */
+export function isBookInStock(book: Book): boolean {
+  return book.stock > 0 && book.status === 'active';
+}
 
-export const ensureBookExists = async (book: BookData): Promise<string> => {
-  // Check cache first
-  if (bookIdCache.has(book.id)) {
-    return bookIdCache.get(book.id)!;
+/**
+ * Get book display price (discounted or regular)
+ */
+export function getBookPrice(book: Book): number {
+  return book.discountPrice || book.price;
+}
+
+/**
+ * Calculate discount percentage
+ */
+export function getDiscountPercentage(book: Book): number {
+  if (!book.discountPrice || book.discountPrice >= book.price) {
+    return 0;
   }
-
-  try {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    
-    // Try to create/get the book in backend
-    const response = await fetch(`${API_URL}/books/ensure`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
-      },
-      body: JSON.stringify({
-        dummyId: book.id,
-        title: book.title,
-        author: book.author,
-        price: book.price,
-        imageUrl: book.image,
-        stock: 100, // Default stock
-        category: 'General',
-        format: 'paperback'
-      })
-    });
-
-    const data = await response.json();
-    
-    if (data.success && data.data.book) {
-      const mongoId = data.data.book._id;
-      // Cache the mapping
-      bookIdCache.set(book.id, mongoId);
-      return mongoId;
-    }
-    
-    // If failed, return the dummy ID (will fail at backend but better than nothing)
-    return book.id;
-  } catch (error) {
-    console.error('Error ensuring book exists:', error);
-    return book.id;
-  }
-};
-
-// Clear cache (useful for testing)
-export const clearBookCache = () => {
-  bookIdCache.clear();
-};
+  return Math.round(((book.price - book.discountPrice) / book.price) * 100);
+}

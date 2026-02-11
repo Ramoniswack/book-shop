@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Search, Eye, EyeOff, Trash2, AlertTriangle, BookOpen, Star, Plus, Edit } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import { getSellerBooks, toggleBookVisibility, deleteBook } from '@/utils/seller';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
@@ -113,9 +114,12 @@ export default function SellerBooks() {
         // Remove from local state
         setBooks(books.filter(book => book._id !== bookId));
         setDeleteConfirm(null);
+        toast.success('Book deleted successfully');
+      } else {
+        toast.error(response.message || 'Failed to delete book');
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to delete book');
+      toast.error(err.message || 'Failed to delete book');
     } finally {
       setDeleting(false);
     }

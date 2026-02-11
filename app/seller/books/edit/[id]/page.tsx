@@ -25,6 +25,7 @@ interface Book {
   isFeatured: boolean;
   isNewArrival: boolean;
   isNepaliBook: boolean;
+  isBestseller: boolean;
 }
 
 export default function EditBook() {
@@ -185,6 +186,7 @@ export default function EditBook() {
               isFeatured: book.isFeatured,
               isNewArrival: book.isNewArrival,
               isNepaliBook: book.isNepaliBook,
+              isBestseller: book.isBestseller,
             }}
             onSubmit={handleSubmit}
             submitLabel="Update Book"
