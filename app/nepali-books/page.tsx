@@ -1,12 +1,21 @@
 import { Suspense } from 'react'
 import MainLayout from '@/layouts/MainLayout'
 import ProductGrid from '@/components/ProductGrid'
-import { fetchBooksByGenre } from '@/utils/fetcher'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
-import { Globe, BookOpen, Heart } from 'lucide-react'
+import { Globe } from 'lucide-react'
 
 export default async function NepaliBooksPage() {
-  const nepaliBooks = await fetchBooksByGenre('nepali-books')
+  // Fetch Nepali books from the database
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/books?isNepaliBook=true&limit=100`, {
+    cache: 'no-store',
+    next: { revalidate: 0 }
+  })
+  
+  let nepaliBooks = []
+  if (response.ok) {
+    const data = await response.json()
+    nepaliBooks = data.data?.books || []
+  }
 
   return (
     <MainLayout>
@@ -20,7 +29,7 @@ export default async function NepaliBooksPage() {
               Nepali Books
             </h1>
             <p className="text-gray-600 dark:text-gray-300 dark-transition">
-              Explore our rich collection of Nepali literature and books
+              Explore our rich collection of Nepali literature and books ({nepaliBooks.length} books)
             </p>
           </div>
         </div>

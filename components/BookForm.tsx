@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { AlertTriangle, Plus } from 'lucide-react';
 import { getAuthors, getGenres, createAuthor, createGenre } from '@/utils/seller';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import toast from 'react-hot-toast';
 
 interface BookFormData {
   title: string;
@@ -21,6 +22,9 @@ interface BookFormData {
   isNewArrival: boolean;
   isNepaliBook: boolean;
   isBestseller: boolean;
+  showInMegaMenuBestseller: boolean;
+  showInMegaMenuNewArrival: boolean;
+  showInMegaMenuNepali: boolean;
 }
 
 interface BookFormProps {
@@ -60,6 +64,9 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
     isNewArrival: initialData?.isNewArrival || false,
     isNepaliBook: initialData?.isNepaliBook || false,
     isBestseller: initialData?.isBestseller || false,
+    showInMegaMenuBestseller: initialData?.showInMegaMenuBestseller || false,
+    showInMegaMenuNewArrival: initialData?.showInMegaMenuNewArrival || false,
+    showInMegaMenuNepali: initialData?.showInMegaMenuNepali || false,
   });
 
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -71,8 +78,10 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
   // New author/genre modals
   const [showNewAuthor, setShowNewAuthor] = useState(false);
   const [newAuthorName, setNewAuthorName] = useState('');
+  const [newAuthorImage, setNewAuthorImage] = useState('');
   const [showNewGenre, setShowNewGenre] = useState(false);
   const [newGenreName, setNewGenreName] = useState('');
+  const [newGenreImage, setNewGenreImage] = useState('');
   const [newGenreSubGenres, setNewGenreSubGenres] = useState<string[]>([]);
   const [newSubGenreInput, setNewSubGenreInput] = useState('');
   const [showAddSubGenre, setShowAddSubGenre] = useState(false);
@@ -123,43 +132,64 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
   };
 
   const handleCreateAuthor = async () => {
-    if (!newAuthorName.trim()) return;
+    if (!newAuthorName.trim()) {
+      toast.error('Author name is required');
+      return;
+    }
+    
+    if (!newAuthorImage.trim()) {
+      toast.error('Author image URL is required');
+      return;
+    }
 
     try {
       setCreatingAuthor(true);
-      const response = await createAuthor({ name: newAuthorName.trim() });
+      const response = await createAuthor({ name: newAuthorName.trim(), image: newAuthorImage.trim() });
       if (response.success) {
         setAuthors([...authors, response.data]);
         setFormData({ ...formData, author: response.data.name });
         setNewAuthorName('');
+        setNewAuthorImage('');
         setShowNewAuthor(false);
+        toast.success('Author created successfully');
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to create author');
+      toast.error(err.message || 'Failed to create author');
     } finally {
       setCreatingAuthor(false);
     }
   };
 
   const handleCreateGenre = async () => {
-    if (!newGenreName.trim()) return;
+    if (!newGenreName.trim()) {
+      toast.error('Genre name is required');
+      return;
+    }
+    
+    if (!newGenreImage.trim()) {
+      toast.error('Genre image URL is required');
+      return;
+    }
 
     try {
       setCreatingGenre(true);
       const response = await createGenre({ 
         name: newGenreName.trim(),
+        image: newGenreImage.trim(),
         subGenres: newGenreSubGenres.length > 0 ? newGenreSubGenres : undefined
       });
       if (response.success) {
         setGenres([...genres, response.data]);
         setFormData({ ...formData, genres: [...formData.genres, response.data.name] });
         setNewGenreName('');
+        setNewGenreImage('');
         setNewGenreSubGenres([]);
         setNewSubGenreInput('');
         setShowNewGenre(false);
+        toast.success('Genre created successfully');
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to create genre');
+      toast.error(err.message || 'Failed to create genre');
     } finally {
       setCreatingGenre(false);
     }
@@ -213,9 +243,10 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
         setSelectedGenreForSubGenre(null);
         setSubGenresToAdd([]);
         setSubGenreInput('');
+        toast.success('Sub-genres added successfully');
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to add sub-genres');
+      toast.error(err.message || 'Failed to add sub-genres');
     } finally {
       setAddingSubGenres(false);
     }
@@ -675,6 +706,43 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
         </label>
       </div>
 
+      {/* Mega Menu Display Options */}
+      <div className="border-t pt-4 mt-4">
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Show in Mega Menu (Max 3 per section)</h3>
+        <div className="space-y-2">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={formData.showInMegaMenuBestseller}
+              onChange={(e) => setFormData({ ...formData, showInMegaMenuBestseller: e.target.checked })}
+              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+            <span className="ml-2 text-sm font-medium text-gray-700">Show in Bestsellers Section</span>
+          </label>
+
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={formData.showInMegaMenuNewArrival}
+              onChange={(e) => setFormData({ ...formData, showInMegaMenuNewArrival: e.target.checked })}
+              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+            <span className="ml-2 text-sm font-medium text-gray-700">Show in New Arrivals Section</span>
+          </label>
+
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={formData.showInMegaMenuNepali}
+              onChange={(e) => setFormData({ ...formData, showInMegaMenuNepali: e.target.checked })}
+              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+            <span className="ml-2 text-sm font-medium text-gray-700">Show in Nepali Books Section</span>
+          </label>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">Note: Only 3 books can be displayed in each mega menu section</p>
+      </div>
+
       {/* Submit Button */}
       {!hideSubmitButton && (
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
@@ -693,20 +761,55 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Author</h3>
-            <input
-              type="text"
-              value={newAuthorName}
-              onChange={(e) => setNewAuthorName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
-              placeholder="Author name"
-              autoFocus
-            />
+            
+            {/* Author Name */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Author Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={newAuthorName}
+                onChange={(e) => setNewAuthorName(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="e.g., James Clear"
+                autoFocus
+              />
+            </div>
+
+            {/* Author Image URL */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image URL <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="url"
+                value={newAuthorImage}
+                onChange={(e) => setNewAuthorImage(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="https://example.com/author-image.jpg"
+              />
+              {newAuthorImage && (
+                <div className="mt-2">
+                  <img 
+                    src={newAuthorImage} 
+                    alt="Preview" 
+                    className="w-20 h-20 object-cover rounded-full border-2 border-gray-200"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://via.placeholder.com/80?text=Invalid';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
             <div className="flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => {
                   setShowNewAuthor(false);
                   setNewAuthorName('');
+                  setNewAuthorImage('');
                 }}
                 disabled={creatingAuthor}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
@@ -716,7 +819,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
               <button
                 type="button"
                 onClick={handleCreateAuthor}
-                disabled={creatingAuthor || !newAuthorName.trim()}
+                disabled={creatingAuthor || !newAuthorName.trim() || !newAuthorImage.trim()}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
                 {creatingAuthor ? 'Creating...' : 'Create'}
@@ -745,6 +848,32 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                 placeholder="e.g., Science Fiction"
                 autoFocus
               />
+            </div>
+
+            {/* Genre Image URL */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image URL <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="url"
+                value={newGenreImage}
+                onChange={(e) => setNewGenreImage(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="https://example.com/genre-image.jpg"
+              />
+              {newGenreImage && (
+                <div className="mt-2">
+                  <img 
+                    src={newGenreImage} 
+                    alt="Preview" 
+                    className="w-32 h-20 object-cover rounded border-2 border-gray-200"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://via.placeholder.com/128x80?text=Invalid';
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Sub-Genres (Optional) */}
@@ -800,6 +929,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                 onClick={() => {
                   setShowNewGenre(false);
                   setNewGenreName('');
+                  setNewGenreImage('');
                   setNewGenreSubGenres([]);
                   setNewSubGenreInput('');
                 }}
@@ -811,7 +941,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
               <button
                 type="button"
                 onClick={handleCreateGenre}
-                disabled={creatingGenre || !newGenreName.trim()}
+                disabled={creatingGenre || !newGenreName.trim() || !newGenreImage.trim()}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
                 {creatingGenre ? 'Creating...' : 'Create'}

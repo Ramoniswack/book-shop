@@ -110,7 +110,7 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
         }}
       >
         {genres.map((genre) => (
-          <SwiperSlide key={genre.id} className="!w-auto">
+          <SwiperSlide key={genre.id || genre._id} className="!w-auto">
             <div
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}

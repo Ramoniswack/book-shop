@@ -1,22 +1,43 @@
 import { Suspense } from 'react'
 import MainLayout from '@/layouts/MainLayout'
 import ProductGrid from '@/components/ProductGrid'
-import { fetchAllBooks } from '@/utils/fetcher'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
 import { Recycle, CheckCircle, DollarSign, Leaf } from 'lucide-react'
 
+// Fetch only used books from the API
+const fetchUsedBooks = async () => {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/books/used`
+    console.log('🔍 Fetching used books from:', url)
+    
+    const response = await fetch(url, { cache: 'no-store' })
+    const data = await response.json()
+    
+    console.log('📦 API Response:', {
+      success: data.success,
+      hasData: !!data.data,
+      hasBooks: !!(data.data && data.data.books),
+      booksCount: data.data?.books?.length || 0
+    })
+    
+    // Handle the nested structure: data.data.books
+    if (data.success && data.data && data.data.books) {
+      console.log('✅ Returning', data.data.books.length, 'used books')
+      return data.data.books
+    }
+    
+    console.log('❌ No books found in response')
+    return []
+  } catch (error) {
+    console.error('❌ Error fetching used books:', error)
+    return []
+  }
+}
+
 export default async function UsedBooksPage() {
-  const allBooks = await fetchAllBooks()
+  const usedBooks = await fetchUsedBooks()
   
-  // Create used books with reduced prices
-  const usedBooks = allBooks.map(book => ({
-    ...book,
-    id: `used-${book.id}`,
-    title: book.title, // Keep original title
-    originalPrice: book.price,
-    price: Math.round(book.price * 0.6), // 40% off for used books
-    description: 'Quality pre-owned book in good condition'
-  }))
+  console.log('📚 UsedBooksPage rendering with', usedBooks.length, 'books')
 
   return (
     <MainLayout>
@@ -47,7 +68,7 @@ export default async function UsedBooksPage() {
                 <DollarSign className="text-green-600 dark:text-green-400" size={32} />
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2 dark-transition">Save Money</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm dark-transition">Get your favorite books at up to 60% off original prices</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm dark-transition">Get quality used books at discounted prices</p>
             </div>
             
             <div className="text-center">
@@ -70,21 +91,35 @@ export default async function UsedBooksPage() {
       </section>
 
       {/* Used Books Grid */}
-      <Suspense fallback={
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {[...Array(12)].map((_, i) => (
-              <BookCardSkeleton key={i} />
-            ))}
+      {usedBooks.length > 0 ? (
+        <Suspense fallback={
+          <div className="container mx-auto px-4 py-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {[...Array(12)].map((_, i) => (
+                <BookCardSkeleton key={i} />
+              ))}
+            </div>
           </div>
+        }>
+          <ProductGrid
+            books={usedBooks}
+            title="Available Used Books"
+            className="py-8"
+          />
+        </Suspense>
+      ) : (
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Recycle className="w-12 h-12 text-gray-400" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            No Used Books Available
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Check back soon for quality pre-owned books at great prices!
+          </p>
         </div>
-      }>
-        <ProductGrid
-          books={usedBooks}
-          title="Available Used Books"
-          className="py-8"
-        />
-      </Suspense>
+      )}
 
     </MainLayout>
   )

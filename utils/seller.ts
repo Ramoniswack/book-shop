@@ -144,10 +144,23 @@ export const getAuthors = async (params?: {
   });
 };
 
-export const createAuthor = async (authorData: { name: string; bio?: string; image?: string }) => {
+export const createAuthor = async (authorData: { name: string; bio?: string; image: string }) => {
   return await apiRequest('/seller/authors', {
     method: 'POST',
     body: JSON.stringify(authorData),
+  });
+};
+
+export const updateAuthor = async (authorId: string, authorData: { name: string; bio?: string; image: string }) => {
+  return await apiRequest(`/seller/authors/${authorId}`, {
+    method: 'PUT',
+    body: JSON.stringify(authorData),
+  });
+};
+
+export const deleteAuthor = async (authorId: string) => {
+  return await apiRequest(`/seller/authors/${authorId}`, {
+    method: 'DELETE',
   });
 };
 
@@ -170,10 +183,23 @@ export const getGenres = async (params?: {
   });
 };
 
-export const createGenre = async (genreData: { name: string; subGenres?: string[] }) => {
+export const createGenre = async (genreData: { name: string; image: string; subGenres?: string[] }) => {
   return await apiRequest('/seller/genres', {
     method: 'POST',
     body: JSON.stringify(genreData),
+  });
+};
+
+export const updateGenre = async (genreId: string, genreData: { name: string; image: string; subGenres?: string[] }) => {
+  return await apiRequest(`/seller/genres/${genreId}`, {
+    method: 'PUT',
+    body: JSON.stringify(genreData),
+  });
+};
+
+export const deleteGenre = async (genreId: string) => {
+  return await apiRequest(`/seller/genres/${genreId}`, {
+    method: 'DELETE',
   });
 };
 
@@ -189,13 +215,13 @@ export const getSellerDeals = async (params?: {
   page?: number;
   limit?: number;
   isActive?: boolean;
-  dealType?: string;
+  type?: string;
 }) => {
   const queryParams = new URLSearchParams();
   if (params?.page) queryParams.append('page', params.page.toString());
   if (params?.limit) queryParams.append('limit', params.limit.toString());
   if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
-  if (params?.dealType) queryParams.append('dealType', params.dealType);
+  if (params?.type) queryParams.append('type', params.type);
 
   const queryString = queryParams.toString();
   const url = `/seller/deals${queryString ? `?${queryString}` : ''}`;
@@ -222,5 +248,17 @@ export const updateDeal = async (dealId: string, dealData: any) => {
 export const deleteDeal = async (dealId: string) => {
   return await apiRequest(`/seller/deals/${dealId}`, {
     method: 'DELETE',
+  });
+};
+
+export const getDealById = async (dealId: string) => {
+  return await apiRequest(`/seller/deals/${dealId}`, {
+    method: 'GET',
+  });
+};
+
+export const toggleDealStatus = async (dealId: string) => {
+  return await apiRequest(`/seller/deals/${dealId}/toggle`, {
+    method: 'PATCH',
   });
 };

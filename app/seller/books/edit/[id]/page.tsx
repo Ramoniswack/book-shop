@@ -26,6 +26,9 @@ interface Book {
   isNewArrival: boolean;
   isNepaliBook: boolean;
   isBestseller: boolean;
+  showInMegaMenuBestseller: boolean;
+  showInMegaMenuNewArrival: boolean;
+  showInMegaMenuNepali: boolean;
 }
 
 export default function EditBook() {
@@ -187,6 +190,9 @@ export default function EditBook() {
               isNewArrival: book.isNewArrival,
               isNepaliBook: book.isNepaliBook,
               isBestseller: book.isBestseller,
+              showInMegaMenuBestseller: book.showInMegaMenuBestseller,
+              showInMegaMenuNewArrival: book.showInMegaMenuNewArrival,
+              showInMegaMenuNepali: book.showInMegaMenuNepali,
             }}
             onSubmit={handleSubmit}
             submitLabel="Update Book"

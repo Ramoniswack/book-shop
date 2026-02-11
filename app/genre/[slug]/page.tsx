@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import MainLayout from '@/layouts/MainLayout'
 import ProductGrid from '@/components/ProductGrid'
 import { fetchBooksByGenre, fetchGenres } from '@/utils/fetcher'
-import { GENRES } from '@/utils/constants'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
 
 interface GenrePageProps {
@@ -13,19 +12,27 @@ interface GenrePageProps {
 }
 
 export async function generateStaticParams() {
-  return GENRES.map((genre) => ({
-    slug: genre.slug,
-  }))
+  try {
+    const genres = await fetchGenres()
+    return genres.map((genre) => ({
+      slug: genre.slug,
+    }))
+  } catch (error) {
+    console.error('Error generating static params:', error)
+    return []
+  }
 }
 
 export default async function GenrePage({ params }: GenrePageProps) {
-  const genre = GENRES.find(g => g.slug === params.slug)
+  const genres = await fetchGenres()
+  const genre = genres.find(g => g.slug === params.slug)
   
   if (!genre) {
     notFound()
   }
 
   const books = await fetchBooksByGenre(params.slug)
+  const bookCount = books.length
 
   return (
     <MainLayout>
@@ -36,7 +43,7 @@ export default async function GenrePage({ params }: GenrePageProps) {
               {genre.name}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 dark-transition">
-              {genre.bookCount.toLocaleString()} books available
+              {bookCount.toLocaleString()} {bookCount === 1 ? 'book' : 'books'} available
             </p>
           </div>
         </div>

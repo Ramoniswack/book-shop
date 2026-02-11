@@ -42,6 +42,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'rwua.bishalbaniya.com.np',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
+      },
     ],
   },
 }

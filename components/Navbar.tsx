@@ -10,6 +10,21 @@ import { useCart } from '@/contexts/CartContext'
 import SearchModal from './SearchModal'
 import ProfileModal from './ProfileModal'
 import { isAuthenticated, getUser, logout } from '@/utils/auth'
+import { getGenres } from '@/utils/seller'
+import apiRequest from '@/utils/api'
+
+interface Genre {
+  _id: string
+  name: string
+  subGenres: string[]
+}
+
+interface Book {
+  _id: string
+  title: string
+  author: string
+  images: string[]
+}
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -26,10 +41,69 @@ const Navbar = () => {
   const currencyRef = useRef<HTMLDivElement>(null)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
+  // Dynamic data
+  const [genres, setGenres] = useState<Genre[]>([])
+  const [bestsellers, setBestsellers] = useState<Book[]>([])
+  const [newArrivals, setNewArrivals] = useState<Book[]>([])
+  const [nepaliBooks, setNepaliBooks] = useState<Book[]>([])
+  const [loadingData, setLoadingData] = useState(true)
+
   // Check authentication status
   useEffect(() => {
     setIsLoggedIn(isAuthenticated())
     setUser(getUser())
+  }, [])
+
+  // Fetch dynamic data for mega menu
+  useEffect(() => {
+    const fetchMegaMenuData = async () => {
+      try {
+        setLoadingData(true)
+        
+        // Fetch all books first to calculate genre book counts
+        const booksResponse = await apiRequest('/books', { method: 'GET' })
+        const allBooks = booksResponse.success ? (booksResponse.data.books || []) : []
+        
+        // Fetch genres
+        const genresResponse = await getGenres({ limit: 100 })
+        if (genresResponse.success) {
+          // Filter out genres with no books
+          const genresWithBooks = genresResponse.data.filter((genre: Genre) => {
+            const bookCount = allBooks.filter((book: any) => 
+              book.genres && book.genres.some((g: string) => 
+                g.toLowerCase() === genre.name.toLowerCase()
+              )
+            ).length
+            return bookCount > 0
+          })
+          setGenres(genresWithBooks)
+        }
+
+        // Fetch bestsellers for mega menu (showInMegaMenuBestseller=true, limit 3)
+        const bestsellersResponse = await apiRequest('/books?showInMegaMenuBestseller=true&limit=3', { method: 'GET' })
+        if (bestsellersResponse.success) {
+          setBestsellers(bestsellersResponse.data.books || [])
+        }
+
+        // Fetch new arrivals for mega menu (showInMegaMenuNewArrival=true, limit 3)
+        const newArrivalsResponse = await apiRequest('/books?showInMegaMenuNewArrival=true&limit=3', { method: 'GET' })
+        if (newArrivalsResponse.success) {
+          setNewArrivals(newArrivalsResponse.data.books || [])
+        }
+
+        // Fetch Nepali books for mega menu (showInMegaMenuNepali=true, limit 3)
+        const nepaliBooksResponse = await apiRequest('/books?showInMegaMenuNepali=true&limit=3', { method: 'GET' })
+        if (nepaliBooksResponse.success) {
+          setNepaliBooks(nepaliBooksResponse.data.books || [])
+        }
+      } catch (error) {
+        console.error('Error fetching mega menu data:', error)
+      } finally {
+        setLoadingData(false)
+      }
+    }
+
+    fetchMegaMenuData()
   }, [])
 
   // Handle Ctrl+K shortcut
@@ -61,73 +135,6 @@ const Navbar = () => {
   }, [])
 
   const [expandedGenre, setExpandedGenre] = useState<string | null>(null)
-
-  const genresWithSubGenres = [
-    {
-      name: 'Arts and Photography',
-      subGenres: ['All', 'Architecture', 'Design & Decorative Arts', 'Drawing', 'Fashion', 'Graphic Design', 'History & Criticism', 'Music', 'Painting', 'Photography & Video']
-    },
-    {
-      name: 'Boxed Sets',
-      subGenres: ['All', 'Fiction Box Sets', 'Non-Fiction Box Sets', 'Children\'s Box Sets', 'Young Adult Box Sets', 'Classic Literature Sets']
-    },
-    {
-      name: 'Business and Investing',
-      subGenres: ['All', 'Accounting', 'Economics', 'Entrepreneurship', 'Finance', 'Management', 'Marketing & Sales', 'Personal Finance', 'Real Estate']
-    },
-    {
-      name: 'Fiction and Literature',
-      subGenres: ['All', 'Action & Adventure', 'Classics', 'Contemporary Fiction', 'Fantasy', 'Historical Fiction', 'Horror', 'Literary Fiction', 'Mystery & Thriller', 'Romance', 'Science Fiction']
-    },
-    {
-      name: 'Foreign Languages',
-      subGenres: ['All', 'Chinese', 'French', 'German', 'Hindi', 'Italian', 'Japanese', 'Korean', 'Nepali', 'Spanish', 'Urdu']
-    },
-    {
-      name: 'History, Biography, and Social Science',
-      subGenres: ['All', 'Ancient History', 'Anthropology', 'Archaeology', 'Biography & Memoir', 'Military History', 'Philosophy', 'Political Science', 'Psychology', 'Sociology', 'World History']
-    },
-    {
-      name: 'Children and Young Adult',
-      subGenres: ['All', 'Action & Adventure', 'Animals', 'Comics & Graphic Novels', 'Early Learning', 'Fantasy & Magic', 'Growing Up', 'Mysteries', 'Science Fiction']
-    },
-    {
-      name: 'Science and Technology',
-      subGenres: ['All', 'Astronomy', 'Biology', 'Chemistry', 'Computer Science', 'Engineering', 'Mathematics', 'Physics', 'Programming', 'Technology']
-    },
-    {
-      name: 'Self-Help and Personal Development',
-      subGenres: ['All', 'Creativity', 'Happiness', 'Memory Improvement', 'Motivational', 'Personal Transformation', 'Relationships', 'Self-Esteem', 'Stress Management', 'Success', 'Time Management']
-    },
-    {
-      name: 'Health and Wellness',
-      subGenres: ['All', 'Alternative Medicine', 'Diet & Nutrition', 'Exercise & Fitness', 'Mental Health', 'Mindfulness', 'Yoga', 'Weight Loss']
-    }
-  ]
-
-  const megaMenuSections = {
-    'Best Sellers': [
-      { id: '2', title: 'Atomic Habits', author: 'James Clear', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop&q=80' },
-      { id: '7', title: 'The Alchemist', author: 'Paulo Coelho', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=300&fit=crop&q=80' },
-      { id: '4', title: 'Psychology of Money', author: 'Morgan Housel', image: 'https://images.unsplash.com/photo-1589998059171-988d887df646?w=200&h=300&fit=crop&q=80' }
-    ],
-    'New Arrivals': [
-      { id: '10', title: 'Fourth Wing', author: 'Rebecca Ross', image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&h=300&fit=crop&q=80' },
-      { id: '11', title: 'Tomorrow, and Tomorrow', author: 'Gabrielle Zevin', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop&q=80' },
-      { id: '12', title: 'The Midnight Library', author: 'Matt Haig', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=300&fit=crop&q=80' }
-    ],
-    'Nepali Books': [
-      { id: '3', title: 'Palpasa Cafe', author: 'Narayan Wagle', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=300&fit=crop&q=80' },
-      { id: '5', title: 'Shirish Ko Phool', author: 'Parijat', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&h=300&fit=crop&q=80' },
-      { id: '15', title: 'Seto Dharti', author: 'Amar Neupane', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop&q=80' }
-    ],
-    'Others': [
-      'Bundle Deals',
-      'Used Books', 
-      'Preorders',
-      'Book Request'
-    ]
-  }
 
   const currencyOptions = [
     { value: 'NPR', label: 'NPR', flag: '🇳🇵', country: 'Nepal' },
@@ -193,55 +200,69 @@ const Navbar = () => {
                       <div className="col-span-3 border-r dark:border-gray-700 pr-6">
                         <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-4 text-base">Browse by Genre</h3>
                         <div className="genre-scroll pr-2" style={{ maxHeight: '360px' }}>
-                          <ul className="space-y-1">
-                            {genresWithSubGenres.map((genre) => (
-                              <li key={genre.name}>
-                                <div className="flex items-stretch gap-1">
-                                  <Link
-                                    href={`/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-                                    className={`flex-1 flex items-center text-left text-gray-900 dark:text-gray-100 hover:text-bookStore-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 py-2.5 px-3 rounded-md transition-all dark-transition font-semibold text-[15px] ${
-                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-bookStore-blue dark:text-blue-400' : ''
-                                    }`}
-                                  >
-                                    <span>{genre.name}</span>
-                                  </Link>
-                                  <button
-                                    onClick={() => setExpandedGenre(expandedGenre === genre.name ? null : genre.name)}
-                                    className={`flex items-center justify-center px-2 text-gray-900 dark:text-gray-100 hover:text-bookStore-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-all dark-transition ${
-                                      expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-bookStore-blue dark:text-blue-400' : ''
-                                    }`}
-                                  >
-                                    <ChevronDown 
-                                      size={16} 
-                                      className={`flex-shrink-0 transition-transform duration-200 ${
-                                        expandedGenre === genre.name ? 'rotate-180' : ''
+                          {loadingData ? (
+                            <div className="space-y-2">
+                              {[...Array(5)].map((_, i) => (
+                                <div key={i} className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                              ))}
+                            </div>
+                          ) : (
+                            <ul className="space-y-1">
+                              {genres.map((genre) => (
+                                <li key={genre._id}>
+                                  <div className="flex items-stretch gap-1">
+                                    <Link
+                                      href={`/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                                      className={`flex-1 flex items-center text-left text-gray-900 dark:text-gray-100 hover:text-bookStore-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 py-2.5 px-3 rounded-md transition-all dark-transition font-semibold text-[15px] ${
+                                        expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-bookStore-blue dark:text-blue-400' : ''
                                       }`}
-                                    />
-                                  </button>
-                                </div>
-                                
-                                {/* Sub-genres - Expand Below */}
-                                {expandedGenre === genre.name && (
-                                  <ul className="mt-1 mb-2 ml-3 space-y-1 border-l-2 border-gray-200 dark:border-gray-600 pl-3">
-                                    {genre.subGenres.map((subGenre) => (
-                                      <li key={subGenre}>
+                                    >
+                                      <span>{genre.name}</span>
+                                    </Link>
+                                    {genre.subGenres && genre.subGenres.length > 0 && (
+                                      <button
+                                        onClick={() => setExpandedGenre(expandedGenre === genre.name ? null : genre.name)}
+                                        className={`flex items-center justify-center px-2 text-gray-900 dark:text-gray-100 hover:text-bookStore-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-all dark-transition ${
+                                          expandedGenre === genre.name ? 'bg-gray-50 dark:bg-gray-700 text-bookStore-blue dark:text-blue-400' : ''
+                                        }`}
+                                      >
+                                        <ChevronDown 
+                                          size={16} 
+                                          className={`flex-shrink-0 transition-transform duration-200 ${
+                                            expandedGenre === genre.name ? 'rotate-180' : ''
+                                          }`}
+                                        />
+                                      </button>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Sub-genres - Expand Below */}
+                                  {expandedGenre === genre.name && genre.subGenres && genre.subGenres.length > 0 && (
+                                    <ul className="mt-1 mb-2 ml-3 space-y-1 border-l-2 border-gray-200 dark:border-gray-600 pl-3">
+                                      <li>
                                         <Link
-                                          href={
-                                            subGenre === 'All' 
-                                              ? `/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
-                                              : `/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${subGenre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
-                                          }
+                                          href={`/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                                           className="text-gray-600 dark:text-gray-400 hover:text-bookStore-blue dark:hover:text-blue-400 text-sm block py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                         >
-                                          {subGenre}
+                                          All
                                         </Link>
                                       </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
+                                      {genre.subGenres.map((subGenre) => (
+                                        <li key={subGenre}>
+                                          <Link
+                                            href={`/genre/${genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${subGenre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                                            className="text-gray-600 dark:text-gray-400 hover:text-bookStore-blue dark:hover:text-blue-400 text-sm block py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                          >
+                                            {subGenre}
+                                          </Link>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
                       </div>
 
@@ -254,25 +275,39 @@ const Navbar = () => {
                               <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-bookStore-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Best Sellers</h4>
                             </Link>
                             <div className="space-y-3">
-                              {megaMenuSections['Best Sellers'].map((book, index) => (
-                                <Link
-                                  key={index}
-                                  href={`/book/${book.id}`}
-                                  className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
-                                >
-                                  <Image
-                                    src={book.image}
-                                    alt={book.title}
-                                    width={50}
-                                    height={70}
-                                    className="rounded shadow-sm flex-shrink-0"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
+                              {loadingData ? (
+                                [...Array(3)].map((_, i) => (
+                                  <div key={i} className="flex items-start space-x-3 p-2">
+                                    <div className="w-[50px] h-[70px] bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                    <div className="flex-1 space-y-2">
+                                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
+                                    </div>
                                   </div>
-                                </Link>
-                              ))}
+                                ))
+                              ) : bestsellers.length > 0 ? (
+                                bestsellers.map((book) => (
+                                  <Link
+                                    key={book._id}
+                                    href={`/book/${book._id}`}
+                                    className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
+                                  >
+                                    <Image
+                                      src={book.images?.[0] || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop'}
+                                      alt={book.title}
+                                      width={50}
+                                      height={70}
+                                      className="rounded shadow-sm flex-shrink-0"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
+                                    </div>
+                                  </Link>
+                                ))
+                              ) : (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">No bestsellers available</p>
+                              )}
                             </div>
                           </div>
 
@@ -282,25 +317,39 @@ const Navbar = () => {
                               <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-bookStore-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">New Arrivals</h4>
                             </Link>
                             <div className="space-y-3">
-                              {megaMenuSections['New Arrivals'].map((book, index) => (
-                                <Link
-                                  key={index}
-                                  href={`/book/${book.id}`}
-                                  className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
-                                >
-                                  <Image
-                                    src={book.image}
-                                    alt={book.title}
-                                    width={50}
-                                    height={70}
-                                    className="rounded shadow-sm flex-shrink-0"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
+                              {loadingData ? (
+                                [...Array(3)].map((_, i) => (
+                                  <div key={i} className="flex items-start space-x-3 p-2">
+                                    <div className="w-[50px] h-[70px] bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                    <div className="flex-1 space-y-2">
+                                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
+                                    </div>
                                   </div>
-                                </Link>
-                              ))}
+                                ))
+                              ) : newArrivals.length > 0 ? (
+                                newArrivals.map((book) => (
+                                  <Link
+                                    key={book._id}
+                                    href={`/book/${book._id}`}
+                                    className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
+                                  >
+                                    <Image
+                                      src={book.images?.[0] || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop'}
+                                      alt={book.title}
+                                      width={50}
+                                      height={70}
+                                      className="rounded shadow-sm flex-shrink-0"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
+                                    </div>
+                                  </Link>
+                                ))
+                              ) : (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">No new arrivals available</p>
+                              )}
                             </div>
                           </div>
 
@@ -310,25 +359,39 @@ const Navbar = () => {
                               <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 hover:text-bookStore-blue dark:hover:text-blue-400 cursor-pointer dark-transition text-base">Nepali Books</h4>
                             </Link>
                             <div className="space-y-3">
-                              {megaMenuSections['Nepali Books'].map((book, index) => (
-                                <Link
-                                  key={index}
-                                  href={`/book/${book.id}`}
-                                  className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
-                                >
-                                  <Image
-                                    src={book.image}
-                                    alt={book.title}
-                                    width={50}
-                                    height={70}
-                                    className="rounded shadow-sm flex-shrink-0"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
+                              {loadingData ? (
+                                [...Array(3)].map((_, i) => (
+                                  <div key={i} className="flex items-start space-x-3 p-2">
+                                    <div className="w-[50px] h-[70px] bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                    <div className="flex-1 space-y-2">
+                                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
+                                    </div>
                                   </div>
-                                </Link>
-                              ))}
+                                ))
+                              ) : nepaliBooks.length > 0 ? (
+                                nepaliBooks.map((book) => (
+                                  <Link
+                                    key={book._id}
+                                    href={`/book/${book._id}`}
+                                    className="flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-md transition-colors group"
+                                  >
+                                    <Image
+                                      src={book.images?.[0] || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop'}
+                                      alt={book.title}
+                                      width={50}
+                                      height={70}
+                                      className="rounded shadow-sm flex-shrink-0"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 dark-transition line-clamp-2">{book.title}</p>
+                                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{book.author}</p>
+                                    </div>
+                                  </Link>
+                                ))
+                              ) : (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">No Nepali books available</p>
+                              )}
                             </div>
                           </div>
 

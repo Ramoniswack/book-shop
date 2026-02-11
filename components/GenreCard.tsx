@@ -17,8 +17,8 @@ interface GenreCardProps {
 const GenreCard = ({ genre, className = '' }: GenreCardProps) => {
   return (
     <Link href={`/genre/${genre.slug}`}>
-      <div className={`card hover:shadow-lg transition-all duration-300 group cursor-pointer dark-transition ${className}`}>
-        <div className="relative h-32 md:h-40 overflow-hidden">
+      <div className={`card hover:shadow-lg transition-all duration-300 group cursor-pointer dark-transition overflow-hidden ${className}`}>
+        <div className="relative h-48 md:h-56 overflow-hidden">
           {genre.image ? (
             <Image
               src={genre.image}
@@ -32,21 +32,17 @@ const GenreCard = ({ genre, className = '' }: GenreCardProps) => {
               <BookOpen size={48} className="text-bookStore-blue dark:text-blue-400" />
             </div>
           )}
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300"></div>
-        </div>
-        
-        <div className="p-4">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-bookStore-blue dark:group-hover:text-blue-400 transition-colors duration-200 dark-transition">
-            {genre.name}
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 dark-transition">
-            {genre.bookCount.toLocaleString()} books
-          </p>
-          {genre.description && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2 dark-transition">
-              {genre.description}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:from-black/80 transition-colors duration-300"></div>
+          
+          {/* Title and book count overlay on image */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+            <h3 className="font-semibold text-lg group-hover:text-blue-300 transition-colors duration-200">
+              {genre.name}
+            </h3>
+            <p className="text-sm text-gray-200 mt-1">
+              {genre.bookCount.toLocaleString()} {genre.bookCount === 1 ? 'book' : 'books'} available
             </p>
-          )}
+          </div>
         </div>
       </div>
     </Link>

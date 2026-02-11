@@ -51,8 +51,7 @@ export interface Author {
 export const fetchAllBooks = async (): Promise<Book[]> => {
   try {
     const response = await fetch(`${API_URL}/books`, {
-      cache: 'no-store', // Disable caching
-      next: { revalidate: 0 } // Revalidate immediately
+      cache: 'no-store'
     });
     const data = await response.json();
     
@@ -72,8 +71,7 @@ export const fetchAllBooks = async (): Promise<Book[]> => {
 export const fetchFeaturedBooks = async (): Promise<Book[]> => {
   try {
     const response = await fetch(`${API_URL}/books/featured`, {
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      cache: 'no-store'
     });
     const data = await response.json();
     
@@ -94,8 +92,7 @@ export const fetchFeaturedBooks = async (): Promise<Book[]> => {
 export const fetchNewArrivals = async (): Promise<Book[]> => {
   try {
     const response = await fetch(`${API_URL}/books/new-arrivals`, {
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      cache: 'no-store'
     });
     const data = await response.json();
     
@@ -116,8 +113,7 @@ export const fetchNewArrivals = async (): Promise<Book[]> => {
 export const fetchBestsellers = async (): Promise<Book[]> => {
   try {
     const response = await fetch(`${API_URL}/books/bestsellers`, {
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      cache: 'no-store'
     });
     const data = await response.json();
     
@@ -138,8 +134,7 @@ export const fetchBestsellers = async (): Promise<Book[]> => {
 export const fetchBookById = async (id: string): Promise<Book | null> => {
   try {
     const response = await fetch(`${API_URL}/books/${id}`, {
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      cache: 'no-store'
     });
     const data = await response.json();
     
@@ -159,11 +154,33 @@ export const fetchBookById = async (id: string): Promise<Book | null> => {
  */
 export const fetchGenres = async (): Promise<Genre[]> => {
   try {
-    const response = await fetch(`${API_URL}/genres`);
-    const data = await response.json();
+    const [genresResponse, booksResponse] = await Promise.all([
+      fetch(`${API_URL}/genres`),
+      fetch(`${API_URL}/books`)
+    ]);
     
-    if (data.success && data.data) {
-      return Array.isArray(data.data) ? data.data : data.data.genres || [];
+    const genresData = await genresResponse.json();
+    const booksData = await booksResponse.json();
+    
+    if (genresData.success && genresData.data) {
+      const genres = Array.isArray(genresData.data) ? genresData.data : genresData.data.genres || [];
+      const books = booksData.success && booksData.data ? (Array.isArray(booksData.data) ? booksData.data : booksData.data.books || []) : [];
+      
+      // Calculate book count for each genre
+      return genres.map((genre: any) => {
+        const bookCount = books.filter((book: any) => 
+          book.genres && book.genres.some((g: string) => 
+            g.toLowerCase() === genre.name.toLowerCase()
+          )
+        ).length;
+        
+        return {
+          ...genre,
+          id: genre._id || genre.id,
+          slug: genre.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          bookCount
+        };
+      });
     }
     return [];
   } catch (error) {

@@ -1,20 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Edit, Trash2, AlertTriangle, Tag, Calendar, TrendingUp, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, AlertTriangle, Tag, Calendar, TrendingUp, Clock, Flame, Gift, Percent } from 'lucide-react';
 import Link from 'next/link';
 import { getSellerDeals, deleteDeal } from '@/utils/seller';
 
 interface Deal {
   _id: string;
   title: string;
-  dealType: 'percentage' | 'flat' | 'bogo';
+  description?: string;
+  type: 'FLASH_SALE' | 'BOGO' | 'PERCENTAGE' | 'FIXED_DISCOUNT' | 'LIMITED_TIME' | 'SEASONAL';
   discountValue: number;
+  buyQuantity?: number;
+  getQuantity?: number;
   applicableBooks: any[];
-  applicableGenres: any[];
+  bannerImage?: string;
   startDate: string;
   endDate: string;
   isActive: boolean;
+  showOnHomepage: boolean;
+  showOnDealsPage: boolean;
   createdAt: string;
 }
 
@@ -33,7 +38,7 @@ export default function SellerDeals() {
 
   // Filters
   const [statusFilter, setStatusFilter] = useState('');
-  const [dealTypeFilter, setDealTypeFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   // Delete confirmation
@@ -42,7 +47,7 @@ export default function SellerDeals() {
 
   useEffect(() => {
     fetchDeals();
-  }, [currentPage, statusFilter, dealTypeFilter]);
+  }, [currentPage, statusFilter, typeFilter]);
 
   const fetchDeals = async () => {
     try {
@@ -60,8 +65,8 @@ export default function SellerDeals() {
         params.isActive = false;
       }
 
-      if (dealTypeFilter) {
-        params.dealType = dealTypeFilter;
+      if (typeFilter) {
+        params.type = typeFilter;
       }
 
       const response = await getSellerDeals(params);
@@ -121,29 +126,73 @@ export default function SellerDeals() {
     }
   };
 
+  const getDealTypeIcon = (type: string) => {
+    switch (type) {
+      case 'FLASH_SALE':
+        return <Flame className="w-4 h-4" />;
+      case 'BOGO':
+        return <Gift className="w-4 h-4" />;
+      case 'LIMITED_TIME':
+        return <Clock className="w-4 h-4" />;
+      case 'PERCENTAGE':
+      case 'FIXED_DISCOUNT':
+        return <Percent className="w-4 h-4" />;
+      default:
+        return <Tag className="w-4 h-4" />;
+    }
+  };
+
   const getDealTypeLabel = (type: string) => {
     switch (type) {
-      case 'percentage':
-        return 'Percentage Off';
-      case 'flat':
-        return 'Flat Discount';
-      case 'bogo':
+      case 'FLASH_SALE':
+        return 'Flash Sale';
+      case 'BOGO':
         return 'Buy One Get One';
+      case 'PERCENTAGE':
+        return 'Percentage Off';
+      case 'FIXED_DISCOUNT':
+        return 'Fixed Discount';
+      case 'LIMITED_TIME':
+        return 'Limited Time';
+      case 'SEASONAL':
+        return 'Seasonal';
       default:
         return type;
     }
   };
 
   const getDealValueDisplay = (deal: Deal) => {
-    switch (deal.dealType) {
-      case 'percentage':
+    switch (deal.type) {
+      case 'FLASH_SALE':
+      case 'PERCENTAGE':
+      case 'LIMITED_TIME':
+      case 'SEASONAL':
         return `${deal.discountValue}% OFF`;
-      case 'flat':
+      case 'FIXED_DISCOUNT':
         return `$${deal.discountValue} OFF`;
-      case 'bogo':
-        return 'BOGO';
+      case 'BOGO':
+        return `Buy ${deal.buyQuantity} Get ${deal.getQuantity} Free`;
       default:
         return deal.discountValue;
+    }
+  };
+
+  const getDealTypeColor = (type: string) => {
+    switch (type) {
+      case 'FLASH_SALE':
+        return 'from-red-500 to-orange-600';
+      case 'BOGO':
+        return 'from-green-500 to-emerald-600';
+      case 'LIMITED_TIME':
+        return 'from-orange-500 to-yellow-600';
+      case 'SEASONAL':
+        return 'from-teal-500 to-cyan-600';
+      case 'PERCENTAGE':
+        return 'from-blue-500 to-indigo-600';
+      case 'FIXED_DISCOUNT':
+        return 'from-purple-500 to-pink-600';
+      default:
+        return 'from-blue-500 to-purple-600';
     }
   };
 
@@ -200,17 +249,20 @@ export default function SellerDeals() {
 
           {/* Deal Type Filter */}
           <select
-            value={dealTypeFilter}
+            value={typeFilter}
             onChange={(e) => {
-              setDealTypeFilter(e.target.value);
+              setTypeFilter(e.target.value);
               setCurrentPage(1);
             }}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Deal Types</option>
-            <option value="percentage">Percentage Off</option>
-            <option value="flat">Flat Discount</option>
-            <option value="bogo">Buy One Get One</option>
+            <option value="FLASH_SALE">Flash Sale</option>
+            <option value="BOGO">Buy One Get One</option>
+            <option value="PERCENTAGE">Percentage Off</option>
+            <option value="FIXED_DISCOUNT">Fixed Discount</option>
+            <option value="LIMITED_TIME">Limited Time</option>
+            <option value="SEASONAL">Seasonal</option>
           </select>
         </div>
       </div>
@@ -234,7 +286,7 @@ export default function SellerDeals() {
               return (
                 <div key={deal._id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
                   {/* Deal Header */}
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+                  <div className={`bg-gradient-to-r ${getDealTypeColor(deal.type)} p-6 text-white`}>
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
@@ -247,8 +299,8 @@ export default function SellerDeals() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm opacity-90">
-                      <Tag className="w-4 h-4" />
-                      <span>{getDealTypeLabel(deal.dealType)}</span>
+                      {getDealTypeIcon(deal.type)}
+                      <span>{getDealTypeLabel(deal.type)}</span>
                     </div>
                   </div>
 
@@ -277,18 +329,19 @@ export default function SellerDeals() {
                         </div>
                       )}
 
-                      {/* Applicable Genres */}
-                      {deal.applicableGenres && deal.applicableGenres.length > 0 && (
-                        <div className="flex items-start gap-2 text-gray-600">
-                          <Tag className="w-4 h-4 mt-0.5" />
-                          <div>
-                            <p className="font-medium text-gray-900">Genres ({deal.applicableGenres.length})</p>
-                            <p className="text-xs text-gray-500">
-                              {deal.applicableGenres.map((genre: any) => genre.name).join(', ')}
-                            </p>
-                          </div>
-                        </div>
-                      )}
+                      {/* Visibility Flags */}
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {deal.showOnHomepage && (
+                          <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
+                            Homepage
+                          </span>
+                        )}
+                        {deal.showOnDealsPage && (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                            Deals Page
+                          </span>
+                        )}
+                      </div>
 
                       {/* Created Date */}
                       <div className="flex items-center gap-2 text-gray-500 text-xs pt-2 border-t border-gray-100">
@@ -352,7 +405,7 @@ export default function SellerDeals() {
           <Tag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-500 text-lg mb-2">No deals found</p>
           <p className="text-gray-400 text-sm mb-4">
-            {statusFilter || dealTypeFilter
+            {statusFilter || typeFilter
               ? 'Try adjusting your filters'
               : 'Create your first deal to start promoting your books'}
           </p>

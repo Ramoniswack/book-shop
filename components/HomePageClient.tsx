@@ -4,10 +4,25 @@ import HeroSection from '@/components/HeroSection'
 import ProductGrid from '@/components/ProductGrid'
 import GenreSlider from '@/components/GenreSlider'
 import BestsellingAuthors from '@/components/BestsellingAuthors'
-import { DealsPromoBanner, UsedBooksPromoBanner, RecommendationBanner, SpecialOffersBanner } from '@/components/PromotionalBanners'
+import DealSection from '@/components/DealSection'
+import { UsedBooksPromoBanner, RecommendationBanner } from '@/components/PromotionalBanners'
 import { Book, Genre, Author } from '@/types/book'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+
+interface Deal {
+  _id: string
+  title: string
+  description: string
+  type: 'FLASH_SALE' | 'BOGO' | 'PERCENTAGE' | 'FIXED_DISCOUNT' | 'LIMITED_TIME' | 'SEASONAL'
+  discountValue: number
+  buyQuantity?: number
+  getQuantity?: number
+  applicableBooks: any[]
+  bannerImage?: string
+  startDate: string
+  endDate: string
+}
 
 interface HomePageClientProps {
   featuredBooks: Book[]
@@ -15,9 +30,10 @@ interface HomePageClientProps {
   genres: Genre[]
   newArrivals: Book[]
   authors: Author[]
+  homeDeals: Deal[]
 }
 
-const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, authors }: HomePageClientProps) => {
+const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, authors, homeDeals }: HomePageClientProps) => {
   return (
     <>
       {/* Hero Section with Rotating Featured Books */}
@@ -36,8 +52,10 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         </div>
       </section>
 
-      {/* Deals Promo Banner */}
-      <DealsPromoBanner />
+      {/* Dynamic Deals Sections */}
+      {homeDeals && homeDeals.length > 0 && homeDeals.map((deal) => (
+        <DealSection key={deal._id} deal={deal} />
+      ))}
 
       {/* Bestselling Authors */}
       <BestsellingAuthors authors={authors} />
@@ -61,9 +79,6 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         showViewAll={false}
         className="bg-gray-50 dark:bg-gray-900"
       />
-
-      {/* Special Offers Banner */}
-      <SpecialOffersBanner />
 
       {/* Bestsellers */}
       <ProductGrid

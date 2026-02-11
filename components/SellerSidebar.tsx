@@ -11,12 +11,16 @@ import {
   TrendingUp,
   Settings,
   LogOut,
+  User,
+  Layers,
 } from 'lucide-react';
 import { logout } from '@/utils/auth';
 
 const navigation = [
   { name: 'Dashboard', href: '/seller', icon: LayoutDashboard },
   { name: 'Books', href: '/seller/books', icon: BookOpen },
+  { name: 'Authors', href: '/seller/authors', icon: User },
+  { name: 'Genres', href: '/seller/genres', icon: Layers },
   { name: 'Orders', href: '/seller/orders', icon: ShoppingCart },
   { name: 'Deals', href: '/seller/deals', icon: Tag },
   { name: 'Analytics', href: '/seller/analytics', icon: BarChart3 },
