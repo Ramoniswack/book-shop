@@ -51,7 +51,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
           title: item.bookId.title || 'Unknown Title',
           author: item.bookId.author || 'Unknown Author',
           price: item.price,
-          image: item.bookId.imageUrl || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop',
+          image: item.bookId.images?.[0] || item.bookId.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop',
           quantity: item.quantity
         }))
         setCart(transformedCart)

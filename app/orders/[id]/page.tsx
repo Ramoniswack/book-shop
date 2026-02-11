@@ -175,7 +175,7 @@ export default function OrderDetailPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    order.orderStatus === 'pending' || order.orderStatus === 'processing' || order.orderStatus === 'shipped' || order.orderStatus === 'delivered'
+                    ['pending', 'accepted', 'processing', 'shipped', 'delivered'].includes(order.orderStatus)
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400'
                   }`}>
@@ -191,7 +191,21 @@ export default function OrderDetailPage() {
 
                 <div className="flex items-center gap-4">
                   <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    order.orderStatus === 'processing' || order.orderStatus === 'shipped' || order.orderStatus === 'delivered'
+                    ['accepted', 'processing', 'shipped', 'delivered'].includes(order.orderStatus)
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400'
+                  }`}>
+                    <CheckCircle size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 dark:text-gray-100">Accepted</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Your order has been accepted</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                    ['processing', 'shipped', 'delivered'].includes(order.orderStatus)
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400'
                   }`}>
@@ -205,7 +219,7 @@ export default function OrderDetailPage() {
 
                 <div className="flex items-center gap-4">
                   <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    order.orderStatus === 'shipped' || order.orderStatus === 'delivered'
+                    ['shipped', 'delivered'].includes(order.orderStatus)
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400'
                   }`}>
@@ -242,7 +256,7 @@ export default function OrderDetailPage() {
                 {order.items.map((item, index) => (
                   <div key={index} className="flex items-center gap-4 pb-4 border-b dark:border-gray-700 last:border-0">
                     <Image
-                      src={item.bookId?.imageUrl || item.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop'}
+                      src={item.bookId?.images?.[0] || item.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop'}
                       alt={item.title}
                       width={64}
                       height={80}

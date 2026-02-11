@@ -7,6 +7,11 @@ import { BookDetailSkeleton } from '@/components/LoadingSkeleton'
 import { ShoppingCart, Heart, Share2, Plus, Minus, ChevronUp, ChevronDown, Facebook, Twitter, Instagram } from 'lucide-react'
 import { Book } from '@/types/book'
 import { useCurrency } from '@/contexts/CurrencyContext'
+import { useCart } from '@/contexts/CartContext'
+import { addToWishlist, removeFromWishlist, getWishlist } from '@/utils/wishlist'
+import { isAuthenticated } from '@/utils/auth'
+import toast from 'react-hot-toast'
+import { useEffect } from 'react'
 
 interface BookDetailClientProps {
   book: Book
@@ -14,9 +19,34 @@ interface BookDetailClientProps {
 
 const BookDetailClient = ({ book }: BookDetailClientProps) => {
   const { formatPrice } = useCurrency()
+  const { addToCart, isLoading } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false)
+
+  // Check if book is in wishlist on mount
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (!isAuthenticated()) return
+
+      try {
+        const response = await getWishlist()
+        if (response.success) {
+          const bookId = book._id || book.id
+          const isInList = response.data.wishlist.some((item: any) => 
+            (item._id || item.id) === bookId
+          )
+          setIsWishlisted(isInList)
+        }
+      } catch (error) {
+        console.error('Error checking wishlist:', error)
+      }
+    }
+
+    checkWishlistStatus()
+  }, [book._id, book.id])
 
   // Generate multiple book images for gallery (using same image with different parameters for demo)
   const bookImages = [
@@ -30,12 +60,79 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
     setQuantity(prev => Math.max(1, prev + change))
   }
 
-  const handleAddToCart = () => {
-    console.log(`Added ${quantity} copies of "${book.title}" to cart`)
+  const handleAddToCart = async () => {
+    if (!isAuthenticated()) {
+      toast.error('Please login to add items to cart')
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1000)
+      return
+    }
+
+    try {
+      setIsAdding(true)
+      
+      // Use the book's MongoDB ID (either _id or id field)
+      const bookId = book._id || book.id
+      
+      // Add to cart with MongoDB ID
+      await addToCart({
+        bookId: bookId,
+        title: book.title,
+        author: book.author,
+        price: book.price,
+        image: book.image
+      }, quantity)
+      
+      setQuantity(1) // Reset quantity after adding
+    } catch (error: any) {
+      console.error('Failed to add to cart:', error)
+      toast.error(error.message || 'Failed to add to cart')
+    } finally {
+      setIsAdding(false)
+    }
   }
 
-  const handleWishlist = () => {
-    setIsWishlisted(!isWishlisted)
+  const handleWishlist = async () => {
+    if (!isAuthenticated()) {
+      toast.error('Please login to add to wishlist')
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1000)
+      return
+    }
+
+    try {
+      setIsWishlistLoading(true)
+      
+      // Use the book's MongoDB ID (either _id or id field)
+      const bookId = book._id || book.id
+      
+      if (isWishlisted) {
+        const response = await removeFromWishlist(bookId)
+        if (response.success) {
+          setIsWishlisted(false)
+          toast.success('Removed from wishlist')
+        }
+      } else {
+        const response = await addToWishlist({
+          bookId: bookId,
+          title: book.title,
+          author: book.author,
+          price: book.price,
+          image: book.image
+        })
+        if (response.success) {
+          setIsWishlisted(true)
+          toast.success('Added to wishlist!')
+        }
+      }
+    } catch (error: any) {
+      console.error('Failed to update wishlist:', error)
+      toast.error(error.message || 'Failed to update wishlist')
+    } finally {
+      setIsWishlistLoading(false)
+    }
   }
 
   const discountPercentage = book.originalPrice && book.originalPrice > book.price 
@@ -197,15 +294,19 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
 
                 <button
                   onClick={handleAddToCart}
-                  className="h-12 px-20 py-4 bg-bookStore-blue hover:bg-blue-700 rounded-full justify-center items-center gap-4 flex transition-colors"
+                  disabled={isAdding || !book.inStock}
+                  className="h-12 px-20 py-4 bg-bookStore-blue hover:bg-blue-700 rounded-full justify-center items-center gap-4 flex transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="text-white text-base font-semibold leading-tight">Add to Cart</span>
+                  <span className="text-white text-base font-semibold leading-tight">
+                    {isAdding ? 'Adding...' : 'Add to Cart'}
+                  </span>
                   <ShoppingCart className="w-4 h-4 text-white" strokeWidth={1.3} />
                 </button>
 
                 <button
                   onClick={handleWishlist}
-                  className="w-13 h-13 rounded-full bg-green-500 bg-opacity-10 hover:bg-opacity-20 transition-colors flex items-center justify-center"
+                  disabled={isWishlistLoading}
+                  className="w-13 h-13 rounded-full bg-green-500 bg-opacity-10 hover:bg-opacity-20 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Heart 
                     className={`w-6 h-6 ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-green-700 dark:text-green-400'}`} 

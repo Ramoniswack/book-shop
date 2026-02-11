@@ -6,10 +6,9 @@ import { Star, Heart, ShoppingCart, Plus, Minus } from 'lucide-react'
 import { Book } from '@/types/book'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { useCart } from '@/contexts/CartContext'
-import { addToWishlist, removeFromWishlist } from '@/utils/wishlist'
+import { addToWishlist, removeFromWishlist, getWishlist } from '@/utils/wishlist'
 import { isAuthenticated } from '@/utils/auth'
-import { ensureBookExists } from '@/utils/bookMapper'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 
 interface BookCardProps {
@@ -24,10 +23,38 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
   const [isAdding, setIsAdding] = useState(false)
   const [isInWishlist, setIsInWishlist] = useState(false)
   const [isWishlistLoading, setIsWishlistLoading] = useState(false)
+  const [checkingWishlist, setCheckingWishlist] = useState(true)
   
   const discountPercentage = book.originalPrice 
     ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
     : 0
+
+  // Check if book is in wishlist on mount
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (!isAuthenticated()) {
+        setCheckingWishlist(false)
+        return
+      }
+
+      try {
+        const response = await getWishlist()
+        if (response.success) {
+          const bookId = book._id || book.id
+          const isInList = response.data.wishlist.some((item: any) => 
+            (item._id || item.id) === bookId
+          )
+          setIsInWishlist(isInList)
+        }
+      } catch (error) {
+        console.error('Error checking wishlist:', error)
+      } finally {
+        setCheckingWishlist(false)
+      }
+    }
+
+    checkWishlistStatus()
+  }, [book._id, book.id])
 
   const handleAddToCart = async () => {
     if (!isAuthenticated()) {
@@ -41,18 +68,12 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
     try {
       setIsAdding(true)
       
-      // Ensure book exists in backend and get MongoDB ID
-      const mongoBookId = await ensureBookExists({
-        id: book.id,
-        title: book.title,
-        author: book.author,
-        price: book.price,
-        image: book.image
-      })
+      // Use the book's MongoDB ID (either _id or id field)
+      const bookId = book._id || book.id
       
       // Add to cart with MongoDB ID
       await addToCart({
-        bookId: mongoBookId,
+        bookId: bookId,
         title: book.title,
         author: book.author,
         price: book.price,
@@ -80,29 +101,27 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
     try {
       setIsWishlistLoading(true)
       
-      // Ensure book exists in backend and get MongoDB ID
-      const mongoBookId = await ensureBookExists({
-        id: book.id,
-        title: book.title,
-        author: book.author,
-        price: book.price,
-        image: book.image
-      })
+      // Use the book's MongoDB ID (either _id or id field)
+      const bookId = book._id || book.id
       
       if (isInWishlist) {
-        await removeFromWishlist(mongoBookId)
-        setIsInWishlist(false)
-        toast.success('Removed from wishlist')
+        const response = await removeFromWishlist(bookId)
+        if (response.success) {
+          setIsInWishlist(false)
+          toast.success('Removed from wishlist')
+        }
       } else {
-        await addToWishlist({
-          bookId: mongoBookId,
+        const response = await addToWishlist({
+          bookId: bookId,
           title: book.title,
           author: book.author,
           price: book.price,
           image: book.image
         })
-        setIsInWishlist(true)
-        toast.success('Added to wishlist!')
+        if (response.success) {
+          setIsInWishlist(true)
+          toast.success('Added to wishlist!')
+        }
       }
     } catch (error: any) {
       console.error('Failed to update wishlist:', error)

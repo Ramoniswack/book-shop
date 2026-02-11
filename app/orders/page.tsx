@@ -32,7 +32,7 @@ export default function OrdersPage() {
   const { formatPrice } = useCurrency()
   const [orders, setOrders] = useState<Order[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'pending' | 'completed' | 'cancelled'>('all')
+  const [filter, setFilter] = useState<'all' | 'pending' | 'delivered' | 'cancelled'>('all')
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -60,8 +60,12 @@ export default function OrdersPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending':
+      case 'accepted':
+      case 'processing':
         return <Clock className="text-yellow-500" size={20} />
-      case 'completed':
+      case 'shipped':
+        return <Package className="text-blue-500" size={20} />
+      case 'delivered':
         return <CheckCircle className="text-green-500" size={20} />
       case 'cancelled':
         return <XCircle className="text-red-500" size={20} />
@@ -89,6 +93,8 @@ export default function OrdersPage() {
 
   const filteredOrders = orders.filter(order => {
     if (filter === 'all') return true
+    if (filter === 'delivered') return order.orderStatus === 'delivered'
+    if (filter === 'pending') return ['pending', 'accepted', 'processing', 'shipped'].includes(order.orderStatus)
     return order.orderStatus === filter
   })
 
@@ -118,17 +124,17 @@ export default function OrdersPage() {
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
-              Pending
+              In Progress
             </button>
             <button
-              onClick={() => setFilter('completed')}
+              onClick={() => setFilter('delivered')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === 'completed'
+                filter === 'delivered'
                   ? 'bg-bookStore-blue text-white'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
-              Completed
+              Delivered
             </button>
             <button
               onClick={() => setFilter('cancelled')}
@@ -203,7 +209,7 @@ export default function OrdersPage() {
                   {order.items.slice(0, 2).map((item, index) => (
                     <div key={index} className="flex items-center gap-4">
                       <Image
-                        src={item.bookId?.imageUrl || item.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop'}
+                        src={item.bookId?.images?.[0] || item.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop'}
                         alt={item.title}
                         width={48}
                         height={60}
