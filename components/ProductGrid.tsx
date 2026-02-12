@@ -2,6 +2,7 @@
 
 import BookCard from './BookCard'
 import { Book } from '@/types/book'
+import { getDealBadgeInfo } from '@/utils/bookMapper'
 
 interface ProductGridProps {
   books: Book[]
@@ -37,7 +38,11 @@ const ProductGrid = ({
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard 
+              key={book.id} 
+              book={book}
+              dealInfo={getDealBadgeInfo(book)}
+            />
           ))}
         </div>
         

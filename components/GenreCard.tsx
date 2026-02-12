@@ -1,16 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BookOpen } from 'lucide-react'
+import { Genre } from '@/lib/types'
 
 interface GenreCardProps {
-  genre: {
-    id: string
-    name: string
-    slug: string
-    image?: string
-    bookCount: number
-    description?: string
-  }
+  genre: any
   className?: string
 }
 

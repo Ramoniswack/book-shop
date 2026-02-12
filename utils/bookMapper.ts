@@ -1,6 +1,52 @@
 import { Book } from '@/types/book';
 
 /**
+ * Get deal badge information from book's deal data
+ */
+export function getDealBadgeInfo(book: any) {
+  if (!book.hasDeal || !book.dealInfo) {
+    return null;
+  }
+
+  const { type, discountValue, buyQuantity, getQuantity } = book.dealInfo;
+  
+  let badge = '';
+  let color = '';
+  
+  switch (type) {
+    case 'FLASH_SALE':
+      badge = '🔥 FLASH';
+      color = 'bg-red-500 text-white';
+      break;
+    case 'BOGO':
+      badge = '🎁 BOGO';
+      color = 'bg-green-500 text-white';
+      break;
+    case 'PERCENTAGE':
+      badge = `${discountValue}% OFF`;
+      color = 'bg-blue-500 text-white';
+      break;
+    case 'FIXED_DISCOUNT':
+      badge = `${discountValue} OFF`;
+      color = 'bg-purple-500 text-white';
+      break;
+    case 'LIMITED_TIME':
+      badge = `⏰ ${discountValue}%`;
+      color = 'bg-orange-500 text-white';
+      break;
+    case 'SEASONAL':
+      badge = `🎉 ${discountValue}%`;
+      color = 'bg-teal-500 text-white';
+      break;
+    default:
+      badge = 'DEAL';
+      color = 'bg-gray-500 text-white';
+  }
+  
+  return { type, badge, color };
+}
+
+/**
  * Normalize book data from backend to match frontend expectations
  * Adds backward compatibility fields
  */
@@ -10,12 +56,17 @@ export function normalizeBook(book: any): Book {
     id: book._id || book.id,
     image: book.images?.[0] || book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop',
     genre: book.genres?.[0] || book.genre || 'General',
-    originalPrice: book.discountPrice ? book.price : undefined,
+    // If book has deal, originalPrice is already set by backend
+    // Otherwise, use discountPrice logic for backward compatibility
+    originalPrice: book.originalPrice || (book.discountPrice && book.discountPrice < book.price ? book.price : undefined),
     inStock: book.stock > 0,
     isNew: book.isNewArrival,
     reviewCount: book.reviews || book.reviewCount || 0,
     rating: book.rating || 0,
     language: book.language || 'English',
+    // Pass through deal information
+    hasDeal: book.hasDeal || false,
+    dealInfo: book.dealInfo || undefined,
   };
 }
 

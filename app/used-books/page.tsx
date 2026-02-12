@@ -7,7 +7,7 @@ import { Recycle, CheckCircle, DollarSign, Leaf } from 'lucide-react'
 // Fetch only used books from the API
 const fetchUsedBooks = async () => {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/books/used`
+    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/books/used`
     console.log('🔍 Fetching used books from:', url)
     
     const response = await fetch(url, { cache: 'no-store' })

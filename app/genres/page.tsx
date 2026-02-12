@@ -6,7 +6,7 @@ export default async function GenresPage() {
   const allGenres = await fetchGenres()
   
   // Filter out genres with no books
-  const genres = allGenres.filter(genre => genre.bookCount > 0)
+  const genres = allGenres.filter(genre => genre.bookCount && genre.bookCount > 0)
 
   return (
     <MainLayout>
@@ -28,7 +28,7 @@ export default async function GenresPage() {
           {genres.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {genres.map((genre) => (
-                <GenreCard key={genre.id} genre={genre} />
+                <GenreCard key={genre._id} genre={genre} />
               ))}
             </div>
           ) : (

@@ -207,36 +207,7 @@ const DealSection = ({ deal, className = '' }: DealSectionProps) => {
         </div>
 
         {/* Deal Books Grid */}
-        {deal.applicableBooks && deal.applicableBooks.length > 0 && (
-          <div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-              {deal.applicableBooks.slice(0, 5).map((book: any) => (
-                <div key={book._id} className="relative">
-                  {/* Deal Badge on Book Card */}
-                  <div className="absolute top-2 right-2 z-10">
-                    <div className={`px-2 py-1 rounded-lg text-xs font-bold shadow-lg ${getDealBadgeColor()}`}>
-                      {deal.type === 'BOGO' ? '🎁 BOGO' : deal.type === 'FLASH_SALE' ? '🔥 SALE' : `${deal.discountValue}%`}
-                    </div>
-                  </div>
-                  <BookCard book={book} />
-                </div>
-              ))}
-            </div>
-
-            {/* View More Link */}
-            {deal.applicableBooks.length > 5 && (
-              <div className="text-center mt-8">
-                <Link
-                  href="/deals"
-                  className="inline-flex items-center text-bookStore-blue hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-                >
-                  View {deal.applicableBooks.length - 5} more books
-                  <ArrowRight size={16} className="ml-1" />
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
+        {/* Books are only shown on the deals page, not on homepage */}
       </div>
     </section>
   )

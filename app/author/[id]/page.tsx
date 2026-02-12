@@ -18,7 +18,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
     fetchBooksByAuthor(params.id)
   ])
   
-  const author = authors.find(a => a.id === params.id)
+  const author = authors.find(a => a._id === params.id)
   
   if (!author) {
     notFound()
@@ -31,7 +31,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
             <Image
-              src={author.image}
+              src={author.image || '/placeholder-author.jpg'}
               alt={author.name}
               width={150}
               height={150}

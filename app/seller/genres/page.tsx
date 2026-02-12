@@ -5,6 +5,7 @@ import { Search, Plus, Edit, Trash2, Tag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getGenres, createGenre, updateGenre, deleteGenre } from '@/utils/seller';
 import Image from 'next/image';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Genre {
   _id: string;
@@ -246,118 +247,150 @@ export default function GenresPage() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {editingGenre ? 'Edit Genre' : 'Add New Genre'}
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="e.g., Science Fiction"
-                />
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+          onClick={handleCloseModal}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Tag className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {editingGenre ? 'Edit Genre' : 'Add New Genre'}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {editingGenre ? 'Update genre information' : 'Create a new book genre'}
+                  </p>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                disabled={submitting}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
-              {/* Image URL */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URL <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/genre-image.jpg"
-                />
-                {formData.image && (
-                  <div className="mt-2">
-                    <img
-                      src={formData.image}
-                      alt="Preview"
-                      className="w-32 h-20 object-cover rounded border-2 border-gray-200"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://via.placeholder.com/128x80?text=Invalid';
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Sub-Genres */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sub-Genres (Optional)
-                </label>
-                <div className="flex gap-2 mb-2">
+            {/* Modal Body */}
+            <form onSubmit={handleSubmit}>
+              <div className="px-6 py-5 space-y-5">
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
-                    value={subGenreInput}
-                    onChange={(e) => setSubGenreInput(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleAddSubGenre();
-                      }
-                    }}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    placeholder="e.g., Space Opera"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    placeholder="e.g., Science Fiction"
+                    autoFocus
                   />
-                  <button
-                    type="button"
-                    onClick={handleAddSubGenre}
-                    className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm"
-                  >
-                    Add
-                  </button>
                 </div>
 
-                {formData.subGenres.length > 0 && (
-                  <div className="space-y-1">
-                    {formData.subGenres.map((subGenre, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-2 bg-blue-50 rounded text-sm"
-                      >
-                        <span className="text-gray-700">{subGenre}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveSubGenre(subGenre)}
-                          className="text-red-600 hover:text-red-700 text-xs"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
+                {/* Image Upload */}
+                <ImageUpload
+                  value={formData.image}
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  type="genres"
+                  label="Genre Image"
+                  required
+                  aspectRatio="landscape"
+                />
+
+                {/* Sub-Genres */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sub-Genres (Optional)
+                  </label>
+                  <div className="flex gap-2 mb-3">
+                    <input
+                      type="text"
+                      value={subGenreInput}
+                      onChange={(e) => setSubGenreInput(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddSubGenre();
+                        }
+                      }}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                      placeholder="e.g., Space Opera"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddSubGenre}
+                      className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 text-sm font-medium transition-colors"
+                    >
+                      Add
+                    </button>
                   </div>
-                )}
+
+                  {formData.subGenres.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs text-gray-500 font-medium">Added sub-genres:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.subGenres.map((subGenre, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-sm border border-purple-200"
+                          >
+                            <span>{subGenre}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSubGenre(subGenre)}
+                              className="text-purple-600 hover:text-purple-800 transition-colors"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3 pt-4">
+              {/* Modal Footer */}
+              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3 rounded-b-xl">
                 <button
                   type="button"
                   onClick={handleCloseModal}
                   disabled={submitting}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-white transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  disabled={submitting || !formData.name.trim() || !formData.image.trim()}
+                  className="px-5 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
                 >
-                  {submitting ? 'Saving...' : editingGenre ? 'Update' : 'Create'}
+                  {submitting ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>{editingGenre ? 'Updating...' : 'Creating...'}</span>
+                    </>
+                  ) : (
+                    <span>{editingGenre ? 'Update Genre' : 'Create Genre'}</span>
+                  )}
                 </button>
               </div>
             </form>

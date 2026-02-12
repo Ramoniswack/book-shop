@@ -33,6 +33,16 @@ export interface Book {
   language?: string;
   createdAt: string;
   updatedAt: string;
+  // Deal information
+  hasDeal?: boolean;
+  dealInfo?: {
+    _id: string;
+    title: string;
+    type: string;
+    discountValue: number;
+    buyQuantity?: number;
+    getQuantity?: number;
+  };
 }
 
 export interface Author {

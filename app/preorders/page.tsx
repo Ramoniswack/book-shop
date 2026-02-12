@@ -11,7 +11,7 @@ export default async function PreordersPage() {
   // Create preorder books (upcoming releases)
   const preorderBooks = allBooks.slice(0, 4).map((book, index) => ({
     ...book,
-    id: `preorder-${book.id}`,
+    id: `preorder-${book._id}`,
     title: `${book.title} (Upcoming Edition)`,
     description: 'Available for preorder - releasing soon',
   }))

@@ -11,7 +11,7 @@ export default async function BundleDealsPage() {
   // Create bundle deals with multiple books
   const bundleDeals = allBooks.slice(0, 6).map((book, index) => ({
     ...book,
-    id: `bundle-${book.id}`,
+    id: `bundle-${book._id}`,
     title: `Bundle: ${book.title} + 2 More Books`,
     originalPrice: book.price * 3,
     price: Math.round(book.price * 2.2), // Save on bundle

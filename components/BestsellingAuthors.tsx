@@ -28,7 +28,7 @@ const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps
   const dragThreshold = 5 // pixels
 
   // Default authors data with real images
-  const defaultAuthors: Author[] = [
+  const defaultAuthors: any[] = [
     {
       id: '1',
       name: 'Fyodor Dostoyevsky',
@@ -190,23 +190,25 @@ const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps
             }}
           >
             {displayAuthors.map((author) => (
-              <SwiperSlide key={author.id}>
+              <SwiperSlide key={author._id || author.id}>
                 <div
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
                   className="text-center group/author cursor-grab active:cursor-grabbing"
                 >
                   <div className="relative mb-3">
-                    <Image
-                      src={author.image}
-                      alt={author.name}
-                      width={120}
-                      height={120}
-                      className="rounded-full mx-auto object-cover group-hover/author:scale-105 transition-transform duration-200 shadow-md"
-                    />
+                    <div className="w-[120px] h-[120px] mx-auto rounded-full overflow-hidden shadow-md group-hover/author:scale-105 transition-transform duration-200">
+                      <Image
+                        src={author.image}
+                        alt={author.name}
+                        width={120}
+                        height={120}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
                   <Link 
-                    href={`/author/${author.id}`}
+                    href={`/author/${author._id || author.id}`}
                     onClick={handleClick}
                   >
                     <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm md:text-base group-hover/author:text-bookStore-blue dark:group-hover/author:text-blue-400 transition-colors line-clamp-1 dark-transition cursor-pointer">

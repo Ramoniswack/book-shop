@@ -5,7 +5,8 @@ import ProductGrid from '@/components/ProductGrid'
 import GenreSlider from '@/components/GenreSlider'
 import BestsellingAuthors from '@/components/BestsellingAuthors'
 import DealSection from '@/components/DealSection'
-import { UsedBooksPromoBanner, RecommendationBanner } from '@/components/PromotionalBanners'
+import DynamicSection from '@/components/DynamicSection'
+import { DynamicBOGOBanner, DynamicFlashSaleBanner } from '@/components/PromotionalBanners'
 import { Book, Genre, Author } from '@/types/book'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
@@ -24,6 +25,13 @@ interface Deal {
   endDate: string
 }
 
+interface HomepageSection {
+  _id: string
+  title: string
+  books: Book[]
+  displayType: 'grid' | 'slider'
+}
+
 interface HomePageClientProps {
   featuredBooks: Book[]
   bestsellers: Book[]
@@ -31,9 +39,26 @@ interface HomePageClientProps {
   newArrivals: Book[]
   authors: Author[]
   homeDeals: Deal[]
+  homepageSections?: HomepageSection[]
 }
 
-const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, authors, homeDeals }: HomePageClientProps) => {
+const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, authors, homeDeals, homepageSections = [] }: HomePageClientProps) => {
+  // Find BOGO and Flash Sale deals for promotional banners
+  const bogoDeal = homeDeals.find(deal => deal.type === 'BOGO')
+  const flashSaleDeal = homeDeals.find(deal => 
+    deal.type === 'FLASH_SALE' || 
+    deal.type === 'LIMITED_TIME' || 
+    deal.type === 'SEASONAL'
+  )
+
+  // Filter out deals used in promotional banners from the dynamic deal sections
+  const dynamicDeals = homeDeals.filter(deal => 
+    deal.type !== 'BOGO' && 
+    deal.type !== 'FLASH_SALE' && 
+    deal.type !== 'LIMITED_TIME' && 
+    deal.type !== 'SEASONAL'
+  )
+
   return (
     <>
       {/* Hero Section with Rotating Featured Books */}
@@ -52,13 +77,16 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         </div>
       </section>
 
-      {/* Dynamic Deals Sections */}
-      {homeDeals && homeDeals.length > 0 && homeDeals.map((deal) => (
+      {/* Dynamic Deal Sections (Percentage, Fixed Discount, etc.) */}
+      {dynamicDeals && dynamicDeals.length > 0 && dynamicDeals.map((deal) => (
         <DealSection key={deal._id} deal={deal} />
       ))}
 
       {/* Bestselling Authors */}
       <BestsellingAuthors authors={authors} />
+
+      {/* Dynamic BOGO Banner - Uses actual BOGO deal data */}
+      {bogoDeal && <DynamicBOGOBanner deal={bogoDeal} />}
 
       {/* Featured Books */}
       <ProductGrid
@@ -69,9 +97,6 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         className="bg-white dark:bg-gray-900"
       />
 
-      {/* Used Books Promo Banner */}
-      <UsedBooksPromoBanner />
-
       {/* New Arrivals */}
       <ProductGrid
         books={newArrivals}
@@ -79,6 +104,9 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         showViewAll={false}
         className="bg-gray-50 dark:bg-gray-900"
       />
+
+      {/* Dynamic Flash Sale Banner - Uses actual Flash/Limited/Seasonal deal data */}
+      {flashSaleDeal && <DynamicFlashSaleBanner deal={flashSaleDeal} />}
 
       {/* Bestsellers */}
       <ProductGrid
@@ -88,8 +116,15 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         className="bg-white dark:bg-gray-900"
       />
 
-      {/* Recommendation Banner */}
-      <RecommendationBanner />
+      {/* Dynamic Homepage Sections - Rendered Below Bestsellers */}
+      {homepageSections && homepageSections.length > 0 && homepageSections.map((section) => (
+        <DynamicSection
+          key={section._id}
+          title={section.title}
+          books={section.books || []}
+          displayType="grid"
+        />
+      ))}
     </>
   )
 }

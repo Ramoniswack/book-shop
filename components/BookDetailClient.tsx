@@ -50,11 +50,11 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
 
   // Generate multiple book images for gallery (using same image with different parameters for demo)
   const bookImages = [
-    book.image,
-    book.image.replace('w=400&h=600', 'w=400&h=600&sat=-100'), // B&W version
-    book.image.replace('w=400&h=600', 'w=400&h=600&sepia=100'), // Sepia version
-    book.image.replace('w=400&h=600', 'w=400&h=600&blur=1'), // Slightly blurred
-  ]
+    book.image || '',
+    (book.image || '').replace('w=400&h=600', 'w=400&h=600&sat=-100'), // B&W version
+    (book.image || '').replace('w=400&h=600', 'w=400&h=600&sepia=100'), // Sepia version
+    (book.image || '').replace('w=400&h=600', 'w=400&h=600&blur=1'), // Slightly blurred
+  ].filter(img => img)
 
   const handleQuantityChange = (change: number) => {
     setQuantity(prev => Math.max(1, prev + change))
@@ -75,13 +75,18 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
       // Use the book's MongoDB ID (either _id or id field)
       const bookId = book._id || book.id
       
+      if (!bookId) {
+        toast.error('Invalid book ID')
+        return
+      }
+      
       // Add to cart with MongoDB ID
       await addToCart({
         bookId: bookId,
         title: book.title,
         author: book.author,
         price: book.price,
-        image: book.image
+        image: book.image || ''
       }, quantity)
       
       setQuantity(1) // Reset quantity after adding
@@ -108,6 +113,11 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
       // Use the book's MongoDB ID (either _id or id field)
       const bookId = book._id || book.id
       
+      if (!bookId) {
+        toast.error('Invalid book ID')
+        return
+      }
+      
       if (isWishlisted) {
         const response = await removeFromWishlist(bookId)
         if (response.success) {
@@ -120,7 +130,7 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
           title: book.title,
           author: book.author,
           price: book.price,
-          image: book.image
+          image: book.image || ''
         })
         if (response.success) {
           setIsWishlisted(true)
@@ -214,7 +224,7 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
               {/* Rating and Reviews */}
               <div className="flex items-center mt-3 text-sm leading-6">
                 <div className="flex gap-0.5">
-                  <RatingStars rating={book.rating} size={16} />
+                  <RatingStars rating={book.rating || 0} size={16} />
                 </div>
                 <span className="ml-1 mr-3 text-gray-700 dark:text-gray-300">{book.reviewCount} Review{book.reviewCount !== 1 ? 's' : ''}</span>
                 <span className="font-medium mr-1 text-gray-700 dark:text-gray-300">ISBN:</span>

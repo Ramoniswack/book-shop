@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { AlertTriangle, Plus } from 'lucide-react';
-import { getAuthors, getGenres, createAuthor, createGenre } from '@/utils/seller';
+import { getAuthors, getGenres, createAuthor, createGenre, getHomepageSections } from '@/utils/seller';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import toast from 'react-hot-toast';
+import MultiImageUpload from './MultiImageUpload';
+import ImageUpload from './ImageUpload';
 
 interface BookFormData {
   title: string;
@@ -25,6 +27,7 @@ interface BookFormData {
   showInMegaMenuBestseller: boolean;
   showInMegaMenuNewArrival: boolean;
   showInMegaMenuNepali: boolean;
+  customSections: string[];
 }
 
 interface BookFormProps {
@@ -44,6 +47,12 @@ interface Genre {
   _id: string;
   name: string;
   subGenres: string[];
+}
+
+interface HomepageSection {
+  _id: string;
+  title: string;
+  isActive: boolean;
 }
 
 export default function BookForm({ initialData, onSubmit, submitLabel, isLoading, hideSubmitButton = false }: BookFormProps) {
@@ -67,10 +76,12 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
     showInMegaMenuBestseller: initialData?.showInMegaMenuBestseller || false,
     showInMegaMenuNewArrival: initialData?.showInMegaMenuNewArrival || false,
     showInMegaMenuNepali: initialData?.showInMegaMenuNepali || false,
+    customSections: initialData?.customSections || [],
   });
 
   const [authors, setAuthors] = useState<Author[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [homepageSections, setHomepageSections] = useState<HomepageSection[]>([]);
   const [loadingAuthors, setLoadingAuthors] = useState(true);
   const [loadingGenres, setLoadingGenres] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -101,6 +112,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
   useEffect(() => {
     fetchAuthors();
     fetchGenres();
+    fetchHomepageSections();
   }, []);
 
   const fetchAuthors = async () => {
@@ -128,6 +140,18 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
       console.error('Failed to fetch genres:', err);
     } finally {
       setLoadingGenres(false);
+    }
+  };
+
+  const fetchHomepageSections = async () => {
+    try {
+      const response = await getHomepageSections();
+      if (response.success) {
+        // Only show active sections
+        setHomepageSections(response.data.filter((s: HomepageSection) => s.isActive));
+      }
+    } catch (err) {
+      console.error('Failed to fetch homepage sections:', err);
     }
   };
 
@@ -594,43 +618,13 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
       </div>
 
       {/* Images */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Images (URLs)
-        </label>
-        <div className="flex gap-2 mb-2">
-          <input
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="https://example.com/image.jpg"
-          />
-          <button
-            type="button"
-            onClick={handleAddImage}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-        {formData.images.length > 0 && (
-          <div className="space-y-2">
-            {formData.images.map((img, index) => (
-              <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                <span className="flex-1 text-sm text-gray-700 truncate">{img}</span>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(index)}
-                  className="text-red-600 hover:text-red-700 text-sm"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <MultiImageUpload
+        values={formData.images}
+        onChange={(urls) => setFormData({ ...formData, images: urls })}
+        type="books"
+        label="Book Images"
+        maxImages={5}
+      />
 
       {/* Used Book Toggle */}
       <div>
@@ -706,6 +700,32 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
         </label>
       </div>
 
+      {/* Custom Homepage Sections */}
+      {homepageSections.length > 0 && (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Custom Homepage Sections
+          </label>
+          {homepageSections.map((section) => (
+            <label key={section._id} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.customSections.includes(section._id)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setFormData({ ...formData, customSections: [...formData.customSections, section._id] })
+                  } else {
+                    setFormData({ ...formData, customSections: formData.customSections.filter(id => id !== section._id) })
+                  }
+                }}
+                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+              />
+              <span className="ml-2 text-sm font-medium text-gray-700">{section.title}</span>
+            </label>
+          ))}
+        </div>
+      )}
+
       {/* Mega Menu Display Options */}
       <div className="border-t pt-4 mt-4">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Show in Mega Menu (Max 3 per section)</h3>
@@ -758,52 +778,31 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
 
       {/* New Author Modal */}
       {showNewAuthor && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Author</h3>
-            
-            {/* Author Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Author Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={newAuthorName}
-                onChange={(e) => setNewAuthorName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="e.g., James Clear"
-                autoFocus
-              />
-            </div>
-
-            {/* Author Image URL */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image URL <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="url"
-                value={newAuthorImage}
-                onChange={(e) => setNewAuthorImage(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="https://example.com/author-image.jpg"
-              />
-              {newAuthorImage && (
-                <div className="mt-2">
-                  <img 
-                    src={newAuthorImage} 
-                    alt="Preview" 
-                    className="w-20 h-20 object-cover rounded-full border-2 border-gray-200"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://via.placeholder.com/80?text=Invalid';
-                    }}
-                  />
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+          onClick={() => {
+            setShowNewAuthor(false);
+            setNewAuthorName('');
+            setNewAuthorImage('');
+          }}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
                 </div>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Add New Author</h3>
+                  <p className="text-sm text-gray-500">Create a new author profile</p>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={() => {
@@ -812,7 +811,53 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                   setNewAuthorImage('');
                 }}
                 disabled={creatingAuthor}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="px-6 py-5 space-y-5">
+              {/* Author Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Author Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={newAuthorName}
+                  onChange={(e) => setNewAuthorName(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="e.g., James Clear"
+                  autoFocus
+                />
+              </div>
+
+              {/* Author Image */}
+              <ImageUpload
+                value={newAuthorImage}
+                onChange={setNewAuthorImage}
+                type="authors"
+                label="Author Image"
+                required
+                aspectRatio="square"
+              />
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3 rounded-b-xl">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowNewAuthor(false);
+                  setNewAuthorName('');
+                  setNewAuthorImage('');
+                }}
+                disabled={creatingAuthor}
+                className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-white transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -820,9 +865,19 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                 type="button"
                 onClick={handleCreateAuthor}
                 disabled={creatingAuthor || !newAuthorName.trim() || !newAuthorImage.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                {creatingAuthor ? 'Creating...' : 'Create'}
+                {creatingAuthor ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Creating...</span>
+                  </>
+                ) : (
+                  <span>Create Author</span>
+                )}
               </button>
             </div>
           </div>
@@ -831,99 +886,33 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
 
       {/* New Genre Modal */}
       {showNewGenre && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Genre</h3>
-            
-            {/* Genre Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Genre Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={newGenreName}
-                onChange={(e) => setNewGenreName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="e.g., Science Fiction"
-                autoFocus
-              />
-            </div>
-
-            {/* Genre Image URL */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image URL <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="url"
-                value={newGenreImage}
-                onChange={(e) => setNewGenreImage(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="https://example.com/genre-image.jpg"
-              />
-              {newGenreImage && (
-                <div className="mt-2">
-                  <img 
-                    src={newGenreImage} 
-                    alt="Preview" 
-                    className="w-32 h-20 object-cover rounded border-2 border-gray-200"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://via.placeholder.com/128x80?text=Invalid';
-                    }}
-                  />
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+          onClick={() => {
+            setShowNewGenre(false);
+            setNewGenreName('');
+            setNewGenreImage('');
+            setNewGenreSubGenres([]);
+            setNewSubGenreInput('');
+          }}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
                 </div>
-              )}
-            </div>
-
-            {/* Sub-Genres (Optional) */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sub-Genres (Optional)
-              </label>
-              <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={newSubGenreInput}
-                  onChange={(e) => setNewSubGenreInput(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddSubGenreToNewGenre();
-                    }
-                  }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  placeholder="e.g., Space Opera"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddSubGenreToNewGenre}
-                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm"
-                >
-                  Add
-                </button>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Add New Genre</h3>
+                  <p className="text-sm text-gray-500">Create a new book genre</p>
+                </div>
               </div>
-              
-              {/* Sub-Genres List */}
-              {newGenreSubGenres.length > 0 && (
-                <div className="space-y-1 mt-2">
-                  {newGenreSubGenres.map((sg, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-blue-50 rounded text-sm">
-                      <span className="text-gray-700">{sg}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSubGenreFromNewGenre(sg)}
-                        className="text-red-600 hover:text-red-700 text-xs"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => {
@@ -934,7 +923,107 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                   setNewSubGenreInput('');
                 }}
                 disabled={creatingGenre}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="px-6 py-5 space-y-5">
+              {/* Genre Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Genre Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={newGenreName}
+                  onChange={(e) => setNewGenreName(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  placeholder="e.g., Science Fiction"
+                  autoFocus
+                />
+              </div>
+
+              {/* Genre Image */}
+              <ImageUpload
+                value={newGenreImage}
+                onChange={setNewGenreImage}
+                type="genres"
+                label="Genre Image"
+                required
+                aspectRatio="landscape"
+              />
+
+              {/* Sub-Genres (Optional) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sub-Genres (Optional)
+                </label>
+                <div className="flex gap-2 mb-3">
+                  <input
+                    type="text"
+                    value={newSubGenreInput}
+                    onChange={(e) => setNewSubGenreInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddSubGenreToNewGenre();
+                      }
+                    }}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                    placeholder="e.g., Space Opera"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddSubGenreToNewGenre}
+                    className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 text-sm font-medium transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+                
+                {/* Sub-Genres List */}
+                {newGenreSubGenres.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-gray-500 font-medium">Added sub-genres:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {newGenreSubGenres.map((sg, index) => (
+                        <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-sm border border-purple-200">
+                          <span>{sg}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSubGenreFromNewGenre(sg)}
+                            className="text-purple-600 hover:text-purple-800 transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3 rounded-b-xl">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowNewGenre(false);
+                  setNewGenreName('');
+                  setNewGenreImage('');
+                  setNewGenreSubGenres([]);
+                  setNewSubGenreInput('');
+                }}
+                disabled={creatingGenre}
+                className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-white transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -942,9 +1031,19 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                 type="button"
                 onClick={handleCreateGenre}
                 disabled={creatingGenre || !newGenreName.trim() || !newGenreImage.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="px-5 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                {creatingGenre ? 'Creating...' : 'Create'}
+                {creatingGenre ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Creating...</span>
+                  </>
+                ) : (
+                  <span>Create Genre</span>
+                )}
               </button>
             </div>
           </div>
@@ -953,75 +1052,32 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
 
       {/* Add Sub-Genre to Existing Genre Modal */}
       {showAddSubGenre && selectedGenreForSubGenre && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Add Sub-Genres to "{selectedGenreForSubGenre.name}"
-            </h3>
-            
-            {/* Show existing sub-genres */}
-            {selectedGenreForSubGenre.subGenres && selectedGenreForSubGenre.subGenres.length > 0 && (
-              <div className="mb-4">
-                <p className="text-xs text-gray-500 mb-2">Existing sub-genres:</p>
-                <div className="flex flex-wrap gap-1">
-                  {selectedGenreForSubGenre.subGenres.map((sg, index) => (
-                    <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                      {sg}
-                    </span>
-                  ))}
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+          onClick={() => {
+            setShowAddSubGenre(false);
+            setSelectedGenreForSubGenre(null);
+            setSubGenresToAdd([]);
+            setSubGenreInput('');
+          }}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Add Sub-Genres</h3>
+                  <p className="text-sm text-gray-500">to "{selectedGenreForSubGenre.name}"</p>
                 </div>
               </div>
-            )}
-
-            {/* Add new sub-genres */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                New Sub-Genres
-              </label>
-              <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={subGenreInput}
-                  onChange={(e) => setSubGenreInput(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddSubGenreToList();
-                    }
-                  }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  placeholder="Enter sub-genre name"
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={handleAddSubGenreToList}
-                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm"
-                >
-                  Add
-                </button>
-              </div>
-              
-              {/* New Sub-Genres List */}
-              {subGenresToAdd.length > 0 && (
-                <div className="space-y-1 mt-2">
-                  {subGenresToAdd.map((sg, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-green-50 rounded text-sm">
-                      <span className="text-gray-700">{sg}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSubGenreFromList(sg)}
-                        className="text-red-600 hover:text-red-700 text-xs"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => {
@@ -1031,7 +1087,96 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                   setSubGenreInput('');
                 }}
                 disabled={addingSubGenres}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="px-6 py-5 space-y-5">
+              {/* Show existing sub-genres */}
+              {selectedGenreForSubGenre.subGenres && selectedGenreForSubGenre.subGenres.length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-blue-900 mb-2">Existing sub-genres:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedGenreForSubGenre.subGenres.map((sg, index) => (
+                      <span key={index} className="px-3 py-1 bg-white text-blue-700 rounded-lg text-sm border border-blue-200">
+                        {sg}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Add new sub-genres */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Sub-Genres
+                </label>
+                <div className="flex gap-2 mb-3">
+                  <input
+                    type="text"
+                    value={subGenreInput}
+                    onChange={(e) => setSubGenreInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddSubGenreToList();
+                      }
+                    }}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                    placeholder="Enter sub-genre name and press Enter"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddSubGenreToList}
+                    className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm font-medium transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+                
+                {/* New Sub-Genres List */}
+                {subGenresToAdd.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-gray-500 font-medium">Sub-genres to add:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {subGenresToAdd.map((sg, index) => (
+                        <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm border border-green-200">
+                          <span>{sg}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSubGenreFromList(sg)}
+                            className="text-green-600 hover:text-green-800 transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3 rounded-b-xl">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddSubGenre(false);
+                  setSelectedGenreForSubGenre(null);
+                  setSubGenresToAdd([]);
+                  setSubGenreInput('');
+                }}
+                disabled={addingSubGenres}
+                className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-white transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -1039,9 +1184,19 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
                 type="button"
                 onClick={handleSaveSubGenresToGenre}
                 disabled={addingSubGenres || subGenresToAdd.length === 0}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="px-5 py-2.5 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                {addingSubGenres ? 'Saving...' : 'Save Sub-Genres'}
+                {addingSubGenres ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <span>Save Sub-Genres</span>
+                )}
               </button>
             </div>
           </div>

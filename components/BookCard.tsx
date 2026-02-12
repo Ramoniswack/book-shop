@@ -14,9 +14,14 @@ import toast from 'react-hot-toast'
 interface BookCardProps {
   book: Book
   className?: string
+  dealInfo?: {
+    type: string
+    badge: string
+    color: string
+  }
 }
 
-const BookCard = ({ book, className = '' }: BookCardProps) => {
+const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
   const { formatPrice } = useCurrency()
   const { addToCart, isLoading } = useCart()
   const [quantity, setQuantity] = useState(1)
@@ -71,13 +76,18 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
       // Use the book's MongoDB ID (either _id or id field)
       const bookId = book._id || book.id
       
+      if (!bookId) {
+        toast.error('Invalid book ID')
+        return
+      }
+      
       // Add to cart with MongoDB ID
       await addToCart({
         bookId: bookId,
         title: book.title,
         author: book.author,
         price: book.price,
-        image: book.image
+        image: book.image || ''
       }, quantity)
       
       setQuantity(1) // Reset quantity after adding
@@ -104,6 +114,11 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
       // Use the book's MongoDB ID (either _id or id field)
       const bookId = book._id || book.id
       
+      if (!bookId) {
+        toast.error('Invalid book ID')
+        return
+      }
+      
       if (isInWishlist) {
         const response = await removeFromWishlist(bookId)
         if (response.success) {
@@ -116,7 +131,7 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
           title: book.title,
           author: book.author,
           price: book.price,
-          image: book.image
+          image: book.image || ''
         })
         if (response.success) {
           setIsInWishlist(true)
@@ -137,7 +152,7 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
       <div className="relative h-48 w-full bg-gray-200 dark:bg-gray-900">
         <Link href={`/book/${book.id}`}>
           <Image
-            src={book.image}
+            src={book.image || '/placeholder-book.jpg'}
             alt={book.title}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"
@@ -149,6 +164,11 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
         <div className="absolute top-2 left-2 right-2 flex justify-between items-start">
           {/* Badges */}
           <div className="flex flex-col space-y-1">
+            {dealInfo && (
+              <span className={`uppercase text-xs px-1.5 py-0.5 rounded font-bold select-none shadow-md ${dealInfo.color}`}>
+                {dealInfo.badge}
+              </span>
+            )}
             {book.isNew && (
               <span className="uppercase text-xs bg-green-50 dark:bg-green-900 px-1.5 py-0.5 border border-green-500 rounded text-green-700 dark:text-green-300 font-medium select-none">
                 New
@@ -201,7 +221,7 @@ const BookCard = ({ book, className = '' }: BookCardProps) => {
                 key={i}
                 size={12}
                 className={`${
-                  i < Math.floor(book.rating)
+                  i < Math.floor(book.rating || 0)
                     ? 'text-yellow-400 fill-current'
                     : 'text-gray-300 dark:text-gray-600'
                 }`}

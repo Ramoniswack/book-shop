@@ -14,9 +14,10 @@ import 'swiper/css/free-mode'
 import 'swiper/css/navigation'
 
 type Genre = {
-  id: string
+  _id?: string
+  id?: string
   name: string
-  slug: string
+  slug?: string
   image?: string
   bookCount?: number
   description?: string
@@ -110,7 +111,7 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
         }}
       >
         {genres.map((genre) => (
-          <SwiperSlide key={genre.id || genre._id} className="!w-auto">
+          <SwiperSlide key={(genre as any)._id || (genre as any).id} className="!w-auto">
             <div
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}

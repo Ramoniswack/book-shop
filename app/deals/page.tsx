@@ -2,11 +2,12 @@ import { Suspense } from 'react'
 import MainLayout from '@/layouts/MainLayout'
 import DealsPageClient from '@/components/DealsPageClient'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
+import { normalizeBooks } from '@/utils/bookMapper'
 
 // Fetch all active deals for deals page
 const fetchDealsPageDeals = async () => {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/deals/active?showOnDealsPage=true`
+    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/deals/active?showOnDealsPage=true`
     console.log('Fetching deals from:', url)
     
     const response = await fetch(url, { cache: 'no-store' })
@@ -18,7 +19,14 @@ const fetchDealsPageDeals = async () => {
       deals: data.data?.map((d: any) => ({ title: d.title, type: d.type }))
     })
     
-    return data.success ? data.data : []
+    // Normalize books in each deal
+    const deals = data.success ? data.data : []
+    const normalizedDeals = deals.map((deal: any) => ({
+      ...deal,
+      applicableBooks: normalizeBooks(deal.applicableBooks || [])
+    }))
+    
+    return normalizedDeals
   } catch (error) {
     console.error('Error fetching deals:', error)
     return []

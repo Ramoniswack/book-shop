@@ -5,6 +5,7 @@ import { Search, Plus, Edit, Trash2, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAuthors, createAuthor, updateAuthor, deleteAuthor } from '@/utils/seller';
 import Image from 'next/image';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Author {
   _id: string;
@@ -212,83 +213,110 @@ export default function AuthorsPage() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {editingAuthor ? 'Edit Author' : 'Add New Author'}
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="e.g., James Clear"
-                />
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+          onClick={handleCloseModal}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {editingAuthor ? 'Edit Author' : 'Add New Author'}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {editingAuthor ? 'Update author information' : 'Create a new author profile'}
+                  </p>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                disabled={submitting}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
-              {/* Bio */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Bio (Optional)
-                </label>
-                <textarea
-                  value={formData.bio}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Brief description about the author"
-                />
-              </div>
+            {/* Modal Body */}
+            <form onSubmit={handleSubmit}>
+              <div className="px-6 py-5 space-y-5">
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="e.g., James Clear"
+                    autoFocus
+                  />
+                </div>
 
-              {/* Image URL */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URL <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="url"
+                {/* Bio */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio (Optional)
+                  </label>
+                  <textarea
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    rows={3}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                    placeholder="Brief description about the author"
+                  />
+                </div>
+
+                {/* Image Upload */}
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/author-image.jpg"
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  type="authors"
+                  label="Author Image"
+                  required
+                  aspectRatio="square"
                 />
-                {formData.image && (
-                  <div className="mt-2">
-                    <img
-                      src={formData.image}
-                      alt="Preview"
-                      className="w-20 h-20 object-cover rounded-full border-2 border-gray-200"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://via.placeholder.com/80?text=Invalid';
-                      }}
-                    />
-                  </div>
-                )}
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3 pt-4">
+              {/* Modal Footer */}
+              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3 rounded-b-xl">
                 <button
                   type="button"
                   onClick={handleCloseModal}
                   disabled={submitting}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-white transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  disabled={submitting || !formData.name.trim() || !formData.image.trim()}
+                  className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
                 >
-                  {submitting ? 'Saving...' : editingAuthor ? 'Update' : 'Create'}
+                  {submitting ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>{editingAuthor ? 'Updating...' : 'Creating...'}</span>
+                    </>
+                  ) : (
+                    <span>{editingAuthor ? 'Update Author' : 'Create Author'}</span>
+                  )}
                 </button>
               </div>
             </form>

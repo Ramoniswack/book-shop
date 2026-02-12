@@ -125,7 +125,7 @@ const SearchComponent = ({
                     className="flex items-center p-3 hover:bg-gray-50 transition-colors"
                   >
                     <Image
-                      src={book.image}
+                      src={book.image || '/placeholder-book.jpg'}
                       alt={book.title}
                       width={40}
                       height={50}

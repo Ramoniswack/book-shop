@@ -45,6 +45,36 @@ const DealsPageClient = ({ deals }: DealsPageClientProps) => {
     FIXED_DISCOUNT: deals.filter(d => d.type === 'FIXED_DISCOUNT').length,
   }
 
+  const getDealBadgeInfo = (deal: Deal) => {
+    const color = getDealBadgeColor(deal.type)
+    let badge = ''
+    
+    switch (deal.type) {
+      case 'FLASH_SALE':
+        badge = '🔥 FLASH'
+        break
+      case 'BOGO':
+        badge = '🎁 BOGO'
+        break
+      case 'PERCENTAGE':
+        badge = `${deal.discountValue}% OFF`
+        break
+      case 'FIXED_DISCOUNT':
+        badge = `${deal.discountValue} OFF`
+        break
+      case 'LIMITED_TIME':
+        badge = `⏰ ${deal.discountValue}%`
+        break
+      case 'SEASONAL':
+        badge = `🎉 ${deal.discountValue}%`
+        break
+      default:
+        badge = 'DEAL'
+    }
+    
+    return { type: deal.type, badge, color }
+  }
+
   const getDealIcon = (type: string) => {
     switch (type) {
       case 'FLASH_SALE':
@@ -328,17 +358,13 @@ const DealsPageClient = ({ deals }: DealsPageClientProps) => {
                   </div>
 
                   {/* Books Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     {deal.applicableBooks.map((book: any) => (
-                      <div key={book._id} className="relative">
-                        {/* Deal Badge on Book */}
-                        <div className="absolute top-2 right-2 z-10">
-                          <div className={`px-2 py-1 rounded-lg text-xs font-bold shadow-lg ${getDealBadgeColor(deal.type)}`}>
-                            {deal.type === 'BOGO' ? '🎁' : deal.type === 'FLASH_SALE' ? '🔥' : `${deal.discountValue}%`}
-                          </div>
-                        </div>
-                        <BookCard book={book} />
-                      </div>
+                      <BookCard 
+                        key={book._id || book.id} 
+                        book={book}
+                        dealInfo={getDealBadgeInfo(deal)}
+                      />
                     ))}
                   </div>
                 </div>

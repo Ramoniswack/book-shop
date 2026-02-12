@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Search, Calendar, Image as ImageIcon, Eye, EyeOff, Flame, Gift, Percent, Clock, Tag as TagIcon, Sparkles } from 'lucide-react'
 import { getSellerBooks } from '@/utils/seller'
+import ImageUpload from './ImageUpload'
 
 interface DealFormData {
   title: string
@@ -354,31 +355,13 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
       {/* Banner Image */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Banner Image (Optional)</h2>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Image URL
-          </label>
-          <input
-            type="url"
-            name="bannerImage"
-            value={formData.bannerImage}
-            onChange={handleChange}
-            placeholder="https://example.com/banner.jpg"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          {formData.bannerImage && (
-            <div className="mt-3">
-              <img
-                src={formData.bannerImage}
-                alt="Banner preview"
-                className="w-full h-32 object-cover rounded-lg"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL'
-                }}
-              />
-            </div>
-          )}
-        </div>
+        <ImageUpload
+          value={formData.bannerImage}
+          onChange={(url) => setFormData(prev => ({ ...prev, bannerImage: url }))}
+          type="deals"
+          label="Deal Banner"
+          aspectRatio="landscape"
+        />
       </div>
 
       {/* Date Range */}

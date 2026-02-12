@@ -32,19 +32,23 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'i.ytimg.com',
+        hostname: 'www.pinterest.com',
       },
       {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+      },      {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
       {
         protocol: 'https',
-        hostname: 'rwua.bishalbaniya.com.np',
+        hostname: 'i.pravatar.cc',
       },
       {
-        protocol: 'https',
-        hostname: 'i.pravatar.cc',
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
       },
     ],
   },

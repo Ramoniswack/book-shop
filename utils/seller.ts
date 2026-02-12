@@ -262,3 +262,50 @@ export const toggleDealStatus = async (dealId: string) => {
     method: 'PATCH',
   });
 };
+
+// Homepage Sections
+export const getHomepageSections = async () => {
+  return await apiRequest('/seller/homepage-sections', {
+    method: 'GET',
+  });
+};
+
+export const getHomepageSectionById = async (sectionId: string) => {
+  return await apiRequest(`/seller/homepage-sections/${sectionId}`, {
+    method: 'GET',
+  });
+};
+
+export const createHomepageSection = async (sectionData: {
+  title: string;
+  displayOrder?: number;
+  isActive?: boolean;
+}) => {
+  return await apiRequest('/seller/homepage-sections', {
+    method: 'POST',
+    body: JSON.stringify(sectionData),
+  });
+};
+
+export const updateHomepageSection = async (sectionId: string, sectionData: {
+  title?: string;
+  displayOrder?: number;
+  isActive?: boolean;
+}) => {
+  return await apiRequest(`/seller/homepage-sections/${sectionId}`, {
+    method: 'PUT',
+    body: JSON.stringify(sectionData),
+  });
+};
+
+export const deleteHomepageSection = async (sectionId: string) => {
+  return await apiRequest(`/seller/homepage-sections/${sectionId}`, {
+    method: 'DELETE',
+  });
+};
+
+export const toggleHomepageSectionStatus = async (sectionId: string) => {
+  return await apiRequest(`/seller/homepage-sections/${sectionId}/toggle`, {
+    method: 'PATCH',
+  });
+};

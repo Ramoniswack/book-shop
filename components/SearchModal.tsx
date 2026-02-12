@@ -145,7 +145,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                     className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors dark-transition"
                   >
                     <Image
-                      src={book.image}
+                      src={book.image || '/placeholder-book.jpg'}
                       alt={book.title}
                       width={60}
                       height={80}
