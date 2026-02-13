@@ -44,9 +44,7 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
 
   useEffect(() => {
     fetchReviews()
-    if (isLoggedIn) {
-      fetchUserReview()
-    }
+    // Remove user review fetching since we allow multiple reviews
   }, [bookId, isLoggedIn])
 
   const fetchReviews = async () => {
@@ -65,26 +63,7 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
   }
 
   const fetchUserReview = async () => {
-    try {
-      const token = localStorage.getItem('token')
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/reviews/book/${bookId}/user`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      const data = await response.json()
-      
-      if (data.success && data.data.review) {
-        setUserReview(data.data.review)
-        setRating(data.data.review.rating)
-        setComment(data.data.review.comment)
-      }
-    } catch (error) {
-      console.error('Error fetching user review:', error)
-    }
+    // Removed - users can now add multiple reviews
   }
 
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -128,9 +107,10 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
       const data = await response.json()
 
       if (data.success) {
-        toast.success(userReview ? 'Review updated!' : 'Review submitted!')
+        toast.success('Review submitted!')
+        setRating(0)
+        setComment('')
         await fetchReviews()
-        await fetchUserReview()
         
         // Refresh page to update book rating
         window.location.reload()
@@ -222,7 +202,7 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
         {isLoggedIn && (
           <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-xl">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              {userReview ? 'Update Your Review' : 'Write a Review'}
+              Write a Review
             </h3>
             <form onSubmit={handleSubmitReview} className="space-y-4">
               {/* Star Rating Selector */}
@@ -278,7 +258,7 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
                 disabled={submitting || rating === 0 || !comment.trim()}
                 className="px-6 py-2 bg-bookStore-blue text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? 'Submitting...' : userReview ? 'Update Review' : 'Submit Review'}
+                {submitting ? 'Submitting...' : 'Submit Review'}
               </button>
             </form>
           </div>

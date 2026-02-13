@@ -14,8 +14,13 @@ import {
   User,
   Layers,
   Layout,
+  X,
 } from 'lucide-react';
 import { logout } from '@/utils/auth';
+
+interface SellerSidebarProps {
+  onClose?: () => void;
+}
 
 const navigation = [
   { name: 'Dashboard', href: '/seller', icon: LayoutDashboard },
@@ -30,7 +35,7 @@ const navigation = [
   { name: 'Settings', href: '/seller/settings', icon: Settings },
 ];
 
-export default function SellerSidebar() {
+export default function SellerSidebar({ onClose }: SellerSidebarProps) {
   const pathname = usePathname();
 
   const handleLogout = () => {
@@ -39,11 +44,24 @@ export default function SellerSidebar() {
     }
   };
 
+  const handleLinkClick = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-gray-900 text-white w-64">
       {/* Logo/Brand */}
-      <div className="flex items-center justify-center h-16 border-b border-gray-800">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-800">
         <h1 className="text-xl font-bold">Seller Dashboard</h1>
+        {/* Close button for mobile */}
+        <button
+          onClick={onClose}
+          className="lg:hidden text-gray-400 hover:text-white"
+        >
+          <X size={24} />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -65,6 +83,7 @@ export default function SellerSidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={handleLinkClick}
               className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                 isActive
                   ? 'bg-blue-600 text-white'
