@@ -18,6 +18,7 @@ interface Book {
   subGenres: string[];
   price: number;
   discountPrice?: number;
+  discountPercentage?: number;
   stock: number;
   images: string[];
   isUsedBook: boolean;
@@ -182,6 +183,7 @@ export default function EditBook() {
               subGenres: book.subGenres,
               price: book.price?.toString() || '',
               discountPrice: book.discountPrice?.toString() || '',
+              discountPercentage: book.discountPercentage?.toString() || '0',
               stock: book.stock?.toString() || '',
               images: book.images,
               isUsedBook: book.isUsedBook,

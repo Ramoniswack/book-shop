@@ -97,7 +97,7 @@ const GenreSlider = ({ genres }: GenreSliderProps) => {
           setIsEnd(swiper.isEnd)
         }}
         onSlideChange={handleSlideChange}
-        className="genre-swiper-refined"
+        className="genre-swiper-refined !cursor-grab active:!cursor-grabbing"
         breakpoints={{
           320: {
             spaceBetween: 6,

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, ShoppingCart, User, Menu, X, ChevronDown, Sun, Moon, BookOpen, LogOut } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu, X, ChevronDown, Sun, Moon, BookOpen, LogOut, LayoutDashboard, Settings } from 'lucide-react'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useCart } from '@/contexts/CartContext'
@@ -500,7 +500,35 @@ const Navbar = () => {
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         {user.email}
                       </p>
+                      {(user.role === 'seller' || user.role === 'admin') && (
+                        <p className="text-xs text-orange-500 dark:text-orange-400 font-medium mt-1">
+                          {user.role === 'admin' ? 'Admin' : 'Seller'}
+                        </p>
+                      )}
                     </div>
+                    {(user.role === 'seller' || user.role === 'admin') && (
+                      <>
+                        <Link
+                          href="/seller"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <LayoutDashboard size={16} />
+                          Seller Dashboard
+                        </Link>
+                        {user.role === 'admin' && (
+                          <Link
+                            href="/seo"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
+                            onClick={() => setIsUserMenuOpen(false)}
+                          >
+                            <Settings size={16} />
+                            SEO Settings
+                          </Link>
+                        )}
+                        <div className="border-t border-gray-200 dark:border-gray-600"></div>
+                      </>
+                    )}
                     <Link
                       href="/profile"
                       onClick={(e) => {

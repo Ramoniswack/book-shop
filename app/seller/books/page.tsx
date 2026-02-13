@@ -278,11 +278,11 @@ export default function SellerBooks() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {formatPrice(book.price)}
+                          {book.discountPrice ? formatPrice(book.discountPrice) : formatPrice(book.price)}
                         </div>
                         {book.discountPrice && (
                           <div className="text-xs text-gray-500 line-through">
-                            {formatPrice(book.discountPrice)}
+                            {formatPrice(book.price)}
                           </div>
                         )}
                       </td>

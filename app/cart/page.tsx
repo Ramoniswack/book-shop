@@ -20,6 +20,34 @@ export default function CartPage() {
     }
   }, [router])
 
+  // Group cart items by book and deal to show BOGO properly
+  const displayCart = cart.reduce((acc: any[], item) => {
+    if (item.dealType === 'BOGO') {
+      // Find if we already have this book (paid version)
+      const existingIndex = acc.findIndex(
+        (i) => i.bookId === item.bookId && !i.isFreeItem && i.dealId === item.dealId
+      )
+      
+      if (item.isFreeItem) {
+        // This is a free item, add to existing paid item's free quantity
+        if (existingIndex >= 0) {
+          acc[existingIndex].freeQuantity = (acc[existingIndex].freeQuantity || 0) + item.quantity
+        }
+      } else {
+        // This is a paid item
+        if (existingIndex >= 0) {
+          acc[existingIndex].quantity += item.quantity
+        } else {
+          acc.push({ ...item, freeQuantity: 0 })
+        }
+      }
+    } else {
+      // Non-BOGO items, add as is
+      acc.push({ ...item, freeQuantity: 0 })
+    }
+    return acc
+  }, [])
+
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   const shipping = subtotal > 0 ? 150 : 0
   const total = subtotal + shipping
@@ -63,8 +91,8 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cart.map((item) => (
-                <div key={item.bookId} className="card p-4 dark:bg-gray-800">
+              {displayCart.map((item) => (
+                <div key={`${item.bookId}-${item.dealId || 'no-deal'}`} className="card p-4 dark:bg-gray-800">
                   <div className="flex items-center space-x-4">
                     <Image
                       src={item.image}
@@ -76,9 +104,38 @@ export default function CartPage() {
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900 dark:text-gray-100">{item.title}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{item.author}</p>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-1">
-                        {formatPrice(item.price)}
-                      </p>
+                      
+                      {/* Deal Badge */}
+                      {item.dealTitle && (
+                        <div className="mt-1">
+                          <span className={`text-xs px-2 py-0.5 rounded ${
+                            item.dealType === 'FLASH_SALE'
+                              ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+                              : item.dealType === 'BOGO'
+                              ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
+                              : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                          }`}>
+                            {item.dealTitle}
+                          </span>
+                        </div>
+                      )}
+                      
+                      <div className="mt-1">
+                        {item.discountApplied && item.discountApplied > 0 ? (
+                          <div className="flex items-center gap-2">
+                            <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                              {formatPrice(item.price)}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 line-through">
+                              {formatPrice(item.price + item.discountApplied)}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            {formatPrice(item.price)}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <button 
@@ -88,7 +145,16 @@ export default function CartPage() {
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="w-8 text-center dark:text-gray-100">{item.quantity}</span>
+                      <span className="w-12 text-center dark:text-gray-100 font-medium">
+                        {item.freeQuantity > 0 ? (
+                          <span className="text-sm">
+                            {item.quantity}
+                            <span className="text-green-600 dark:text-green-400">+{item.freeQuantity}</span>
+                          </span>
+                        ) : (
+                          item.quantity
+                        )}
+                      </span>
                       <button 
                         onClick={() => handleUpdateQuantity(item.bookId, item.quantity + 1)}
                         disabled={isLoading}

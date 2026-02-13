@@ -169,7 +169,7 @@ const BestsellingAuthors = ({ authors, className = '' }: BestsellingAuthorsProps
               setIsEnd(swiper.isEnd)
             }}
             onSlideChange={handleSlideChange}
-            className="author-swiper"
+            className="author-swiper !cursor-grab active:!cursor-grabbing"
             breakpoints={{
               320: {
                 slidesPerView: 3,

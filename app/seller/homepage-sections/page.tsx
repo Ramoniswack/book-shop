@@ -223,7 +223,7 @@ export default function HomepageSectionsPage() {
                     className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     title={section.isActive ? 'Hide section' : 'Show section'}
                   >
-                    {section.isActive ? <Eye size={18} /> : <EyeOff size={18} />}
+                    {section.isActive ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                   <button
                     onClick={() => handleOpenModal(section)}

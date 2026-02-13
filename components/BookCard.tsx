@@ -84,14 +84,24 @@ const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
         return
       }
       
-      // Add to cart with MongoDB ID
-      await addToCart({
+      // Prepare cart item with deal information
+      const cartItem: any = {
         bookId: bookId,
         title: book.title,
         author: book.author,
         price: book.price,
         image: book.image || ''
-      }, quantity)
+      }
+
+      // Add deal information if available
+      if (book.activeDeal) {
+        cartItem.dealId = book.activeDeal._id
+        cartItem.dealType = book.activeDeal.type
+        cartItem.dealTitle = book.activeDeal.title
+      }
+      
+      // Add to cart with MongoDB ID and deal info
+      await addToCart(cartItem, quantity)
       
       setQuantity(1) // Reset quantity after adding
     } catch (error: any) {
@@ -238,16 +248,7 @@ const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
         <div className="flex items-center justify-between gap-2 mt-2">
           {/* Price */}
           <div className="flex flex-col">
-            {discountPercentage > 0 ? (
-              <>
-                <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
-                  {formatPrice(book.price * (1 - discountPercentage / 100))}
-                </p>
-                <p className="text-gray-500 dark:text-gray-400 text-xs line-through">
-                  {formatPrice(book.price)}
-                </p>
-              </>
-            ) : book.originalPrice && book.originalPrice > book.price ? (
+            {book.originalPrice && book.originalPrice > book.price ? (
               <>
                 <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
                   {formatPrice(book.price)}

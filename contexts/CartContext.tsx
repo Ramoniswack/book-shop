@@ -12,6 +12,11 @@ interface CartItem {
   price: number
   image: string
   quantity: number
+  dealId?: string
+  dealType?: string
+  dealTitle?: string
+  discountApplied?: number
+  isFreeItem?: boolean
 }
 
 interface CartContextType {
@@ -52,7 +57,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
           author: item.bookId.author || 'Unknown Author',
           price: item.price,
           image: item.bookId.images?.[0] || item.bookId.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop',
-          quantity: item.quantity
+          quantity: item.quantity,
+          dealId: item.dealId,
+          dealType: item.dealType,
+          dealTitle: item.dealTitle,
+          discountApplied: item.discountApplied,
+          isFreeItem: item.isFreeItem
         }))
         setCart(transformedCart)
       }

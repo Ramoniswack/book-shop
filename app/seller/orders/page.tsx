@@ -15,6 +15,10 @@ interface OrderItem {
   title: string;
   quantity: number;
   price: number;
+  dealId?: string;
+  dealType?: string;
+  dealTitle?: string;
+  isFreeItem?: boolean;
 }
 
 interface Order {
@@ -316,10 +320,33 @@ export default function SellerOrders() {
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
                               <p className="text-xs text-gray-500">{item.bookId?.author}</p>
-                              <p className="text-xs text-gray-600">Qty: {item.quantity} × {formatPrice(item.price)}</p>
+                              {item.dealTitle && (
+                                <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded ${
+                                  item.isFreeItem
+                                    ? 'bg-green-100 text-green-700'
+                                    : item.dealType === 'BOGO'
+                                    ? 'bg-purple-100 text-purple-700'
+                                    : item.dealType === 'FLASH_SALE'
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-blue-100 text-blue-700'
+                                }`}>
+                                  {item.isFreeItem ? 'FREE (BOGO)' : item.dealTitle}
+                                </span>
+                              )}
+                              <p className="text-xs text-gray-600 mt-1">
+                                {item.isFreeItem ? (
+                                  <span className="text-green-600 font-medium">Qty: {item.quantity} × FREE</span>
+                                ) : (
+                                  <>Qty: {item.quantity} × {formatPrice(item.price)}</>
+                                )}
+                              </p>
                             </div>
                             <div className="text-sm font-semibold text-gray-900">
-                              {formatPrice(item.quantity * item.price)}
+                              {item.isFreeItem ? (
+                                <span className="text-green-600">FREE</span>
+                              ) : (
+                                formatPrice(item.quantity * item.price)
+                              )}
                             </div>
                           </div>
                         ))}

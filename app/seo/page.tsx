@@ -45,12 +45,19 @@ export default function SEOPage() {
         return
       }
 
-      // Decode token to check role
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      const userRole = payload.role
+      // Get user from localStorage (more reliable than decoding token)
+      const userStr = localStorage.getItem('user')
+      if (!userStr) {
+        toast.error('User data not found. Please login again.')
+        router.push('/login')
+        return
+      }
+
+      const user = JSON.parse(userStr)
+      const userRole = user.role
 
       if (userRole !== 'seller' && userRole !== 'admin') {
-        toast.error('Access denied. Seller or Admin access required.')
+        toast.error('Access denied. Admin access required.')
         router.push('/')
         return
       }
@@ -59,6 +66,7 @@ export default function SEOPage() {
       await fetchSettings()
     } catch (error) {
       console.error('Authorization error:', error)
+      toast.error('Authorization failed. Please login again.')
       router.push('/login')
     }
   }
