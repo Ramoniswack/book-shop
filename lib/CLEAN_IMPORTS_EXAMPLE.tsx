@@ -73,7 +73,7 @@ export default function CleanSellerBooksPage() {
       if (response.success) {
         setBooks(response.data);
       } else {
-        setError(response.message || 'Failed to fetch books');
+        setError((response as any).message || 'Failed to fetch books');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to fetch books');

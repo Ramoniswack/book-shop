@@ -1,9 +1,32 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import MainLayout from '@/layouts/MainLayout'
 import HomePageClient from '@/components/HomePageClient'
 import { fetchFeaturedBooks, fetchBestsellers, fetchGenres, fetchNewArrivals, fetchBestsellingAuthors } from '@/utils/fetcher'
 import { HomePageSkeleton } from '@/components/LoadingSkeleton'
 import { normalizeBooks } from '@/utils/bookMapper'
+
+export const metadata: Metadata = {
+  title: 'BookStore Nepal - Nepal\'s Largest Online Bookstore',
+  description: 'Discover over 35,000 books at Nepal\'s largest online bookstore. Shop bestsellers, new arrivals, deals, and more with fast delivery across Nepal.',
+  keywords: 'books Nepal, online bookstore Nepal, buy books online, bestsellers, new arrivals, book deals, Nepali books',
+  openGraph: {
+    title: 'BookStore Nepal - Nepal\'s Largest Online Bookstore',
+    description: 'Discover over 35,000 books at Nepal\'s largest online bookstore.',
+    type: 'website',
+    url: 'https://bookstore.com',
+    siteName: 'BookStore Nepal',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'BookStore Nepal - Nepal\'s Largest Online Bookstore',
+    description: 'Discover over 35,000 books at Nepal\'s largest online bookstore.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 // Fetch active deals for homepage
 const fetchHomeDeals = async () => {

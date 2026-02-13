@@ -1,6 +1,24 @@
+import { Metadata } from 'next'
 import MainLayout from '@/layouts/MainLayout'
 import GenreCard from '@/components/GenreCard'
 import { fetchGenres } from '@/utils/fetcher'
+
+export const metadata: Metadata = {
+  title: 'Book Genres - Explore All Categories | BookStore Nepal',
+  description: 'Explore our complete collection of book genres. Find fiction, non-fiction, mystery, romance, sci-fi, and more at BookStore Nepal.',
+  keywords: 'book genres, book categories, fiction, non-fiction, mystery, romance, sci-fi, fantasy',
+  openGraph: {
+    title: 'Book Genres - BookStore Nepal',
+    description: 'Explore our complete collection of book genres.',
+    type: 'website',
+    url: 'https://bookstore.com/genres',
+    siteName: 'BookStore Nepal',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 export default async function GenresPage() {
   const allGenres = await fetchGenres()

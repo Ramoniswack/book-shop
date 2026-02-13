@@ -274,7 +274,7 @@ const DealsPageClient = ({ deals }: DealsPageClientProps) => {
                         <BookCard 
                           key={book._id || book.id} 
                           book={book}
-                          dealInfo={getDealBadgeInfo(book)}
+                          dealInfo={getDealBadgeInfo(book) || undefined}
                         />
                       ))}
                     </div>

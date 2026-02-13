@@ -1,9 +1,27 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import MainLayout from '@/layouts/MainLayout'
 import DealsPageClient from '@/components/DealsPageClient'
 import DealsBanner from '@/components/DealsBanner'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
 import { normalizeBooks } from '@/utils/bookMapper'
+
+export const metadata: Metadata = {
+  title: 'Book Deals & Offers - BookStore Nepal',
+  description: 'Discover amazing deals on books! Flash sales, BOGO offers, seasonal discounts, and limited-time offers on bestsellers and popular titles.',
+  keywords: 'book deals, book offers, flash sale, BOGO books, discount books Nepal, cheap books',
+  openGraph: {
+    title: 'Book Deals & Offers - BookStore Nepal',
+    description: 'Discover amazing deals on books! Flash sales, BOGO offers, and more.',
+    type: 'website',
+    url: 'https://bookstore.com/deals',
+    siteName: 'BookStore Nepal',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 // Fetch all active deals for deals page
 const fetchDealsPageDeals = async () => {

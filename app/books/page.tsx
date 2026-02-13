@@ -1,8 +1,26 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import MainLayout from '@/layouts/MainLayout'
 import ProductGrid from '@/components/ProductGrid'
 import { fetchAllBooks } from '@/utils/fetcher'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
+
+export const metadata: Metadata = {
+  title: 'All Books - Browse Our Complete Collection | BookStore Nepal',
+  description: 'Browse our complete collection of books across all genres. Find bestsellers, new arrivals, classics, and more at BookStore Nepal.',
+  keywords: 'all books, book collection, browse books, buy books online Nepal, book catalog',
+  openGraph: {
+    title: 'All Books - BookStore Nepal',
+    description: 'Browse our complete collection of books across all genres.',
+    type: 'website',
+    url: 'https://bookstore.com/books',
+    siteName: 'BookStore Nepal',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 export default async function BooksPage() {
   const books = await fetchAllBooks()

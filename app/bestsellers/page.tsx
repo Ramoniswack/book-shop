@@ -1,9 +1,27 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import MainLayout from '@/layouts/MainLayout'
 import ProductGrid from '@/components/ProductGrid'
 import { fetchBestsellers } from '@/utils/fetcher'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
 import { TrendingUp, Award, Star } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Bestselling Books - Most Popular Titles | BookStore Nepal',
+  description: 'Discover the most popular and bestselling books loved by readers worldwide. Shop trending titles across all genres at BookStore Nepal.',
+  keywords: 'bestselling books, popular books, trending books, top books Nepal, bestsellers',
+  openGraph: {
+    title: 'Bestselling Books - BookStore Nepal',
+    description: 'Discover the most popular books loved by readers worldwide.',
+    type: 'website',
+    url: 'https://bookstore.com/bestsellers',
+    siteName: 'BookStore Nepal',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 export default async function BestsellersPage() {
   const bestsellers = await fetchBestsellers()

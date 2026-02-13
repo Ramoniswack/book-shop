@@ -16,6 +16,7 @@ interface HomepageSection {
   title: string
   slug: string
   isActive: boolean
+  isDefault: boolean
   displayOrder: number
   bookCount?: number
 }
@@ -186,12 +187,17 @@ export default function HomepageSectionsPage() {
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                       {section.title}
                     </h3>
+                    {section.isDefault && (
+                      <span className="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                        Default
+                      </span>
+                    )}
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       section.isActive
                         ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
                         : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
                     }`}>
-                      {section.isActive ? 'Active' : 'Inactive'}
+                      {section.isActive ? 'Active' : 'Hidden'}
                     </span>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -200,27 +206,41 @@ export default function HomepageSectionsPage() {
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
                     Slug: {section.slug}
                   </p>
+                  {section.isDefault && (
+                    <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                      Default section - Automatically populated with {
+                        section.slug === 'featured-books' ? 'featured books' :
+                        section.slug === 'bestsellers' ? 'bestselling books' :
+                        section.slug === 'new-arrivals' ? 'new arrival books' :
+                        'books from this category'
+                      }. You can edit the title and hide it, but cannot delete it.
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleToggleStatus(section._id)}
                     className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                    title={section.isActive ? 'Deactivate' : 'Activate'}
+                    title={section.isActive ? 'Hide section' : 'Show section'}
                   >
                     {section.isActive ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
                   <button
                     onClick={() => handleOpenModal(section)}
                     className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                    title="Edit section"
                   >
                     <Edit2 size={18} />
                   </button>
-                  <button
-                    onClick={() => handleDelete(section._id)}
-                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  {!section.isDefault && (
+                    <button
+                      onClick={() => handleDelete(section._id)}
+                      className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      title="Delete section"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

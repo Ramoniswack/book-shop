@@ -51,8 +51,6 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
     deal.type === 'SEASONAL'
   )
 
-  // No dynamic deal sections on homepage - only promotional banners
-
   return (
     <>
       {/* Hero Section with Rotating Featured Books */}
@@ -71,41 +69,16 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
         </div>
       </section>
 
-      {/* Bestselling Authors */}
+      {/* Bestselling Authors - Keep this as it shows authors, not books */}
       <BestsellingAuthors authors={authors} />
 
       {/* Dynamic BOGO Banner - Uses actual BOGO deal data */}
       {bogoDeal && <DynamicBOGOBanner deal={bogoDeal} />}
 
-      {/* Featured Books */}
-      <ProductGrid
-        books={featuredBooks}
-        title="Featured Books"
-        showViewAll={true}
-        viewAllLink="/featured"
-        className="bg-white dark:bg-gray-900"
-      />
-
-      {/* New Arrivals */}
-      <ProductGrid
-        books={newArrivals}
-        title="New Arrivals"
-        showViewAll={false}
-        className="bg-gray-50 dark:bg-gray-900"
-      />
-
       {/* Dynamic Flash Sale Banner - Uses actual Flash/Limited/Seasonal deal data */}
       {flashSaleDeal && <DynamicFlashSaleBanner deal={flashSaleDeal} />}
 
-      {/* Bestsellers */}
-      <ProductGrid
-        books={bestsellers}
-        title="Bestsellers"
-        showViewAll={false}
-        className="bg-white dark:bg-gray-900"
-      />
-
-      {/* Dynamic Homepage Sections - Rendered Below Bestsellers */}
+      {/* Dynamic Homepage Sections - All book sections now come from here */}
       {homepageSections && homepageSections.length > 0 && homepageSections.map((section) => (
         <DynamicSection
           key={section._id}

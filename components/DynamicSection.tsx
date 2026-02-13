@@ -26,7 +26,7 @@ const DynamicSection = ({ title, books, displayType = 'grid' }: DynamicSectionPr
               <BookCard 
                 key={book._id || book.id} 
                 book={book}
-                dealInfo={getDealBadgeInfo(book)}
+                dealInfo={getDealBadgeInfo(book) || undefined}
               />
             ))}
           </div>

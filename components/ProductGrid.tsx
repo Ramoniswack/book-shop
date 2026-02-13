@@ -41,7 +41,7 @@ const ProductGrid = ({
             <BookCard 
               key={book._id || book.id} 
               book={book}
-              dealInfo={getDealBadgeInfo(book)}
+              dealInfo={getDealBadgeInfo(book) || undefined}
             />
           ))}
         </div>

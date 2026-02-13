@@ -1,8 +1,26 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import MainLayout from '@/layouts/MainLayout'
 import ProductGrid from '@/components/ProductGrid'
 import UsedBooksBanner from '@/components/UsedBooksBanner'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
+
+export const metadata: Metadata = {
+  title: 'Used Books - Affordable Pre-Owned Books | BookStore Nepal',
+  description: 'Shop quality used books at great prices. Find pre-owned bestsellers, classics, and rare books in excellent condition with huge savings.',
+  keywords: 'used books Nepal, second hand books, pre-owned books, cheap books, affordable books Nepal',
+  openGraph: {
+    title: 'Used Books - Affordable Pre-Owned Books',
+    description: 'Shop quality used books at great prices.',
+    type: 'website',
+    url: 'https://bookstore.com/used-books',
+    siteName: 'BookStore Nepal',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 // Fetch only used books from the API
 const fetchUsedBooks = async () => {

@@ -349,11 +349,11 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
         </div>
 
         {/* Related Books Section */}
-        <RelatedBooks bookId={book._id || book.id} />
+        <RelatedBooks bookId={(book._id || book.id) as string} />
 
         {/* Review Section */}
         <ReviewSection 
-          bookId={book._id || book.id} 
+          bookId={(book._id || book.id) as string} 
           averageRating={book.averageRating || book.rating || 0}
           totalReviews={book.totalReviews || book.reviewCount || 0}
         />
