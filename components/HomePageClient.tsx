@@ -15,8 +15,8 @@ interface Deal {
   _id: string
   title: string
   description: string
-  type: 'FLASH_SALE' | 'BOGO' | 'PERCENTAGE' | 'FIXED_DISCOUNT' | 'LIMITED_TIME' | 'SEASONAL'
-  discountValue: number
+  type: 'FLASH_SALE' | 'BOGO' | 'LIMITED_TIME' | 'SEASONAL'
+  discountPercentage: number
   buyQuantity?: number
   getQuantity?: number
   applicableBooks: any[]
@@ -51,13 +51,7 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
     deal.type === 'SEASONAL'
   )
 
-  // Filter out deals used in promotional banners from the dynamic deal sections
-  const dynamicDeals = homeDeals.filter(deal => 
-    deal.type !== 'BOGO' && 
-    deal.type !== 'FLASH_SALE' && 
-    deal.type !== 'LIMITED_TIME' && 
-    deal.type !== 'SEASONAL'
-  )
+  // No dynamic deal sections on homepage - only promotional banners
 
   return (
     <>
@@ -76,11 +70,6 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
           <GenreSlider genres={genres} />
         </div>
       </section>
-
-      {/* Dynamic Deal Sections (Percentage, Fixed Discount, etc.) */}
-      {dynamicDeals && dynamicDeals.length > 0 && dynamicDeals.map((deal) => (
-        <DealSection key={deal._id} deal={deal} />
-      ))}
 
       {/* Bestselling Authors */}
       <BestsellingAuthors authors={authors} />

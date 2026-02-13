@@ -8,8 +8,8 @@ import ImageUpload from './ImageUpload'
 interface DealFormData {
   title: string
   description: string
-  type: 'FLASH_SALE' | 'BOGO' | 'PERCENTAGE' | 'FIXED_DISCOUNT' | 'LIMITED_TIME' | 'SEASONAL'
-  discountValue: number
+  type: string // Can be predefined or custom
+  discountPercentage: number
   buyQuantity: number
   getQuantity: number
   applicableBooks: string[]
@@ -32,8 +32,8 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
   const [formData, setFormData] = useState<DealFormData>({
     title: '',
     description: '',
-    type: 'PERCENTAGE',
-    discountValue: 0,
+    type: '',
+    discountPercentage: 0,
     buyQuantity: 1,
     getQuantity: 1,
     applicableBooks: [],
@@ -45,6 +45,9 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
     showOnDealsPage: true,
   })
 
+  const [showCustomTypeInput, setShowCustomTypeInput] = useState(false)
+  const [customTypeName, setCustomTypeName] = useState('')
+
   const [books, setBooks] = useState<any[]>([])
   const [filteredBooks, setFilteredBooks] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -54,11 +57,15 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
 
   useEffect(() => {
     if (initialData) {
+      // Check if it's a custom type
+      const predefinedTypes = ['FLASH_SALE', 'BOGO', 'LIMITED_TIME', 'SEASONAL'];
+      const isCustom = initialData.isCustomType || !predefinedTypes.includes(initialData.type);
+      
       setFormData({
         title: initialData.title || '',
         description: initialData.description || '',
-        type: initialData.type || 'PERCENTAGE',
-        discountValue: initialData.discountValue || 0,
+        type: isCustom ? 'CUSTOM' : initialData.type || '',
+        discountPercentage: initialData.discountPercentage || initialData.discountValue || 0,
         buyQuantity: initialData.buyQuantity || 1,
         getQuantity: initialData.getQuantity || 1,
         applicableBooks: initialData.applicableBooks?.map((b: any) => b._id || b) || [],
@@ -69,6 +76,11 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
         showOnHomepage: initialData.showOnHomepage || false,
         showOnDealsPage: initialData.showOnDealsPage !== undefined ? initialData.showOnDealsPage : true,
       })
+      
+      if (isCustom) {
+        setShowCustomTypeInput(true)
+        setCustomTypeName(initialData.customTypeName || initialData.type || '')
+      }
     }
   }, [initialData])
 
@@ -127,7 +139,14 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
+    
+    // If custom type, use the custom name as the type
+    const submitData = {
+      ...formData,
+      type: formData.type === 'CUSTOM' ? customTypeName : formData.type
+    }
+    
+    onSubmit(submitData)
   }
 
   const getDealTypeIcon = (type: string) => {
@@ -198,15 +217,20 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
               {[
                 { value: 'FLASH_SALE', label: 'Flash Sale', icon: <Flame className="w-4 h-4" />, color: 'red' },
                 { value: 'BOGO', label: 'Buy One Get One', icon: <Gift className="w-4 h-4" />, color: 'green' },
-                { value: 'PERCENTAGE', label: 'Percentage Off', icon: <Percent className="w-4 h-4" />, color: 'blue' },
-                { value: 'FIXED_DISCOUNT', label: 'Fixed Discount', icon: <TagIcon className="w-4 h-4" />, color: 'purple' },
                 { value: 'LIMITED_TIME', label: 'Limited Time', icon: <Clock className="w-4 h-4" />, color: 'orange' },
                 { value: 'SEASONAL', label: 'Seasonal', icon: <Sparkles className="w-4 h-4" />, color: 'teal' },
+                { value: 'CUSTOM', label: 'Custom Type', icon: <TagIcon className="w-4 h-4" />, color: 'purple' },
               ].map((type) => (
                 <button
                   key={type.value}
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, type: type.value as any }))}
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, type: type.value }))
+                    setShowCustomTypeInput(type.value === 'CUSTOM')
+                    if (type.value !== 'CUSTOM') {
+                      setCustomTypeName('')
+                    }
+                  }}
                   className={`flex items-center space-x-2 px-4 py-3 rounded-lg border-2 transition-all ${
                     formData.type === type.value
                       ? `border-${type.color}-500 bg-${type.color}-50 text-${type.color}-700`
@@ -218,25 +242,46 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
                 </button>
               ))}
             </div>
+            
+            {/* Custom Type Name Input */}
+            {showCustomTypeInput && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Custom Deal Type Name *
+                </label>
+                <input
+                  type="text"
+                  value={customTypeName}
+                  onChange={(e) => setCustomTypeName(e.target.value)}
+                  placeholder="e.g., Trending Now, Staff Picks, Clearance Sale"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  required={showCustomTypeInput}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  This will be displayed as the deal category on your deals page
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* Discount Value (for non-BOGO) */}
+          {/* Discount Percentage (for non-BOGO) */}
           {formData.type !== 'BOGO' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {formData.type === 'FIXED_DISCOUNT' ? 'Discount Amount ($) *' : 'Discount Percentage (%) *'}
+                Discount Percentage (%) *
               </label>
               <input
                 type="number"
-                name="discountValue"
-                value={formData.discountValue}
+                name="discountPercentage"
+                value={formData.discountPercentage}
                 onChange={handleChange}
                 required
                 min="0"
-                max={formData.type === 'FIXED_DISCOUNT' ? undefined : 100}
-                step={formData.type === 'FIXED_DISCOUNT' ? '0.01' : '1'}
+                max="100"
+                step="1"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+              <p className="text-xs text-gray-500 mt-1">Enter a value between 0 and 100</p>
             </div>
           )}
 
@@ -499,7 +544,7 @@ const DealForm = ({ initialData, onSubmit, loading, isEdit = false }: DealFormPr
               <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
                 {formData.type === 'BOGO' 
                   ? `Buy ${formData.buyQuantity} Get ${formData.getQuantity} Free`
-                  : `${formData.discountValue}${formData.type === 'FIXED_DISCOUNT' ? '$' : '%'} OFF`
+                  : `${formData.discountPercentage}% OFF`
                 }
               </span>
               <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full">

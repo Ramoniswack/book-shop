@@ -47,7 +47,16 @@ export default function SellerSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-4 py-6 space-y-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
+        <style jsx>{`
+          nav::-webkit-scrollbar {
+            display: none;
+          }
+          nav {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
         {navigation.map((item) => {
           const isActive = pathname === item.href || (item.href !== '/seller' && pathname.startsWith(item.href));
           const Icon = item.icon;

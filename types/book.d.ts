@@ -7,6 +7,7 @@ export interface Book {
   price: number;
   originalPrice?: number;
   discountPrice?: number;
+  discountPercentage?: number; // NEW: Percentage discount (0-100)
   discount?: number;
   stock: number;
   inStock?: boolean; // Computed from stock
@@ -26,6 +27,8 @@ export interface Book {
   rating?: number;
   reviewCount?: number;
   reviews?: number;
+  averageRating?: number; // NEW: Average rating from reviews
+  totalReviews?: number; // NEW: Total number of reviews
   isbn?: string;
   publisher?: string;
   publishedDate?: string;
@@ -39,7 +42,7 @@ export interface Book {
     _id: string;
     title: string;
     type: string;
-    discountValue: number;
+    discountPercentage: number; // Changed from discountValue
     buyQuantity?: number;
     getQuantity?: number;
   };

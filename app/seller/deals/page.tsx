@@ -9,8 +9,10 @@ interface Deal {
   _id: string;
   title: string;
   description?: string;
-  type: 'FLASH_SALE' | 'BOGO' | 'PERCENTAGE' | 'FIXED_DISCOUNT' | 'LIMITED_TIME' | 'SEASONAL';
-  discountValue: number;
+  type: string;
+  customTypeName?: string;
+  isCustomType?: boolean;
+  discountPercentage: number;
   buyQuantity?: number;
   getQuantity?: number;
   applicableBooks: any[];
@@ -20,6 +22,7 @@ interface Deal {
   isActive: boolean;
   showOnHomepage: boolean;
   showOnDealsPage: boolean;
+  isLocked?: boolean;
   createdAt: string;
 }
 
@@ -85,6 +88,15 @@ export default function SellerDeals() {
   };
 
   const handleDeleteDeal = async (dealId: string) => {
+    const deal = deals.find(d => d._id === dealId);
+    
+    // Check if deal is locked
+    if (deal?.isLocked) {
+      alert('This deal is locked and cannot be deleted. You can only edit or deactivate it.');
+      setDeleteConfirm(null);
+      return;
+    }
+
     try {
       setDeleting(true);
       const response = await deleteDeal(dealId);
@@ -126,7 +138,9 @@ export default function SellerDeals() {
     }
   };
 
-  const getDealTypeIcon = (type: string) => {
+  const getDealTypeIcon = (deal: Deal) => {
+    const type = deal.isCustomType ? 'CUSTOM' : deal.type;
+    
     switch (type) {
       case 'FLASH_SALE':
         return <Flame className="w-4 h-4" />;
@@ -134,50 +148,51 @@ export default function SellerDeals() {
         return <Gift className="w-4 h-4" />;
       case 'LIMITED_TIME':
         return <Clock className="w-4 h-4" />;
-      case 'PERCENTAGE':
-      case 'FIXED_DISCOUNT':
-        return <Percent className="w-4 h-4" />;
+      case 'SEASONAL':
+      case 'CUSTOM':
+        return <Tag className="w-4 h-4" />;
       default:
         return <Tag className="w-4 h-4" />;
     }
   };
 
-  const getDealTypeLabel = (type: string) => {
-    switch (type) {
+  const getDealTypeLabel = (deal: Deal) => {
+    if (deal.isCustomType && deal.customTypeName) {
+      return deal.customTypeName;
+    }
+    
+    switch (deal.type) {
       case 'FLASH_SALE':
         return 'Flash Sale';
       case 'BOGO':
         return 'Buy One Get One';
-      case 'PERCENTAGE':
-        return 'Percentage Off';
-      case 'FIXED_DISCOUNT':
-        return 'Fixed Discount';
       case 'LIMITED_TIME':
         return 'Limited Time';
       case 'SEASONAL':
         return 'Seasonal';
+      case 'CUSTOM':
+        return deal.customTypeName || 'Custom Deal';
       default:
-        return type;
+        return deal.type;
     }
   };
 
   const getDealValueDisplay = (deal: Deal) => {
     switch (deal.type) {
       case 'FLASH_SALE':
-      case 'PERCENTAGE':
       case 'LIMITED_TIME':
       case 'SEASONAL':
-        return `${deal.discountValue}% OFF`;
-      case 'FIXED_DISCOUNT':
-        return `$${deal.discountValue} OFF`;
+        return `${deal.discountPercentage}% OFF`;
       case 'BOGO':
         return `Buy ${deal.buyQuantity} Get ${deal.getQuantity} Free`;
       default:
-        return deal.discountValue;
+        return deal.discountPercentage;
     }
   };
 
-  const getDealTypeColor = (type: string) => {
+  const getDealTypeColor = (deal: Deal) => {
+    const type = deal.isCustomType ? 'CUSTOM' : deal.type;
+    
     switch (type) {
       case 'FLASH_SALE':
         return 'from-red-500 to-orange-600';
@@ -187,9 +202,7 @@ export default function SellerDeals() {
         return 'from-orange-500 to-yellow-600';
       case 'SEASONAL':
         return 'from-teal-500 to-cyan-600';
-      case 'PERCENTAGE':
-        return 'from-blue-500 to-indigo-600';
-      case 'FIXED_DISCOUNT':
+      case 'CUSTOM':
         return 'from-purple-500 to-pink-600';
       default:
         return 'from-blue-500 to-purple-600';
@@ -259,8 +272,6 @@ export default function SellerDeals() {
             <option value="">All Deal Types</option>
             <option value="FLASH_SALE">Flash Sale</option>
             <option value="BOGO">Buy One Get One</option>
-            <option value="PERCENTAGE">Percentage Off</option>
-            <option value="FIXED_DISCOUNT">Fixed Discount</option>
             <option value="LIMITED_TIME">Limited Time</option>
             <option value="SEASONAL">Seasonal</option>
           </select>
@@ -286,10 +297,20 @@ export default function SellerDeals() {
               return (
                 <div key={deal._id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
                   {/* Deal Header */}
-                  <div className={`bg-gradient-to-r ${getDealTypeColor(deal.type)} p-6 text-white`}>
+                  <div className={`bg-gradient-to-r ${getDealTypeColor(deal)} p-6 text-white`}>
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-xl font-bold">{deal.title}</h3>
+                          {deal.isLocked && (
+                            <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded text-xs font-semibold flex items-center gap-1">
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                              </svg>
+                              LOCKED
+                            </span>
+                          )}
+                        </div>
                         <div className="text-3xl font-bold">
                           {getDealValueDisplay(deal)}
                         </div>
@@ -299,8 +320,8 @@ export default function SellerDeals() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm opacity-90">
-                      {getDealTypeIcon(deal.type)}
-                      <span>{getDealTypeLabel(deal.type)}</span>
+                      {getDealTypeIcon(deal)}
+                      <span>{getDealTypeLabel(deal)}</span>
                     </div>
                   </div>
 
@@ -361,7 +382,13 @@ export default function SellerDeals() {
                       </Link>
                       <button
                         onClick={() => setDeleteConfirm(deal._id)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-red-300 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                        disabled={deal.isLocked}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                          deal.isLocked
+                            ? 'border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
+                            : 'border-red-300 text-red-600 hover:bg-red-50'
+                        }`}
+                        title={deal.isLocked ? 'Locked deals cannot be deleted' : 'Delete deal'}
                       >
                         <Trash2 className="w-4 h-4" />
                         Delete

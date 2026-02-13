@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Tag, Clock, Gift, Sparkles, ArrowRight, Flame, Calendar, Percent } from 'lucide-react'
+import { Tag, Clock, Gift, Sparkles, ArrowRight, Flame, Calendar } from 'lucide-react'
 import BookCard from './BookCard'
 
 interface Deal {
   _id: string
   title: string
   description: string
-  type: 'FLASH_SALE' | 'BOGO' | 'PERCENTAGE' | 'FIXED_DISCOUNT' | 'LIMITED_TIME' | 'SEASONAL'
-  discountValue: number
+  type: 'FLASH_SALE' | 'BOGO' | 'LIMITED_TIME' | 'SEASONAL'
+  discountPercentage: number
   buyQuantity?: number
   getQuantity?: number
   applicableBooks: any[]
@@ -66,9 +66,6 @@ const DealSection = ({ deal, className = '' }: DealSectionProps) => {
         return <Clock className="w-5 h-5" />
       case 'SEASONAL':
         return <Calendar className="w-5 h-5" />
-      case 'PERCENTAGE':
-      case 'FIXED_DISCOUNT':
-        return <Percent className="w-5 h-5" />
       default:
         return <Tag className="w-5 h-5" />
     }
@@ -84,10 +81,6 @@ const DealSection = ({ deal, className = '' }: DealSectionProps) => {
         return 'bg-orange-500 text-white'
       case 'SEASONAL':
         return 'bg-teal-500 text-white'
-      case 'PERCENTAGE':
-        return 'bg-blue-500 text-white'
-      case 'FIXED_DISCOUNT':
-        return 'bg-purple-500 text-white'
       default:
         return 'bg-gray-500 text-white'
     }
@@ -96,17 +89,13 @@ const DealSection = ({ deal, className = '' }: DealSectionProps) => {
   const getDealText = () => {
     switch (deal.type) {
       case 'FLASH_SALE':
-        return `${deal.discountValue}% OFF`
+        return `${deal.discountPercentage}% OFF`
       case 'BOGO':
         return `Buy ${deal.buyQuantity} Get ${deal.getQuantity} Free`
-      case 'PERCENTAGE':
-        return `${deal.discountValue}% OFF`
-      case 'FIXED_DISCOUNT':
-        return `Save $${deal.discountValue}`
       case 'LIMITED_TIME':
-        return `${deal.discountValue}% OFF`
+        return `${deal.discountPercentage}% OFF`
       case 'SEASONAL':
-        return `${deal.discountValue}% OFF`
+        return `${deal.discountPercentage}% OFF`
       default:
         return 'Special Offer'
     }

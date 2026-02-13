@@ -8,34 +8,26 @@ export function getDealBadgeInfo(book: any) {
     return null;
   }
 
-  const { type, discountValue, buyQuantity, getQuantity } = book.dealInfo;
+  const { type, discountPercentage, buyQuantity, getQuantity } = book.dealInfo;
   
   let badge = '';
   let color = '';
   
   switch (type) {
     case 'FLASH_SALE':
-      badge = '🔥 FLASH';
+      badge = `${discountPercentage}% OFF`;
       color = 'bg-red-500 text-white';
       break;
     case 'BOGO':
-      badge = '🎁 BOGO';
+      badge = `BUY ${buyQuantity} GET ${getQuantity}`;
       color = 'bg-green-500 text-white';
       break;
-    case 'PERCENTAGE':
-      badge = `${discountValue}% OFF`;
-      color = 'bg-blue-500 text-white';
-      break;
-    case 'FIXED_DISCOUNT':
-      badge = `${discountValue} OFF`;
-      color = 'bg-purple-500 text-white';
-      break;
     case 'LIMITED_TIME':
-      badge = `⏰ ${discountValue}%`;
+      badge = `${discountPercentage}% OFF`;
       color = 'bg-orange-500 text-white';
       break;
     case 'SEASONAL':
-      badge = `🎉 ${discountValue}%`;
+      badge = `${discountPercentage}% OFF`;
       color = 'bg-teal-500 text-white';
       break;
     default:
@@ -56,17 +48,17 @@ export function normalizeBook(book: any): Book {
     id: book._id || book.id,
     image: book.images?.[0] || book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop',
     genre: book.genres?.[0] || book.genre || 'General',
-    // If book has deal, originalPrice is already set by backend
-    // Otherwise, use discountPrice logic for backward compatibility
-    originalPrice: book.originalPrice || (book.discountPrice && book.discountPrice < book.price ? book.price : undefined),
+    // originalPrice is set by backend (either book price or deal original price)
+    originalPrice: book.originalPrice || book.price,
     inStock: book.stock > 0,
     isNew: book.isNewArrival,
     reviewCount: book.reviews || book.reviewCount || 0,
     rating: book.rating || 0,
     language: book.language || 'English',
-    // Pass through deal information
+    // Pass through deal and discount information
     hasDeal: book.hasDeal || false,
     dealInfo: book.dealInfo || undefined,
+    discountPercentage: book.discountPercentage || 0,
   };
 }
 

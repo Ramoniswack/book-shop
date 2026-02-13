@@ -3,6 +3,8 @@
 import { useState, Suspense } from 'react'
 import Image from 'next/image'
 import RatingStars from '@/components/RatingStars'
+import ReviewSection from '@/components/ReviewSection'
+import RelatedBooks from '@/components/RelatedBooks'
 import { BookDetailSkeleton } from '@/components/LoadingSkeleton'
 import { ShoppingCart, Heart, Share2, Plus, Minus, ChevronUp, ChevronDown, Facebook, Twitter, Instagram } from 'lucide-react'
 import { Book } from '@/types/book'
@@ -151,7 +153,7 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
 
   return (
     <Suspense fallback={<BookDetailSkeleton />}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-8 px-4 dark-transition">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center py-8 px-4 dark-transition">
         <div className="w-full max-w-7xl mx-auto">
           <div className="flex bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 p-10 dark-transition">
             
@@ -224,9 +226,11 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
               {/* Rating and Reviews */}
               <div className="flex items-center mt-3 text-sm leading-6">
                 <div className="flex gap-0.5">
-                  <RatingStars rating={book.rating || 0} size={16} />
+                  <RatingStars rating={book.averageRating || book.rating || 0} size={16} />
                 </div>
-                <span className="ml-1 mr-3 text-gray-700 dark:text-gray-300">{book.reviewCount} Review{book.reviewCount !== 1 ? 's' : ''}</span>
+                <span className="ml-1 mr-3 text-gray-700 dark:text-gray-300">
+                  {book.averageRating ? book.averageRating.toFixed(1) : '0.0'} ({book.totalReviews || book.reviewCount || 0} {(book.totalReviews || book.reviewCount || 0) !== 1 ? 'reviews' : 'review'})
+                </span>
                 <span className="font-medium mr-1 text-gray-700 dark:text-gray-300">ISBN:</span>
                 <span className="text-gray-700 dark:text-gray-300">{book.isbn || '978-0-123456-78-9'}</span>
               </div>
@@ -343,6 +347,16 @@ const BookDetailClient = ({ book }: BookDetailClientProps) => {
             </div>
           </div>
         </div>
+
+        {/* Related Books Section */}
+        <RelatedBooks bookId={book._id || book.id} />
+
+        {/* Review Section */}
+        <ReviewSection 
+          bookId={book._id || book.id} 
+          averageRating={book.averageRating || book.rating || 0}
+          totalReviews={book.totalReviews || book.reviewCount || 0}
+        />
       </div>
     </Suspense>
   )

@@ -11,7 +11,7 @@ interface BOGOBannerProps {
     title: string
     description: string
     type: string
-    discountValue: number
+    discountPercentage: number
     buyQuantity?: number
     getQuantity?: number
     applicableBooks: any[]
@@ -107,7 +107,7 @@ interface FlashSaleBannerProps {
     title: string
     description: string
     type: string
-    discountValue: number
+    discountPercentage: number
     endDate: string
     applicableBooks: any[]
   }
@@ -175,7 +175,7 @@ export const DynamicFlashSaleBanner = ({ deal }: FlashSaleBannerProps) => {
             {/* Large Background Discount */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <span className="text-[200px] font-bold text-gray-900 dark:text-white opacity-5 select-none">
-                {deal.discountValue}%
+                {deal.discountPercentage}%
               </span>
             </div>
 

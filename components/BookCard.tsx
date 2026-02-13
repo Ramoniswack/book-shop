@@ -30,9 +30,12 @@ const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
   const [isWishlistLoading, setIsWishlistLoading] = useState(false)
   const [checkingWishlist, setCheckingWishlist] = useState(true)
   
-  const discountPercentage = book.originalPrice 
-    ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
-    : 0
+  // Calculate discount percentage from book's discountPercentage field or from price difference
+  const discountPercentage = book.discountPercentage 
+    ? book.discountPercentage
+    : book.originalPrice 
+      ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
+      : 0
 
   // Check if book is in wishlist on mount
   useEffect(() => {
@@ -231,35 +234,51 @@ const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
           <span className="text-[10px] text-gray-500 dark:text-gray-400">({book.reviewCount})</span>
         </div>
         
-        {/* Price - Side by Side */}
-        <div className="flex items-center gap-2 mt-2">
-          <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
-            {formatPrice(book.price)}
-          </p>
-          {book.originalPrice && book.originalPrice > book.price && (
-            <p className="text-gray-500 dark:text-gray-400 text-xs line-through">
-              {formatPrice(book.originalPrice)}
-            </p>
-          )}
-        </div>
-        
-        {/* Quantity Controls */}
-        <div className="flex justify-center mt-3">
-          <div className="inline-flex items-center border border-gray-200 dark:border-gray-600 rounded-md overflow-hidden">
+        {/* Price and Quantity Row */}
+        <div className="flex items-center justify-between gap-2 mt-2">
+          {/* Price */}
+          <div className="flex flex-col">
+            {discountPercentage > 0 ? (
+              <>
+                <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
+                  {formatPrice(book.price * (1 - discountPercentage / 100))}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs line-through">
+                  {formatPrice(book.price)}
+                </p>
+              </>
+            ) : book.originalPrice && book.originalPrice > book.price ? (
+              <>
+                <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
+                  {formatPrice(book.price)}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs line-through">
+                  {formatPrice(book.originalPrice)}
+                </p>
+              </>
+            ) : (
+              <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
+                {formatPrice(book.price)}
+              </p>
+            )}
+          </div>
+          
+          {/* Quantity Controls - Compact */}
+          <div className="inline-flex items-center border border-gray-200 dark:border-gray-600 rounded-md overflow-hidden bg-white dark:bg-gray-800">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
+              className="text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-1.5 py-1 transition-colors"
             >
-              <Minus size={16} />
+              <Minus size={14} />
             </button>
-            <div className="bg-white dark:bg-gray-800 border-l border-r border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 inline-flex items-center px-4 py-1 select-none min-w-[40px] justify-center font-medium">
+            <div className="border-l border-r border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 inline-flex items-center px-2.5 py-1 select-none min-w-[32px] justify-center font-medium text-sm">
               {quantity}
             </div>
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="bg-white dark:bg-gray-800 text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-2 py-1 transition-colors"
+              className="text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 disabled:opacity-50 inline-flex items-center px-1.5 py-1 transition-colors"
             >
-              <Plus size={16} />
+              <Plus size={14} />
             </button>
           </div>
         </div>
