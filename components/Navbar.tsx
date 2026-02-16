@@ -10,7 +10,7 @@ import { useCart } from '@/contexts/CartContext'
 import SearchModal from './SearchModal'
 import ProfileModal from './ProfileModal'
 import { isAuthenticated, getUser, logout } from '@/utils/auth'
-import { getGenres } from '@/utils/seller'
+import { getGenres } from '@/utils/admin'
 import apiRequest from '@/utils/api'
 
 interface Genre {
@@ -502,7 +502,7 @@ const Navbar = () => {
                       </p>
                       {(user.role === 'seller' || user.role === 'admin') && (
                         <p className="text-xs text-orange-500 dark:text-orange-400 font-medium mt-1">
-                          {user.role === 'admin' ? 'Admin' : 'Seller'}
+                          Admin
                         </p>
                       )}
                     </div>
@@ -514,7 +514,7 @@ const Navbar = () => {
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <LayoutDashboard size={16} />
-                          Seller Dashboard
+                          Admin Dashboard
                         </Link>
                         {user.role === 'admin' && (
                           <Link

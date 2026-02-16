@@ -32,8 +32,8 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
   const [submitting, setSubmitting] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [hasRated, setHasRated] = useState(false)
-  const [userRating, setUserRating] = useState(0)
+  const [userReview, setUserReview] = useState<Review | null>(null)
+  const [canReview, setCanReview] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   
   // Review form state
@@ -63,16 +63,16 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
   useEffect(() => {
     fetchReviews()
     if (isLoggedIn) {
-      checkUserRating()
+      checkReviewEligibility()
     }
   }, [bookId, isLoggedIn])
 
   // Separate effect to ensure rating persists after state updates
   useEffect(() => {
-    if (hasRated && userRating > 0 && rating === 0) {
-      setRating(userRating)
+    if (userReview && rating === 0) {
+      setRating(userReview.rating)
     }
-  }, [hasRated, userRating, rating])
+  }, [userReview, rating])
 
   const fetchReviews = async () => {
     try {
@@ -89,23 +89,25 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
     }
   }
 
-  const checkUserRating = async () => {
+  const checkReviewEligibility = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/user/${bookId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/book/${bookId}/eligibility`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       const data = await response.json()
       
-      if (data.success && data.data.review) {
-        setHasRated(true)
-        setUserRating(data.data.review.rating)
-        setRating(data.data.review.rating) // Pre-fill with existing rating
+      if (data.success) {
+        setCanReview(data.data.canReview)
+        if (data.data.hasReview && data.data.review) {
+          setUserReview(data.data.review)
+          setRating(data.data.review.rating)
+        }
       }
     } catch (error) {
-      console.error('Error checking user rating:', error)
+      console.error('Error checking review eligibility:', error)
     }
   }
 
@@ -120,8 +122,12 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
       return
     }
 
-    // If user hasn't rated yet, rating is required
-    if (!hasRated && rating === 0) {
+    if (!canReview) {
+      toast.error('Please buy and receive this book before submitting a review.')
+      return
+    }
+
+    if (rating === 0) {
       toast.error('Please select a rating')
       return
     }
@@ -135,63 +141,33 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
       setSubmitting(true)
       const token = localStorage.getItem('token')
       
-      const body: any = {
-        bookId,
-        comment,
-      }
-      
-      // Only send rating if user is rating for first time or updating rating
-      if (rating > 0 && (!hasRated || rating !== userRating)) {
-        body.rating = rating
-      }
-      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          bookId,
+          rating,
+          comment,
+        }),
       })
 
       const data = await response.json()
 
       if (data.success) {
-        if (data.data.hasRated && !hasRated) {
-          toast.success('Rating and comment submitted!')
-          setHasRated(true)
-          setUserRating(rating)
-        } else if (rating > 0 && rating !== userRating) {
-          toast.success('Rating updated and comment added!')
-          setUserRating(rating)
-          setRating(rating) // Keep the updated rating in the form
+        if (data.data.isUpdate) {
+          toast.success('Review updated successfully!')
         } else {
-          toast.success('Comment added!')
-          // Keep the existing rating in the form
-          setRating(userRating)
+          toast.success('Review submitted successfully!')
         }
         
         setComment('')
         
-        // Fetch updated reviews
+        // Fetch updated reviews and eligibility
         await fetchReviews()
-        
-        // Fetch updated book rating if rating was changed
-        if (rating > 0 && rating !== userRating) {
-          // Trigger a re-fetch of book data to update average rating
-          try {
-            const bookResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/books/${bookId}`)
-            const bookData = await bookResponse.json()
-            if (bookData.success) {
-              // Update the displayed rating (you might need to pass this as a prop or use context)
-              console.log('Updated book rating:', bookData.data.averageRating)
-            }
-          } catch (error) {
-            console.error('Error fetching updated book data:', error)
-          }
-        }
-        
-        // Don't reload page - rating stays in the form for next comment
+        await checkReviewEligibility()
       } else {
         toast.error(data.message || 'Failed to submit review')
       }
@@ -223,8 +199,8 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
         toast.success('Comment deleted successfully')
         await fetchReviews()
         
-        // Check if this was the user's last review (need to re-check rating status)
-        await checkUserRating()
+        // Re-check eligibility after deletion
+        await checkReviewEligibility()
       } else {
         toast.error(data.message || 'Failed to delete comment')
       }
@@ -311,18 +287,25 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
         {isLoggedIn && (
           <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-xl">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              {hasRated ? 'Add Another Comment' : 'Write a Review'}
+              {userReview ? 'Update Your Review' : 'Write a Review'}
             </h3>
-            {hasRated && (
+            {!canReview && (
+              <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  You need to purchase and receive this book before you can write a review.
+                </p>
+              </div>
+            )}
+            {userReview && (
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                You've already rated this book ({userRating} stars). You can update your rating or just add a comment.
+                You've already reviewed this book ({userReview.rating} stars). You can update your review below.
               </p>
             )}
             <form onSubmit={handleSubmitReview} className="space-y-4">
               {/* Star Rating Selector */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {hasRated ? 'Update Rating (Optional)' : 'Rating *'}
+                  Rating *
                 </label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -333,6 +316,7 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
                       onMouseEnter={() => setHoverRating(star)}
                       onMouseLeave={() => setHoverRating(0)}
                       className="transition-transform hover:scale-110"
+                      disabled={!canReview}
                     >
                       <Star
                         size={32}
@@ -340,14 +324,14 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
                           star <= (hoverRating || rating)
                             ? 'text-yellow-400 fill-yellow-400'
                             : 'text-gray-300 dark:text-gray-600'
-                        }`}
+                        } ${!canReview ? 'opacity-50 cursor-not-allowed' : ''}`}
                       />
                     </button>
                   ))}
                 </div>
-                {hasRated && rating !== userRating && rating > 0 && (
+                {userReview && rating !== userReview.rating && rating > 0 && (
                   <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                    Your rating will be updated from {userRating} to {rating} stars
+                    Your rating will be updated from {userReview.rating} to {rating} stars
                   </p>
                 )}
               </div>
@@ -362,9 +346,10 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
                   onChange={(e) => setComment(e.target.value)}
                   rows={4}
                   maxLength={1000}
-                  placeholder="Share your thoughts about this book..."
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder={canReview ? "Share your thoughts about this book..." : "Purchase this book to write a review"}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                   required
+                  disabled={!canReview}
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {comment.length}/1000 characters
@@ -374,10 +359,10 @@ const ReviewSection = ({ bookId, averageRating, totalReviews }: ReviewSectionPro
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={submitting || (!hasRated && rating === 0) || !comment.trim()}
+                disabled={submitting || !canReview || rating === 0 || !comment.trim()}
                 className="px-6 py-2 bg-bookStore-blue text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? 'Submitting...' : hasRated ? 'Add Comment' : 'Submit Review'}
+                {submitting ? 'Submitting...' : userReview ? 'Update Your Review' : 'Submit Review'}
               </button>
             </form>
           </div>

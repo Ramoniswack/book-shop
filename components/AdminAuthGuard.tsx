@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUser, isAuthenticated } from '@/utils/auth';
 
-interface SellerAuthGuardProps {
+interface AdminAuthGuardProps {
   children: React.ReactNode;
 }
 
-export default function SellerAuthGuard({ children }: SellerAuthGuardProps) {
+export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +21,7 @@ export default function SellerAuthGuard({ children }: SellerAuthGuardProps) {
         return;
       }
 
-      // Check if user has seller or admin role
+      // Check if user has admin role
       const user = getUser();
       if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
         router.push('/');

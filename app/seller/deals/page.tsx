@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, AlertTriangle, Tag, Calendar, TrendingUp, Clock, Flame, Gift, Percent } from 'lucide-react';
 import Link from 'next/link';
-import { getSellerDeals, deleteDeal } from '@/utils/seller';
+import { getSellerDeals, deleteDeal } from '@/utils/admin';
 
 interface Deal {
   _id: string;

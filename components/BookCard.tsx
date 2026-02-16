@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Star, Heart, ShoppingCart, Plus, Minus } from 'lucide-react'
+import { Heart, ShoppingCart, Plus, Minus } from 'lucide-react'
 import { Book } from '@/types/book'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { useCart } from '@/contexts/CartContext'
@@ -10,6 +10,7 @@ import { addToWishlist, removeFromWishlist, getWishlist } from '@/utils/wishlist
 import { isAuthenticated } from '@/utils/auth'
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
+import RatingStars from '@/components/RatingStars'
 
 interface BookCardProps {
   book: Book
@@ -93,11 +94,12 @@ const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
         image: book.image || ''
       }
 
-      // Add deal information if available
-      if (book.activeDeal) {
-        cartItem.dealId = book.activeDeal._id
-        cartItem.dealType = book.activeDeal.type
-        cartItem.dealTitle = book.activeDeal.title
+      // Add deal information if available (check both activeDeal and dealInfo)
+      const dealData = book.activeDeal || book.dealInfo
+      if (dealData) {
+        cartItem.dealId = dealData._id
+        cartItem.dealType = dealData.type
+        cartItem.dealTitle = dealData.title
       }
       
       // Add to cart with MongoDB ID and deal info
@@ -106,7 +108,7 @@ const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
       setQuantity(1) // Reset quantity after adding
     } catch (error: any) {
       console.error('Failed to add to cart:', error)
-      toast.error(error.message || 'Failed to add to cart')
+      // Don't show toast here - CartContext already shows it
     } finally {
       setIsAdding(false)
     }
@@ -227,21 +229,12 @@ const BookCard = ({ book, className = '', dealInfo }: BookCardProps) => {
         </Link>
         
         {/* Rating */}
-        <div className="flex items-center mt-1.5 space-x-1">
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={12}
-                className={`${
-                  i < Math.floor(book.rating || 0)
-                    ? 'text-yellow-400 fill-current'
-                    : 'text-gray-300 dark:text-gray-600'
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-[10px] text-gray-500 dark:text-gray-400">({book.reviewCount})</span>
+        <div className="flex items-center mt-1.5">
+          <RatingStars 
+            rating={book.averageRating || book.rating || 0} 
+            size={12}
+            reviewCount={book.totalReviews || book.reviewCount || 0}
+          />
         </div>
         
         {/* Price and Quantity Row */}

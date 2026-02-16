@@ -49,26 +49,28 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true)
       const response = await getCart()
+      
       if (response.success) {
-        // Transform backend cart data to frontend format
-        const transformedCart = (response.data.cart || []).map((item: any) => ({
-          bookId: item.bookId._id || item.bookId,
-          title: item.bookId.title || 'Unknown Title',
-          author: item.bookId.author || 'Unknown Author',
-          price: item.price,
-          image: item.bookId.images?.[0] || item.bookId.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop',
-          quantity: item.quantity,
-          dealId: item.dealId,
-          dealType: item.dealType,
-          dealTitle: item.dealTitle,
-          discountApplied: item.discountApplied,
-          isFreeItem: item.isFreeItem
-        }))
+        // Filter out items where bookId is null (deleted books)
+        const transformedCart = (response.data.cart || [])
+          .filter((item: any) => item.bookId !== null && item.bookId !== undefined)
+          .map((item: any) => ({
+            bookId: item.bookId._id || item.bookId,
+            title: item.bookId.title || 'Unknown Title',
+            author: item.bookId.author || 'Unknown Author',
+            price: item.price,
+            image: item.bookId.images?.[0] || item.bookId.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop',
+            quantity: item.quantity,
+            dealId: item.dealId,
+            dealType: item.dealType,
+            dealTitle: item.dealTitle,
+            discountApplied: item.discountApplied,
+            isFreeItem: item.isFreeItem
+          }))
         setCart(transformedCart)
       }
     } catch (error: any) {
       console.error('Error loading cart:', error)
-      // Don't show error toast on initial load
     } finally {
       setIsLoading(false)
     }
@@ -101,7 +103,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       console.error('Error adding to cart:', error)
       toast.error(error.message || 'Failed to add to cart')
-      throw error
+      throw error // Re-throw so BookCard knows there was an error but doesn't show duplicate toast
     } finally {
       setIsLoading(false)
     }

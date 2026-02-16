@@ -18,27 +18,32 @@ const RatingStars = ({
   className = '' 
 }: RatingStarsProps) => {
   const fullStars = Math.floor(rating)
-  const hasHalfStar = rating % 1 !== 0
+  const partialStar = rating % 1
   const emptyStars = maxRating - Math.ceil(rating)
 
   return (
-    <div className={`flex items-center space-x-1 ${className}`}>
+    <div className={`flex items-center gap-1 ${className}`}>
       <div className="flex items-center">
         {/* Full stars */}
         {[...Array(fullStars)].map((_, i) => (
           <Star
             key={`full-${i}`}
             size={size}
-            className="text-yellow-400 fill-current"
+            className="text-yellow-400 fill-yellow-400"
           />
         ))}
         
-        {/* Half star */}
-        {hasHalfStar && (
-          <div className="relative">
-            <Star size={size} className="text-gray-300" />
-            <div className="absolute inset-0 overflow-hidden w-1/2">
-              <Star size={size} className="text-yellow-400 fill-current" />
+        {/* Partial star */}
+        {partialStar > 0 && (
+          <div className="relative inline-block" style={{ width: size, height: size }}>
+            {/* Background empty star */}
+            <Star size={size} className="text-gray-300 dark:text-gray-600 absolute top-0 left-0" />
+            {/* Foreground filled portion */}
+            <div 
+              className="absolute top-0 left-0 overflow-hidden" 
+              style={{ width: `${partialStar * 100}%` }}
+            >
+              <Star size={size} className="text-yellow-400 fill-yellow-400" />
             </div>
           </div>
         )}
@@ -48,19 +53,19 @@ const RatingStars = ({
           <Star
             key={`empty-${i}`}
             size={size}
-            className="text-gray-300"
+            className="text-gray-300 dark:text-gray-600"
           />
         ))}
       </div>
       
       {showNumber && (
-        <span className="text-sm text-gray-600 font-medium">
+        <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
           {rating.toFixed(1)}
         </span>
       )}
       
       {reviewCount !== undefined && (
-        <span className="text-sm text-gray-500">
+        <span className="text-[10px] text-gray-500 dark:text-gray-400">
           ({reviewCount.toLocaleString()})
         </span>
       )}

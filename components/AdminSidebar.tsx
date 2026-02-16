@@ -15,10 +15,11 @@ import {
   Layers,
   Layout,
   X,
+  Image,
 } from 'lucide-react';
 import { logout } from '@/utils/auth';
 
-interface SellerSidebarProps {
+interface AdminSidebarProps {
   onClose?: () => void;
 }
 
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Books', href: '/seller/books', icon: BookOpen },
   { name: 'Authors', href: '/seller/authors', icon: User },
   { name: 'Genres', href: '/seller/genres', icon: Layers },
+  { name: 'Hero Slides', href: '/seller/hero-slides', icon: Image },
   { name: 'Homepage Sections', href: '/seller/homepage-sections', icon: Layout },
   { name: 'Orders', href: '/seller/orders', icon: ShoppingCart },
   { name: 'Deals', href: '/seller/deals', icon: Tag },
@@ -35,7 +37,7 @@ const navigation = [
   { name: 'Settings', href: '/seller/settings', icon: Settings },
 ];
 
-export default function SellerSidebar({ onClose }: SellerSidebarProps) {
+export default function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
   const handleLogout = () => {
@@ -54,7 +56,7 @@ export default function SellerSidebar({ onClose }: SellerSidebarProps) {
     <div className="flex flex-col h-full bg-gray-900 text-white w-64">
       {/* Logo/Brand */}
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-800">
-        <h1 className="text-xl font-bold">Seller Dashboard</h1>
+        <h1 className="text-xl font-bold">Admin Dashboard</h1>
         {/* Close button for mobile */}
         <button
           onClick={onClose}

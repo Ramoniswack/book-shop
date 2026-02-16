@@ -17,13 +17,11 @@ const apiRequest = async (
     'Content-Type': 'application/json',
   };
 
-  // Add existing headers from options
   if (options.headers) {
     const existingHeaders = options.headers as Record<string, string>;
     Object.assign(headers, existingHeaders);
   }
 
-  // Add authorization token if available
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }

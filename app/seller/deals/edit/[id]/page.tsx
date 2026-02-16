@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import DealForm from '@/components/DealForm'
-import { getDealById, updateDeal } from '@/utils/seller'
+import { getDealById, updateDeal } from '@/utils/admin'
 import { toast } from 'react-hot-toast'
 import { AlertTriangle } from 'lucide-react'
 

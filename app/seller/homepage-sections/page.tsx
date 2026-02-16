@@ -9,7 +9,7 @@ import {
   updateHomepageSection,
   deleteHomepageSection,
   toggleHomepageSectionStatus,
-} from '@/utils/seller'
+} from '@/utils/admin'
 
 interface HomepageSection {
   _id: string

@@ -8,6 +8,7 @@ import { isAuthenticated } from '@/utils/auth'
 import { getWishlist } from '@/utils/wishlist'
 import BookCard from '@/components/BookCard'
 import { Book } from '@/types/book'
+import { normalizeBooks } from '@/utils/bookMapper'
 
 export default function WishlistPage() {
   const router = useRouter()
@@ -28,17 +29,8 @@ export default function WishlistPage() {
       setIsLoading(true)
       const response = await getWishlist()
       if (response.success) {
-        // Backend returns populated book objects
-        const books = (response.data.wishlist || []).map((book: any) => ({
-          ...book,
-          id: book._id,
-          image: book.images?.[0] || book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop',
-          genre: book.genres?.[0] || 'General',
-          inStock: book.stock > 0,
-          isNew: book.isNewArrival,
-          reviewCount: book.reviews || book.reviewCount || 0,
-          rating: book.rating || 0,
-        }))
+        // Use normalizeBooks to ensure consistent data transformation
+        const books = normalizeBooks(response.data.wishlist || [])
         setWishlist(books)
       }
     } catch (error) {

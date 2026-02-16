@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Package, AlertTriangle, CheckCircle, XCircle, Truck, Clock } from 'lucide-react';
-import { getSellerOrders, updateOrderStatus } from '@/utils/seller';
+import { getSellerOrders, updateOrderStatus } from '@/utils/admin';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface OrderItem {

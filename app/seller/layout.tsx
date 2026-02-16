@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import SellerAuthGuard from '@/components/SellerAuthGuard';
-import SellerSidebar from '@/components/SellerSidebar';
-import SellerHeader from '@/components/SellerHeader';
+import SellerAuthGuard from '@/components/AdminAuthGuard';
+import SellerSidebar from '@/components/AdminSidebar';
+import SellerHeader from '@/components/AdminHeader';
 
 export default function SellerLayout({
   children,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AlertTriangle, Plus } from 'lucide-react';
-import { getAuthors, getGenres, createAuthor, createGenre, getHomepageSections } from '@/utils/seller';
+import { getAuthors, getGenres, createAuthor, createGenre, getHomepageSections } from '@/utils/admin';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import toast from 'react-hot-toast';
 import MultiImageUpload from './MultiImageUpload';
@@ -255,7 +255,7 @@ export default function BookForm({ initialData, onSubmit, submitLabel, isLoading
 
     try {
       setAddingSubGenres(true);
-      const { addSubGenresToGenre } = await import('@/utils/seller');
+      const { addSubGenresToGenre } = await import('@/utils/admin');
       const response = await addSubGenresToGenre(selectedGenreForSubGenre._id, subGenresToAdd);
       
       if (response.success) {

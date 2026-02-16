@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DealForm from '@/components/DealForm'
-import { createDeal } from '@/utils/seller'
+import { createDeal } from '@/utils/admin'
 import { toast } from 'react-hot-toast'
 
 export default function AddDealPage() {

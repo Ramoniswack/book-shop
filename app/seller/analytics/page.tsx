@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { TrendingUp, DollarSign, Package, AlertTriangle, BookOpen, ShoppingCart, BarChart3 } from 'lucide-react';
-import { getAnalyticsOverview, getBestSellingBooks, getLowStockAlerts, getRevenueTimeline } from '@/utils/seller';
+import { getAnalyticsOverview, getBestSellingBooks, getLowStockAlerts, getRevenueTimeline } from '@/utils/admin';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface AnalyticsData {

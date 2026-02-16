@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, User } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getAuthors, createAuthor, updateAuthor, deleteAuthor } from '@/utils/seller';
+import { getAuthors, createAuthor, updateAuthor, deleteAuthor } from '@/utils/admin';
 import Image from 'next/image';
 import ImageUpload from '@/components/ImageUpload';
 

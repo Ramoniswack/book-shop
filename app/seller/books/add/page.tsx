@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import BookForm from '@/components/BookForm';
-import { addBook } from '@/utils/seller';
+import { addBook } from '@/utils/admin';
 
 export default function AddBook() {
   const router = useRouter();

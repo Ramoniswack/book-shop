@@ -4,6 +4,7 @@ import MainLayout from '@/layouts/MainLayout'
 import ProductGrid from '@/components/ProductGrid'
 import UsedBooksBanner from '@/components/UsedBooksBanner'
 import { BookCardSkeleton } from '@/components/LoadingSkeleton'
+import { normalizeBooks } from '@/utils/bookMapper'
 
 export const metadata: Metadata = {
   title: 'Used Books - Affordable Pre-Owned Books | BookStore Nepal',
@@ -26,43 +27,25 @@ export const metadata: Metadata = {
 const fetchUsedBooks = async () => {
   try {
     const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/books/used`
-    console.log('🔍 Fetching used books from:', url)
     
     const response = await fetch(url, { cache: 'no-store' })
     const data = await response.json()
     
-    console.log('📦 API Response:', {
-      success: data.success,
-      hasData: !!data.data,
-      hasBooks: !!(data.data && data.data.books),
-      booksCount: data.data?.books?.length || 0
-    })
-    
     // Handle the nested structure: data.data.books
     if (data.success && data.data && data.data.books) {
-      console.log('✅ Returning', data.data.books.length, 'used books')
-      // Normalize books to ensure they have proper structure
-      const books = data.data.books.map((book: any) => ({
-        ...book,
-        id: book._id || book.id,
-        image: book.images?.[0] || book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop',
-        inStock: book.stock > 0,
-      }))
-      return books
+      // Use normalizeBooks for consistent data transformation
+      return normalizeBooks(data.data.books)
     }
     
-    console.log('❌ No books found in response')
     return []
   } catch (error) {
-    console.error('❌ Error fetching used books:', error)
+    console.error('Error fetching used books:', error)
     return []
   }
 }
 
 export default async function UsedBooksPage() {
   const usedBooks = await fetchUsedBooks()
-  
-  console.log('📚 UsedBooksPage rendering with', usedBooks.length, 'books')
 
   return (
     <MainLayout>

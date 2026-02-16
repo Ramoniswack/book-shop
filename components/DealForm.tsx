@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Search, Calendar, Image as ImageIcon, Eye, EyeOff, Flame, Gift, Percent, Clock, Tag as TagIcon, Sparkles } from 'lucide-react'
-import { getSellerBooks } from '@/utils/seller'
+import { getSellerBooks } from '@/utils/admin'
 import ImageUpload from './ImageUpload'
 
 interface DealFormData {

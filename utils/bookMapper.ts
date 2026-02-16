@@ -43,22 +43,30 @@ export function getDealBadgeInfo(book: any) {
  * Adds backward compatibility fields
  */
 export function normalizeBook(book: any): Book {
+  // Calculate the correct review count and rating first
+  const correctReviewCount = book.totalReviews || book.reviews || book.reviewCount || 0;
+  const correctRating = book.averageRating || book.rating || 0;
+  
   return {
+    // Spread all book properties
     ...book,
+    // Then explicitly override with normalized values
     id: book._id || book.id,
     image: book.images?.[0] || book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop',
     genre: book.genres?.[0] || book.genre || 'General',
-    // originalPrice is set by backend (either book price or deal original price)
     originalPrice: book.originalPrice || book.price,
     inStock: book.stock > 0,
     isNew: book.isNewArrival,
-    reviewCount: book.reviews || book.reviewCount || 0,
-    rating: book.rating || 0,
     language: book.language || 'English',
-    // Pass through deal and discount information
     hasDeal: book.hasDeal || false,
     dealInfo: book.dealInfo || undefined,
     discountPercentage: book.discountPercentage || 0,
+    // Force override review and rating fields AFTER spread
+    reviewCount: correctReviewCount,
+    totalReviews: correctReviewCount,
+    reviews: correctReviewCount,
+    rating: correctRating,
+    averageRating: correctRating,
   };
 }
 

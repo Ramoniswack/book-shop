@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Tag } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getGenres, createGenre, updateGenre, deleteGenre } from '@/utils/seller';
+import { getGenres, createGenre, updateGenre, deleteGenre } from '@/utils/admin';
 import Image from 'next/image';
 import ImageUpload from '@/components/ImageUpload';
 

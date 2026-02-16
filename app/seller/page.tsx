@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { BookOpen, ShoppingCart, DollarSign, AlertTriangle, Package, TrendingUp, Eye, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { getAnalyticsOverview, getSellerOrders, getLowStockAlerts } from '@/utils/seller';
+import { getAnalyticsOverview, getSellerOrders, getLowStockAlerts } from '@/utils/admin';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface AnalyticsData {

@@ -1,10 +1,8 @@
 'use client'
 
-import HeroSection from '@/components/HeroSection'
-import ProductGrid from '@/components/ProductGrid'
+import HeroSlider from '@/components/HeroSlider'
 import GenreSlider from '@/components/GenreSlider'
 import BestsellingAuthors from '@/components/BestsellingAuthors'
-import DealSection from '@/components/DealSection'
 import DynamicSection from '@/components/DynamicSection'
 import { DynamicBOGOBanner, DynamicFlashSaleBanner } from '@/components/PromotionalBanners'
 import { Book, Genre, Author } from '@/types/book'
@@ -53,8 +51,8 @@ const HomePageClient = ({ featuredBooks, bestsellers, genres, newArrivals, autho
 
   return (
     <>
-      {/* Hero Section with Rotating Featured Books */}
-      <HeroSection featuredBooks={featuredBooks} />
+      {/* Hero Slider with Continuous Loop */}
+      <HeroSlider />
 
       {/* Genres Section */}
       <section className="py-12 bg-white dark:bg-gray-900 dark-transition">

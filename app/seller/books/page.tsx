@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Search, Eye, EyeOff, Trash2, AlertTriangle, BookOpen, Star, Plus, Edit } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { getSellerBooks, toggleBookVisibility, deleteBook } from '@/utils/seller';
+import { getSellerBooks, toggleBookVisibility, deleteBook } from '@/utils/admin';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface Book {

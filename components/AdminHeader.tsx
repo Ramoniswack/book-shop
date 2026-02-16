@@ -6,11 +6,11 @@ import Link from 'next/link';
 import { getUser } from '@/utils/auth';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
-interface SellerHeaderProps {
+interface AdminHeaderProps {
   onMenuClick?: () => void;
 }
 
-export default function SellerHeader({ onMenuClick }: SellerHeaderProps) {
+export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const [user, setUser] = useState<{ firstName: string; lastName: string; email: string } | null>(null);
   const { currency, setCurrency } = useCurrency();
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
@@ -55,7 +55,7 @@ export default function SellerHeader({ onMenuClick }: SellerHeaderProps) {
         </button>
 
         {/* Page Title */}
-        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white">Seller Portal</h2>
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white">Admin Portal</h2>
       </div>
 
       {/* Right side - Currency, Notifications and User */}
